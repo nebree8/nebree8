@@ -274,12 +274,7 @@ class PausableWSGIApplication(webapp2.WSGIApplication):
 
 def StartServer(port):
     from paste import httpserver
-
-    logging.basicConfig(
-        filename="/dev/stdout",
-        #filename="server_%s.log" % time.strftime("%Y%m%d_%H%M%S"),
-        filemode='w',
-        level=logging.INFO)
+    logging.info("Starting server on port %d", port)
     #app = webapp2.WSGIApplication([
     app = PausableWSGIApplication([
         # User UI
@@ -322,8 +317,19 @@ def main():
     parser.add_argument('--port', type=int, default=8000, help='Port to run on')
     parser.add_argument('--fake', dest='fake', action='store_true')
     parser.add_argument('--nofake', dest='fake', action='store_false')
-    parser.set_defaults(fake=False)
+    parser.add_argument('--logfile', default="", help='File to log to. If empty, does not log to a file')
+    parser.add_argument('--logtostderr', dest='logtostderr', action='store_true')
+    parser.add_argument('--loglevel', default='info', help='Log level (debug, info, warning, error)')
+    parser.set_defaults(fake=False, logtostderr=True)
     args = parser.parse_args()
+
+    # Set up logging
+    rootLogger = logging.getLogger()
+    rootLogger.setLevel(getattr(logging, args.loglevel.upper()))
+    if args.logfile:
+        rootLogger.addHandler(logging.FileHandler(args.logfile))
+    if args.logtostderr:
+        rootLogger.addHandler(logging.StreamHandler())
 
     global robot
     global controller

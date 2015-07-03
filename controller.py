@@ -29,19 +29,20 @@ class Controller:
 
   def __Process(self):
     while True:
-      print "Waiting for actions..."
+      logging.info("Waiting for actions...")
       self.queued_sem.acquire() # Ensure there are items to process.
       with self.queue_lock:
         self.current_action = self.queue.popleft()
       try:
         if self.current_action.sensitive():
           self.app.drop_all = True
+        logging.info("Executing %s", self.current_action.inspect())
         self.current_action(self.robot)
       except ActionException, e:
         self.last_exception = e
-        print "Waiting for resume signal..."
+        logging.info("Waiting for resume signal...")
         self.resume_lock.acquire()
-        print "...got it."
+        logging.info("Resume signal received, continuing to process actions.")
       except Exception, e:
         threading.Thread(target=self.KillProcess).start()
         raise
