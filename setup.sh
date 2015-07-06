@@ -18,6 +18,8 @@ function install_once {
     RPi.GPIO \
     enum34 WebOb Paste webapp2
   install_polymer
+
+  curl https://raw.githubusercontent.com/mbostock/d3/master/d3.min.js > static/d3.v3.min.js 
 }
 
 function initialize {
