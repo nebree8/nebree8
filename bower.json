@@ -10,13 +10,13 @@
     "**/.*",
     "node_modules",
     "bower_components",
+    "static/bower_components",
     "test",
     "tests"
   ],
   "dependencies": {
-    "polymer": "Polymer/polymer#~0.5.2",
-    "paper-elements": "Polymer/paper-elements#~0.5.2",
-    "core-ajax": "Polymer/core-ajax#~0.5.2",
-    "font-roboto": "Polymer/font-roboto#~0.5.2"
+    "core-ajax": "Polymer/core-ajax#~0.4.0",
+    "core-image": "Polymer/core-image#~0.4.0",
+    "paper-elements": "Polymer/paper-elements#~0.4.0"
   }
 }
