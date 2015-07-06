@@ -67,7 +67,7 @@ class PhysicalRobot(Robot):
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 0)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
     self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
-    time.sleep(0.5)
+    #time.sleep(0.5)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 0)
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
 

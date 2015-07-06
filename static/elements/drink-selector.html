@@ -26,18 +26,26 @@
         background-color: gray;
       }
       .drink-row-hide-true-false {
-        visibility: hidden;
+        height: 0px;
+        display: block;
+        overflow: hidden;
       }
-      .back-button {
+      .back-button-container {
         width: 100px;
       }
+      .back-button {
+        background-color: #FF9999;
+      }
+      .advance-button {
+        background-color: #33A9FF;
+      }
     </style>
-    <div layout vertical
+    <div layout vertical hidden?={{!collapsing_ready}} id="details_{{drink}}"
       class="drink-row-gray-{{gray_out}}-{{show_details}} drink-row-hide-{{hide_if_not_selected}}-{{selected}}">
       <div layout horizontal class="drink-row" on-tap="{{drinkTapped}}">
         <core-collapse id="back" horizontal=true opened="{{selected}}">
-          <div class="back-button">
-            <paper-button raised label="BACK" on-tap="{{drinkDeSelected}}"></paper-button>
+          <div class="back-button-container">
+            <paper-button raisedButton label="BACK" class="back-button" on-tap="{{drinkDeSelected}}"></paper-button>
           </div>
         </core-collapse>
         <core-image
@@ -50,31 +58,34 @@
         </div>
         <div hidden?="{{!show_details}}">
           <!--<large-button urlLink="selector.html" textValue="Next">-->
-          <paper-button raised label="NEXT" on-tap="{{drinkSelected}}"></paper-button>
+          <paper-button raisedButton label="NEXT" class="advance-button" on-tap="{{drinkSelected}}">
+          </paper-button>
          <!-- <large-button on-tap="{{drinkSelected}}" textValue="Next">
          </large-button>-->
         </div>
       </div>  <!-- end horizontal -->
-      <core-collapse id="drink_details" opened="{{show_details}}">
-        <template repeat="{{ingredient in details}}">
-          <div layout horizontal>
-            <paper-slider value="{{ingredient.parts}}" min="0" max="{{ingredient.total_parts}}" snaps=true></paper-slider>
-            <paper-item label="{{ingredient.name}}"></paper-item>
-            <div on-tap="{{drinkTapped}}" flex></div>
-          </div>
-        </template>
-      </core-collapse>
-      <core-collapse id="name_entry" opened="{{selected}}">
-        <paper-input id="name_input" label="{{user_name}}">
-        </paper-input>
-      </core-collapse>
-      <core-collapse id="submit_area" horizontal=false opened="{{selected}}">
-        <paper-button on-tap="{{createDrink}}" label="Create my drink!">
-        </paper-button>
-      </core-collapse>
-      <core-collapse id="submitted_message" opened="{{submitted}}">
-        <paper-item label="Thanks, order submitted."></paper-item>
-      </core-collapse>
+      <div vertical layout center>
+        <core-collapse id="drink_details" opened="{{show_details}}">
+          <template repeat="{{ingredient in details}}">
+            <div layout horizontal>
+              <paper-slider value="{{ingredient.parts}}" min="0" max="{{ingredient.total_parts}}" snaps=true></paper-slider>
+              <paper-item label="{{ingredient.name}}"></paper-item>
+              <div on-tap="{{drinkTapped}}" flex></div>
+            </div>
+          </template>
+        </core-collapse>
+        <core-collapse id="name_entry" opened="{{selected}}">
+          <paper-input id="name_input" label="{{user_name}}">
+          </paper-input>
+        </core-collapse>
+        <core-collapse id="submit_area" opened="{{selected}}">
+          <paper-button raisedButton on-tap="{{createDrink}}" class="advance-button" label="Create my drink!">
+          </paper-button>
+        </core-collapse>
+        <core-collapse id="submitted_message" opened="{{submitted}}">
+          <paper-item label="Thanks, order submitted."></paper-item>
+        </core-collapse>
+      </div>
       <core-ajax
         id="ajax_submit"
         auto=false
@@ -126,12 +137,21 @@
       submitted: {
         value: false,
         reflect: true
+      },
+      collapsing_ready: {
+        value: false,
+        reflect: true
       }
     },
     drinkTapped: function(event, detail, sender) {
       if (!this.selected && (!this.gray_out || this.show_details)) {
         this.show_details = !this.show_details;
         this.gray_out = this.show_details;
+      }
+      if (this.show_details) {
+        // Not working.
+        //location.href="#details_" + this.drink;
+        //this.scroller.scrollTop = 0;
       }
     },
     drinkSelected: function(event, detail, sender) {
@@ -147,6 +167,10 @@
       this.selected = false;
     },
     createDrink: function(event, detail, sender) {
+      if (this.$.name_input.value == "") {
+        alert("You must set your name so you can see your position in the queue.");
+        return;
+      }
       var params = {
         "alt":"json",
         "user_name":this.$.name_input.value,
@@ -172,6 +196,9 @@
           this.$.drink_details.toggle();
           this.$.back.toggle();
           this.submitted = false;
+          this.async(function() {
+            this.collapsing_ready = true;
+          }, null, 50);
         }, null, 1);
       }, null, 1);
     //this.$.drink_details.opened = false

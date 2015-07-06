@@ -17,6 +17,7 @@ from actions.meter_simple import MeterSimple as Meter
 from actions.meter_bitters import MeterBitters
 from actions.move import Move
 from actions.wait_for_glass_removal import WaitForGlassRemoval
+from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.pressurize import HoldPressure, ReleasePressure
 from controller import Controller
 from config import ingredients
@@ -176,6 +177,8 @@ def actions_for_recipe(recipe):
                     ingredient.name, recipe.name, recipe)
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
+    actions.append(WaitForGlassRemoval())
+    actions.append(WaitForGlassPlaced())
     return actions
 
 
@@ -217,8 +220,8 @@ class PrimeHandler(webapp2.RequestHandler):
     def post(self):
         controller.EnqueueGroup(actions_for_recipe(
             manual_db.Recipe(name='Prime', ingredients=[
-                manual_db.Ingredient(manual_db.Oz(.25), ingredient)
-                for ingredient in ingredients.INGREDIENTS_ORDERED])))
+                manual_db.Ingredient(manual_db.Oz(.10), ingredient)
+                for ingredient in ingredients.INGREDIENTS_ORDERED if ingredient != "air"])))
 
 
 class HoldPressureHandler(webapp2.RequestHandler):
@@ -236,8 +239,9 @@ class FillHandler(webapp2.RequestHandler):
     def post(self):
         print "FILL HANDLER"
         try:
-            valve = int(self.request.get('valve'))
-            oz = float(self.request.get('oz'))
+            args = self.request.get('text').replace(" ", "").partition(",")
+            valve = int(args[2])
+            oz = float(args[0])
             controller.EnqueueGroup([Meter(valve_to_actuate=valve, oz_to_meter=oz)])
         except ValueError:
             self.response.status = 400

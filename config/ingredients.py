@@ -11,18 +11,18 @@ INGREDIENTS_ORDERED = (
     "angostura bitters",
     "lime juice",
     "lemon juice",
-    "grenadine", # brown bottle dark liquid
+    "air", #"grenadine", # brown bottle dark liquid
     "agave syrup", # clear bottle amber liquid
     "simple syrup",
     "kahlua",
     "pimms",
-    "triple sec",
+    "air", #"triple sec",
     "tequila",
     "gin",
     "rum",
     "rye",
-    "bourbon",
-    "vodka",
+    #"bourbon",
+    #"vodka",
 )
 
 def ScaleDrinkSize(ingredient_list):
