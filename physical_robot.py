@@ -18,6 +18,7 @@ class PhysicalRobot(Robot):
     motor = StepperMotor(io=self.io, use_separate_process=True)  # Not a dry run
     self.rail = RobotRail(motor)
     self.load_cell = LoadCellMonitor()
+    self.calibrated = False
 
   def CalibrateToZero(self, carefully=True):
     self.ChuckVent()
@@ -28,8 +29,10 @@ class PhysicalRobot(Robot):
     self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
     # time.sleep(5)
     # self.io.WriteOutput(io_bank.Outputs.CHUCK, 1)
+    self.calibrated = True
 
   def MoveToPosition(self, position_in_inches):
+    self.CalibrateToZero()
     self.cannot_interrupt = True
     self.ChuckHoldHeadPressure()
     time.sleep(2)

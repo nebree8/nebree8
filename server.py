@@ -244,7 +244,8 @@ class FillHandler(webapp2.RequestHandler):
             args = self.request.get('text').replace(" ", "").partition(",")
             valve = int(args[2])
             oz = float(args[0])
-            controller.EnqueueGroup([Meter(valve_to_actuate=valve, oz_to_meter=oz)])
+            controller.EnqueueGroup([Move(valve_position(valve)),
+              Meter(valve_to_actuate=valve, oz_to_meter=oz)])
         except ValueError:
             self.response.status = 400
             self.response.write("valve and oz arguments are required.")
