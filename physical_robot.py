@@ -1,7 +1,7 @@
 from contextlib import contextmanager
 import time
 
-import io_bank
+from parts import io_bank
 from robot import Robot
 from parts.load_cell import LoadCellMonitor
 from parts.motor import StepperMotor, RobotRail
