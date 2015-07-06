@@ -18,6 +18,8 @@ function install_once {
     RPi.GPIO \
     enum34 WebOb Paste webapp2
   install_polymer
+
+  curl https://raw.githubusercontent.com/mbostock/d3/master/d3.min.js > static/d3.v3.min.js 
 }
 
 function initialize {
@@ -48,6 +50,7 @@ function install_polymer {
   run sudo apt-get install nodejs nodejs-legacy npm
   run sudo npm install -g bower
   run sudo npm install -g vulcanize # Used to minify app
+  mkdir -p bower_components
   run bower update
 }
 

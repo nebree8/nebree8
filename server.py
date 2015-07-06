@@ -133,10 +133,12 @@ class StaticFileHandler(webapp2.RequestHandler):
         elif '.js' in self.request.path:
             self.response.content_type = 'application/javascript'
         relative_path = self.to_relative_path(self.request.path)
+        path = STATIC_FILE_DIR + relative_path
         try:
-            self.response.write(open(STATIC_FILE_DIR + relative_path).read())
+            logging.debug("%s => %s", self.request.path, path)
+            self.response.write(open(path).read())
         except IOError:
-            print "404 could not load: %s" % (STATIC_FILE_DIR + relative_path)
+            print "404 could not load: %s" % path
             self.response.status = 404
 
     def to_relative_path(self, path):
