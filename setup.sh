@@ -50,6 +50,7 @@ function install_polymer {
   run sudo apt-get install nodejs nodejs-legacy npm
   run sudo npm install -g bower
   run sudo npm install -g vulcanize # Used to minify app
+  mkdir -p bower_components
   run bower update
 }
 
