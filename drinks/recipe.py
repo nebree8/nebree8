@@ -1,6 +1,6 @@
 
 class Recipe(object):
-    def __init__(self, name, ingredients, total_oz = None):
+    def __init__(self, name, ingredients, total_oz=None, user_name=None):
         self.name = name
         self.total_oz = total_oz
         self.ingredients = ingredients
@@ -12,6 +12,8 @@ class Recipe(object):
             for i in self.ingredients:
                 i.qty.total_oz = total_oz
                 i.qty.total_parts = total_parts
+        if user_name:
+          self.user_name = user_name
 
     def __str__(self):
         return "%s\n  %s\n\n" % (self.name, "\n  ".join(map(str, self.ingredients)))

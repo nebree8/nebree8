@@ -3,7 +3,7 @@
 import random
 import sys
 
-import drinks.manual_db
+from drinks import recipe
 
 
 # MUST MAP TO ORDER OF PHYSICAL VALVES
@@ -24,4 +24,15 @@ INGREDIENTS_ORDERED = (
     "bourbon",
     "vodka",
 )
+
+def ScaleDrinkSize(ingredient_list):
+  total_desired_oz = 4
+  total_oz = 0
+  for ingredient in ingredient_list:
+    if type(ingredient.qty) == recipe.Oz:
+      total_oz += ingredient.qty.oz
+  adjustment = total_desired_oz * 1.0 / total_oz
+  for ingredient in ingredient_list:
+    if type(ingredient.qty) == recipe.Oz:
+      ingredient.qty.oz *= adjustment
 

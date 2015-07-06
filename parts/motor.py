@@ -104,7 +104,7 @@ class StepperMotor(object):
     self.io.WriteOutput(io_bank.Outputs.STEPPER_PULSE, 0)
 
 def InchesToSteps(inches):
-  return int(inches / 3.75 * 800)
+  return int(inches / 2.81 * 800)  # 14 teeth -> 2.81 inches
 
 class RobotRail(object):
   def __init__(self, motor):

@@ -16,8 +16,8 @@ from actions.home import Home
 from actions.meter_simple import MeterSimple as Meter
 from actions.meter_bitters import MeterBitters
 from actions.move import Move
-from actions.vent import Vent
 from actions.wait_for_glass_removal import WaitForGlassRemoval
+from actions.pressurize import HoldPressure, ReleasePressure
 from controller import Controller
 from config import ingredients
 from drinks import manual_db
@@ -153,7 +153,7 @@ def SingleActionHandler(action):
 
 
 def valve_position(valve_no):
-    return -10.75 - 4.0 * (14 - valve_no)
+    return -9.625 - 1.875 * valve_no
 
 def actions_for_recipe(recipe):
     """Returns the actions necessary to make the given recipe.
@@ -221,6 +221,17 @@ class PrimeHandler(webapp2.RequestHandler):
                 for ingredient in ingredients.INGREDIENTS_ORDERED])))
 
 
+class HoldPressureHandler(webapp2.RequestHandler):
+    def post(self):
+        print "Hold pressure."
+        controller.EnqueueGroup([HoldPressure()])
+
+
+class ReleasePressureHandler(webapp2.RequestHandler):
+    def post(self):
+        controller.EnqueueGroup([ReleasePressure()])
+
+
 class FillHandler(webapp2.RequestHandler):
     def post(self):
         print "FILL HANDLER"
@@ -246,11 +257,22 @@ class Test1Handler(webapp2.RequestHandler):
 
 class CreateDrinkHandler(webapp2.RequestHandler):
   def post(self):
+    print "New drink handler."
     try:
+      drink_name = self.request.get('drink_name')
+      user_name = self.request.get('user_name')
+      ingredient_list = []
       for arg in self.request.arguments():
         print "%s -> %s" % (arg, self.request.get(arg))
-        self.response.status = 200
-        self.response.write("ok")
+        if "ingredient=" in arg:
+          parts = float(self.request.get(arg))
+          ingredient = arg.replace("ingredient=", "")
+          ingredient_list.append(manual_db.Ingredient(manual_db.Oz(parts), ingredient))
+      ingredients.ScaleDrinkSize(ingredient_list)
+      controller.EnqueueGroup(actions_for_recipe(
+          recipe = manual_db.Recipe(drink_name, ingredient_list, user_name=user_name)))
+      self.response.status = 200
+      self.response.write("ok")
     except ValueError:
       self.response.status = 400
       self.response.write("valve and oz arguments are required.")
@@ -294,12 +316,13 @@ def StartServer(port):
         ('/queue-skip', SkipQueue),
         # Debug API
         ('/api/calibrate', SingleActionHandler(Home)),
-        ('/api/vent', SingleActionHandler(Vent)),
         ('/api/compressor-on',
          SingleActionHandler(lambda: CompressorToggle(State.ON))),
         ('/api/compressor-off',
          SingleActionHandler(lambda: CompressorToggle(State.OFF))),
         ('/api/prime', PrimeHandler),
+        ('/api/hold_pressure', HoldPressureHandler),
+        ('/api/release_pressure', ReleasePressureHandler),
         ('/api/move.*', MoveHandler),
         ('/api/fill.*', FillHandler),
         ('/api/test1.*', Test1Handler),

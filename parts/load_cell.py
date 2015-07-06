@@ -61,10 +61,13 @@ class LoadCellMonitor(threading.Thread):
 
     def run(self):
         while not self.shutdown:
+          try:
             val = self.adc.readADCSingleEnded(
                     1, 4096, SAMPLES_PER_SECOND)
             ts = time.time()
             self.buffer.append((ts, val))
+          except TypeError:  # Happens if the read fails.
+            pass
 
 
 class FakeLoadCellMonitor(LoadCellMonitor):

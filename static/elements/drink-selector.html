@@ -37,7 +37,7 @@
       <div layout horizontal class="drink-row" on-tap="{{drinkTapped}}">
         <core-collapse id="back" horizontal=true opened="{{selected}}">
           <div class="back-button">
-            <paper-item label="BACK" on-tap="{{drinkDeSelected}}"></paper-item>
+            <paper-button raised label="BACK" on-tap="{{drinkDeSelected}}"></paper-button>
           </div>
         </core-collapse>
         <core-image
@@ -50,14 +50,10 @@
         </div>
         <div hidden?="{{!show_details}}">
           <!--<large-button urlLink="selector.html" textValue="Next">-->
-          <paper-item label="NEXT" on-tap="{{drinkSelected}}"></paper-item>
+          <paper-button raised label="NEXT" on-tap="{{drinkSelected}}"></paper-button>
          <!-- <large-button on-tap="{{drinkSelected}}" textValue="Next">
          </large-button>-->
         </div>
-        <core-collapse id="submit_area" horizontal=true opened="{{selected}}">
-          <paper-button on-tap="{{createDrink}}" label="Create my drink!">
-          </paper-button>
-        </core-collapse>
       </div>  <!-- end horizontal -->
       <core-collapse id="drink_details" opened="{{show_details}}">
         <template repeat="{{ingredient in details}}">
@@ -71,6 +67,10 @@
       <core-collapse id="name_entry" opened="{{selected}}">
         <paper-input id="name_input" label="{{user_name}}">
         </paper-input>
+      </core-collapse>
+      <core-collapse id="submit_area" horizontal=false opened="{{selected}}">
+        <paper-button on-tap="{{createDrink}}" label="Create my drink!">
+        </paper-button>
       </core-collapse>
       <core-collapse id="submitted_message" opened="{{submitted}}">
         <paper-item label="Thanks, order submitted."></paper-item>
@@ -113,6 +113,10 @@
       },
       hide_if_not_selected: {
         value: "false",
+        reflect: true
+      },
+      search: {
+        value: "",
         reflect: true
       },
       selected: {

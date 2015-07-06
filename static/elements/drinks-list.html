@@ -16,6 +16,7 @@
         show_details=false
         user_name="{{userName}}"
         submitted=true
+        search="{{search}}"
         on-tap="{{drinkTapped}}">
         </drink-selector>
       </template>
@@ -35,6 +36,10 @@
         userName: {
           // Note, can't yet set globally. Not sure why; it should work. Maybe the input element isn't setting the internal value.
           value: "Your Name",
+          reflect: true
+        },
+        search: {
+          value: "",
           reflect: true
         }
       }

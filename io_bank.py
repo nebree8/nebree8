@@ -58,31 +58,34 @@ class Outputs(enum.Enum):
   # # For cleanup, open both
   # COMPRESSOR = 1023
 
-  #VALVE_0 = 2013 # NOT CONNECTED
-  VALVE_0 = 2003
-  VALVE_1 = 2002
-  VALVE_2 = 2014  # orange
-  VALVE_3 = 2015
-  VALVE_4 = 2018
-  VALVE_5 = 2020
-  VALVE_6 = 2019
-  VALVE_7 = 2021
-  VALVE_8 = 2016
-  VALVE_9 = 2017
-  VALVE_10 = 2013
-  VALVE_11 = 2012
-  VALVE_12 = 2011
-  VALVE_13 = 2010
-  VALVE_14 = 2009
-  VALVE_15 = 2013  # NOT CONNECTED
+  VALVE_0 = 2052
+  VALVE_1 = 2011
+  VALVE_2 = 2012  # orange
+  VALVE_3 = 2010
+  VALVE_4 = 2009
 
-  CHUCK = 2007
-  COMPRESSOR_HEAD = 2004
-  COMPRESSOR_VENT = 2005
+  VALVE_5 = 2005
+  VALVE_6 = 2004
+  VALVE_7 = 2003
+  VALVE_8 = 2014
+  VALVE_9 = 2002
+  VALVE_10 = 2015
+  VALVE_11 = 2016
+  VALVE_12 = 2017
+
+  # VALVE_13 = 2010
+  # VALVE_14 = 2009
+  # VALVE_15 = 2013  # NOT CONNECTED
+
+  CHUCK = 2008
+  # COMPRESSOR_HEAD = 2004
+  # COMPRESSOR_VENT = 2005
   # To pressurize, open head, close vent
   # For chuck, close head, open vent
   # For cleanup, open both
   COMPRESSOR = 2006
+
+PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
 
 VALVES = (
     Outputs.VALVE_0,
@@ -98,9 +101,9 @@ VALVES = (
     Outputs.VALVE_10,
     Outputs.VALVE_11,
     Outputs.VALVE_12,
-    Outputs.VALVE_13,
-    Outputs.VALVE_14,
-    Outputs.VALVE_15,
+    # Outputs.VALVE_13,
+    # Outputs.VALVE_14,
+    # Outputs.VALVE_15,
 )
 
 
@@ -168,6 +171,11 @@ class IOBank(object):
         print "Arduino write (%d) = %d" % (output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
         self.arduino.WriteOutput(output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
 
+  def HoldPressure(self):
+    self.arduino.HoldPressure(PRESSURE_VALVE_PIN, hold=True)
+
+  def ReleasePressure(self):
+    self.arduino.HoldPressure(PRESSURE_VALVE_PIN, hold=False)
 
   def __Shift(self, byte):
     SLEEP_TIME = 0.0001
