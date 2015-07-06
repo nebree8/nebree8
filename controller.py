@@ -56,7 +56,7 @@ class Controller:
         self.queue.append(action)
         # Signal that there are items to process.
         self.queued_sem.release() 
-    self.WriteToFile()
+    #self.WriteToFile()
 
   def WriteToFile(self):
     queue_contents = self.InspectQueue()
