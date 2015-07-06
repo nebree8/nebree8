@@ -90,6 +90,20 @@ db = [
             Ingredient(Parts(2), 'Grenadine'),
             Ingredient(Parts(1), 'Lemon Juice'),
             Ingredient(Parts(1), 'Lime Juice')]),
+    Recipe(
+        name = 'Random Sour',
+        total_oz = 4.0,
+        ingredients = [
+            Ingredient(Parts(2), 'Alcohol'),
+            Ingredient(Parts(1), 'Sweet'),
+            Ingredient(Parts(1), 'Sour')]),
+    Recipe(
+        name = 'Random Bitter',
+        total_oz = 3.7,
+        ingredients = [
+            Ingredient(Parts(3), 'Alcohol'),
+            Ingredient(Parts(0.7), 'Sweet'),
+            Ingredient(Parts(1), 'Bitters')]),
 ]
 
 TEST_DRINK = Recipe(

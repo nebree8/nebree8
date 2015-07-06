@@ -19,6 +19,7 @@ class PhysicalRobot(Robot):
     self.rail = RobotRail(motor)
     self.load_cell = LoadCellMonitor()
     self.calibrated = False
+    self.pressurized = False
 
   def CalibrateToZero(self, carefully=True):
     self.ChuckVent()
@@ -78,10 +79,12 @@ class PhysicalRobot(Robot):
     """Maintains a min/max pressure range in the vessel."""
     print "physical_robot hold pressure."
     self.io.HoldPressure()
+    self.pressurized = True
 
   def ReleasePressure(self):
     """Stops maintaining pressure -- may leak out quickly or slowly."""
     self.io.ReleasePressure()
+    self.pressurized = False
 
   @contextmanager
   def OpenValve(self, valve_no):

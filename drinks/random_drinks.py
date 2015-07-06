@@ -67,7 +67,7 @@ def RandomSourDrink():
 
 
 def RandomSpirituousDrink():
-    return RandomDrink([3, .7, 0, 1], 'Random Spirituous Drink')
+    return RandomDrink([3, .7, 0, 1], 'Random Bitter Drink')
 
 
 if __name__ == "__main__":

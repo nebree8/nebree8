@@ -13,6 +13,7 @@ class FakeRobot(Robot):
     self.load_cell = FakeLoadCellMonitor()
     self.load_cell.stddev = 1
     self.valves = collections.defaultdict(lambda: False)
+    self.pressurized = False
 
   def __check_position(self, valve_no):
     if abs(self.position - (-10.5 - 4. * (14 - valve_no))) > 1:
@@ -64,6 +65,15 @@ class FakeRobot(Robot):
 
   def DeactivateCompressor(self):
     return
+
+  def HoldPressure(self):
+    """Maintains a min/max pressure range in the vessel."""
+    self.pressurized = True
+
+  def ReleasePressure(self):
+    """Stops maintaining pressure -- may leak out quickly or slowly."""
+    self.pressurized = False
+
 
   def _FakeMove(self, new_position):
     time.sleep(abs(self.position - new_position) / 10.0)

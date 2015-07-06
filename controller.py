@@ -7,6 +7,7 @@ import logging
 import os
 
 from actions.action import ActionException
+from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.move import Move
 
 class Controller:
@@ -56,10 +57,26 @@ class Controller:
         self.queue.append(action)
         # Signal that there are items to process.
         self.queued_sem.release() 
-    #self.WriteToFile()
+    self.WriteToFile()
 
   def WriteToFile(self):
     queue_contents = self.InspectQueue()
+    name_and_drink_lines = []
+    name_and_drink = []
+    i = 0
+    for action in queue_contents:
+      if type(action) == WaitForGlassRemoval:
+        creating_message = ""
+        if i == 0:
+          creating_message = " <===== ACTIVE"
+        i += 1;
+        name_and_drink.append(action.user_name, action.drink_name)
+        name_and_drink_lines.append("%d.\tCreating %s a %s%d\n" %
+            (i, action.user_name, action.drink_name, creating_message))
+    name_and_drink_lines.append("\n\n\n Holding Pressure: %s" % self.robot.pressurized)
+    queue_txt = open("/home/pi/nebree82/nebree8/monitor/data/queue.txt", "w")
+    queue_txt.write("\n".join(name_and_drink_lines))
+    queue_txt.close()
 
   def InspectQueue(self):
     with self.queue_lock:

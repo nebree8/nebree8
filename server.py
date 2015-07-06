@@ -179,7 +179,7 @@ def actions_for_recipe(recipe):
                     ingredient.name, recipe.name, recipe)
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
-    actions.append(WaitForGlassRemoval())
+    actions.append(WaitForGlassRemoval(recipe.user_name, recipe.name))
     actions.append(WaitForGlassPlaced())
     return actions
 
@@ -269,15 +269,21 @@ class CreateDrinkHandler(webapp2.RequestHandler):
       drink_name = self.request.get('drink_name')
       user_name = self.request.get('user_name')
       ingredient_list = []
-      for arg in self.request.arguments():
-        print "%s -> %s" % (arg, self.request.get(arg))
-        if "ingredient=" in arg:
-          parts = float(self.request.get(arg))
-          ingredient = arg.replace("ingredient=", "")
-          ingredient_list.append(manual_db.Ingredient(manual_db.Oz(parts), ingredient))
-      ingredients.ScaleDrinkSize(ingredient_list)
-      controller.EnqueueGroup(actions_for_recipe(
-          recipe = manual_db.Recipe(drink_name, ingredient_list, user_name=user_name)))
+      if drink_name == "Random Sour":
+        recipe = RandomSourDrink()
+      elif drink_name == "Random Bitter":
+        recipe = RandomSpirituousDrink()
+      else:
+        for arg in self.request.arguments():
+          print "%s -> %s" % (arg, self.request.get(arg))
+          if "ingredient=" in arg:
+            parts = float(self.request.get(arg))
+            ingredient = arg.replace("ingredient=", "")
+            ingredient_list.append(manual_db.Ingredient(manual_db.Oz(parts), ingredient))
+        ingredients.ScaleDrinkSize(ingredient_list)
+        recipe = manual_db.Recipe(drink_name, ingredient_list, user_name=user_name)
+      recipe.user_name = user_name
+      controller.EnqueueGroup(actions_for_recipe(recipe))
       self.response.status = 200
       self.response.write("ok")
     except ValueError:
