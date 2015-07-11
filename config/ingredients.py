@@ -21,25 +21,37 @@ INGREDIENTS_ORDERED = (
     "air",
     "air",
     "air",
-#   "angostura bitters",
-#   "lime juice",
-#   "lemon juice",
-#   "grenadine", # brown bottle dark liquid
-#   "agave syrup", # clear bottle amber liquid
-#   "simple syrup",
-#   "kahlua",
-#   "pimms",
-#   "triple sec",
-#   "tequila",
-#   "gin",
-#   "rum",
-#   "rye",
-
 #   "bourbon",
+#   "bourbon", #backup bottle
+#   "tequila",
+#   "tequila", #backup bottle
+#   "galliano",
+#   "chocolate bitters", #small bottle location
+#   "scotch",
+#   "rye",
+#   "rum",
 #   "vodka",
-#   "vodka",
-#   "vodka",
-#   "vodka",
+#   "triple sec",
+#   "frangelico",
+#   "angostura bitters", #small bottle location
+#   "sweet vermouth",
+#   "kahlua",
+#   "gin",
+#   "campari",
+#   "dry vermouth",
+#   "peychauds bitters", #small bottle location
+#   "agave",
+#   "pimms",
+#   "grenadine",
+#   "simple",
+#   "lemon",
+#   "lime",
+#   "orange bitters", #small bottle location
+#   "orange",
+#   "tonic",
+#   "cola",
+#   "water",
+#   "soda",
 )
 
 def ScaleDrinkSize(ingredient_list):
