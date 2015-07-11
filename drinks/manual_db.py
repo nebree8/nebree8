@@ -45,6 +45,145 @@ db = [
             Ingredient(Parts(1), 'Lemon Juice'),
             Ingredient(Parts(1), 'Simple Syrup')]),
     Recipe(
+        name = 'Negroni',
+        total_oz = 2.75,
+        ingredients =[
+            Ingredient(Parts(1), 'Gin'),
+            Ingredient(Parts(1), 'Sweet Vermouth'),
+            Ingredient(Parts(1), 'Campari')]),
+    Recipe(
+        name = 'Boulevardier',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(1.5), 'Rye'),
+            Ingredient(Parts(1), 'Campari'),
+            Ingredient(Parts(1), 'Sweet Vermouth')]),
+    Recipe(
+        name = 'Americano',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(1), 'Campari'),
+            Ingredient(Parts(1), 'Sweet Vermouth'),
+            Ingredient(Parts(3), 'Soda')]),
+    Recipe(
+        name = 'Manhattan',
+        total_oz = 4,
+        ingredients = [
+            Ingredient(Parts(5), 'Rye'),
+            Ingredient(Parts(2), 'Sweet Vermouth'),
+            Ingredient(Parts(1), 'Angostura')]),
+    Recipe(
+        name = 'Gin & Tonic',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(3), 'Gin'),
+            Ingredient(Parts(1), 'Tonic')]),
+    Recipe(
+        name = 'Scotch (neat)',
+        total_oz = 2,
+        ingredients = [
+            Ingredient(Parts(1), 'Scotch')]),
+    Recipe(
+        name = 'Scotch & Water',
+        total_oz = 3,
+        ingredients = [
+            Ingredient(Parts(3), 'Scotch'),
+            Ingredient(Parts(1), 'Water')]),
+    Recipe(
+        name = 'Screwdriver',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(2), 'Vodka'),
+            Ingredient(Parts(3), 'Orange')]),
+    Recipe(
+        name = 'Hairy Navel',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(1), 'Vodka'),
+            Ingredient(Parts(1), 'Triple Sec'),
+            Ingredient(Parts(2), 'Orange')]),
+    Recipe(
+        name = 'Tequila Sunrise',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(3), 'Tequila'),
+            Ingredient(Parts(6), 'Orange'),
+            Ingredient(Parts(1), 'Grenadine')]),
+    Recipe(
+        name = 'Cuba Libre',
+        total_oz = 4,
+        ingredients = [
+            Ingredient(Parts(5), 'Rum'),
+            Ingredient(Parts(1), 'Lime'),
+            Ingredient(Parts(12), 'Cola')]),
+    Recipe(
+        name = 'Rum & Coke',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(2), 'Rum'),
+            Ingredient(Parts(3), 'Cola')]),
+    Recipe(
+        name = 'Godfather',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(1), 'Scotch'),
+            Ingredient(Parts(1), 'Frangelico')]),
+    Recipe(
+        name = 'Harvey Wallbanger',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(3), 'Vodka'),
+            Ingredient(Parts(1), 'Galliano'),
+            Ingredient(Parts(6), 'Orange')]),
+    Recipe(
+        name = 'Dry Martini',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(6), 'Gin'),
+            Ingredient(Parts(1), 'Dry Vermouth')]),
+    Recipe(
+        name = 'Original Martini',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(2), 'Gin'),
+            Ingredient(Parts(1), 'Dry Vermouth')]),
+    Recipe(
+        name = 'Perfect Martini',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(1), 'Gin'),
+            Ingredient(Parts(1), 'Dry Vermouth')]),
+    Recipe(
+        name = 'Vodka Martini',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(6), 'Vodka'),
+            Ingredient(Parts(1), 'Dry Vermouth')]),
+    Recipe(
+        name = 'Bronx',
+        total_oz = 2.75,
+        ingredients = [
+            Ingredient(Parts(6), 'Gin'),
+            Ingredient(Parts(2), 'Dry Vermouth'),
+            Ingredient(Parts(3), 'Sweet Vermouth'),
+            Ingredient(Parts(3), 'Orange')]),
+    Recipe(
+        name = 'Gin Fizz',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(4.5), 'Gin'),
+            Ingredient(Parts(3), 'Lemon Juice'),
+            Ingredient(Parts(1), 'Simple Syrup'),
+            Ingredient(Parts(8), 'Soda')]),
+    Recipe(
+        name = 'Yellow Bird',
+        total_oz = 5,
+        ingredients = [
+            Ingredient(Parts(2), 'Rum'),
+            Ingredient(Parts(1), 'Lime Juice'),
+            Ingredient(Parts(1), 'Triple Sec'),
+            Ingredient(Parts(1), 'Galliano')]),
+    Recipe(
         name = 'Kamikaze',
         total_oz = 2.75,
         ingredients = [
@@ -60,7 +199,7 @@ db = [
             Ingredient(Parts(1), 'Simple Syrup')]),
     Recipe(
         name = 'Long Island Ice Tea',
-        total_oz = 5, #topped with splash of cola
+        total_oz = 5,
         ingredients = [
             Ingredient(Parts(1), 'Vodka'),
             Ingredient(Parts(1), 'Gin'),
@@ -69,7 +208,8 @@ db = [
             Ingredient(Parts(1), 'Lemon Juice'),
             Ingredient(Parts(1), 'Lime Juice'),
             Ingredient(Parts(1), 'Simple Syrup'),
-            Ingredient(Parts(1), 'Triple Sec')]),
+            Ingredient(Parts(1), 'Triple Sec'),
+            Ingredient(Parts(0.5), 'Cola')]),
     Recipe(
         name = 'Tom Collins',
         total_oz = 2.75,
@@ -99,10 +239,10 @@ db = [
             Ingredient(Parts(1), 'Sour')]),
     Recipe(
         name = 'Random Bitter',
-        total_oz = 3.7,
+        total_oz = 3,
         ingredients = [
-            Ingredient(Parts(3), 'Alcohol'),
-            Ingredient(Parts(0.7), 'Sweet'),
+            Ingredient(Parts(4), 'Alcohol'),
+            Ingredient(Parts(1), 'Sweet'),
             Ingredient(Parts(1), 'Bitters')]),
 ]
 
