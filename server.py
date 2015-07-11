@@ -223,7 +223,8 @@ class PrimeHandler(webapp2.RequestHandler):
         controller.EnqueueGroup(actions_for_recipe(
             manual_db.Recipe(name='Prime', ingredients=[
                 manual_db.Ingredient(manual_db.Oz(.10), ingredient)
-                for ingredient in ingredients.INGREDIENTS_ORDERED if ingredient != "air"])))
+                for ingredient in ingredients.INGREDIENTS_ORDERED if ingredient != "air"],
+                user_name="dev console")))
 
 
 class HoldPressureHandler(webapp2.RequestHandler):

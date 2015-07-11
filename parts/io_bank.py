@@ -58,7 +58,7 @@ class Outputs(enum.Enum):
   # # For cleanup, open both
   # COMPRESSOR = 1023
 
-  VALVE_0 = 2052
+  VALVE_0 = 2053
   VALVE_1 = 2011
   VALVE_2 = 2012  # orange
   VALVE_3 = 2010
@@ -73,9 +73,26 @@ class Outputs(enum.Enum):
   VALVE_11 = 2016
   VALVE_12 = 2017
 
-  # VALVE_13 = 2010
-  # VALVE_14 = 2009
-  # VALVE_15 = 2013  # NOT CONNECTED
+  VALVE_13 = 2018
+  VALVE_14 = 2019
+  VALVE_15 = 2022
+  VALVE_16 = 2024
+  VALVE_17 = 2026
+  VALVE_18 = 2028
+  VALVE_19 = 2030
+  VALVE_20 = 2032
+
+  # VALVE_21 = 2023
+  # VALVE_22 = 2025
+  # VALVE_23 = 2027
+  # VALVE_24 = 2029
+  # VALVE_25 = 2031
+  # VALVE_26 = 2033
+  # VALVE_27 = 2035
+  # VALVE_28 = 2037
+
+  # VALVE_29 = 2046
+  # VALVE_30 = 2048
 
   CHUCK = 2008
   # COMPRESSOR_HEAD = 2004
@@ -86,6 +103,12 @@ class Outputs(enum.Enum):
   COMPRESSOR = 2006
 
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
+ARDUINO_STEPPER_DONE = 44
+ARDUINO_STEPPER_DIR = 42
+ARDUINO_STEPPER_PULSE = 40
+ARDUINO_STEPPER_ENABLE = 38
+ARDUINO_RAIL_TRIGGER_NEGATIVE = 36
+ARDUINO_RAIL_TRIGGER_POSITIVE = 34
 
 VALVES = (
     Outputs.VALVE_0,
@@ -101,9 +124,24 @@ VALVES = (
     Outputs.VALVE_10,
     Outputs.VALVE_11,
     Outputs.VALVE_12,
-    # Outputs.VALVE_13,
-    # Outputs.VALVE_14,
-    # Outputs.VALVE_15,
+#   Outputs.VALVE_13,
+#   Outputs.VALVE_14,
+#   Outputs.VALVE_15,
+#   Outputs.VALVE_16,
+#   Outputs.VALVE_17,
+#   Outputs.VALVE_18,
+#   Outputs.VALVE_19,
+#   Outputs.VALVE_20,
+#   Outputs.VALVE_21,
+#   Outputs.VALVE_22,
+#   Outputs.VALVE_23,
+#   Outputs.VALVE_24,
+#   Outputs.VALVE_25,
+#   Outputs.VALVE_26,
+#   Outputs.VALVE_27,
+#   Outputs.VALVE_28,
+#   Outputs.VALVE_29,
+#   Outputs.VALVE_30,
 )
 
 
@@ -176,6 +214,15 @@ class IOBank(object):
 
   def ReleasePressure(self):
     self.arduino.HoldPressure(PRESSURE_VALVE_PIN, hold=False)
+
+  def Move(self, forward, steps, final_wait):
+    self.arduino.Move(ARDUINO_STEPPER_DIR, ARDUINO_STEPPER_PULSE,
+        ARDUINO_RAIL_TRIGGER_NEGATIVE, ARDUINO_RAIL_TRIGGER_POSITIVE,
+        ARDUINO_STEPPER_DONE,
+        forward, steps, final_wait)
+    time.sleep(0.5)
+    while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
+      time.sleep(0.05)
 
   def __Shift(self, byte):
     SLEEP_TIME = 0.0001

@@ -5,7 +5,7 @@ import Queue
 
 from arduinoio import serial_control
 
-_REFRESH_RATE = .0001  # Refreshes per second
+_REFRESH_RATE = 5  # Refreshes per second
 
 class Arduino:
   def __init__(self):
@@ -43,6 +43,23 @@ class Arduino:
     command = "HOLDP" + "".join(raw_message)
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
+  def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
+      positive_trigger_pin, done_pin, forward, steps, final_wait):
+    raw_message = []
+    if forward:
+      forward = 0x01
+    else:
+      forward = 0x00
+    raw_message.extend((
+      stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin, positive_trigger_pin, done_pin, forward))
+    raw_message.extend(struct.unpack('4B', struct.pack('<i', steps)))
+    raw_message.extend(struct.unpack('4B', struct.pack('<i', int(1.0 / final_wait))))
+    raw_message = [chr(x) for x in raw_message]
+    command = "MOVE" + "".join(raw_message)
+    print "Move command: %s" % [ord(x) for x in raw_message]
+    self.signal_refresh.put((True, command), block=True, timeout=None)
+
+
   def __SendOutputsMessage(self):
     raw_message = []
     for pin, value in self.outputs.iteritems():
@@ -57,6 +74,15 @@ class Arduino:
         use_this_command, command = self.signal_refresh.get(True, 1. / _REFRESH_RATE)
         if use_this_command:
           self.interface.Write(0, command)
+          #f command[0:4] == "MOVE":
+          # print "Wait for motor."
+          # while True:
+          #   message = self.interface.Read(no_checksums=True)
+          #   if message:
+          #     print "Got message: %s" % message.command
+          #     if message.command[0:5] == [ord(x) for x in "MDONE"]:
+          #       print "Motor done."
+          #       break
         else:
           self.__SendOutputsMessage()
       except Queue.Empty:

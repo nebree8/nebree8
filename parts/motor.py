@@ -35,32 +35,37 @@ class StepperMotor(object):
   def __init__(self, dry_run=False, io=None, use_separate_process=False):
     self.pulse_state = False
     self.use_separate_process = use_separate_process
+    self.use_arduino = True
     self.dry_run = dry_run
     if not io:
       io = io_bank.IOBank()
     self.io = io
-    self.colliding_positive = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_POS)
-    self.colliding_negative = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_NEG)
-    def HitPositiveRail(channel):
-      time.sleep(0.0001)
+    if not self.use_arduino:
       self.colliding_positive = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_POS)
-      print "Hit positive rail"
-    def HitNegativeRail(channel):
-      #self.colliding_negative = True
-      time.sleep(0.0001)
       self.colliding_negative = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_NEG)
-      print "Hit negative rail"
-    self.io.AddCallback(io_bank.Inputs.LIMIT_SWITCH_POS, gpio.FALLING,
-        HitPositiveRail)
-    self.io.AddCallback(io_bank.Inputs.LIMIT_SWITCH_NEG, gpio.FALLING,
-        HitNegativeRail)
+      def HitPositiveRail(channel):
+        time.sleep(0.0001)
+        self.colliding_positive = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_POS)
+        print "Hit positive rail"
+      def HitNegativeRail(channel):
+        #self.colliding_negative = True
+        time.sleep(0.0001)
+        self.colliding_negative = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_NEG)
+        print "Hit negative rail"
+      self.io.AddCallback(io_bank.Inputs.LIMIT_SWITCH_POS, gpio.FALLING,
+          HitPositiveRail)
+      self.io.AddCallback(io_bank.Inputs.LIMIT_SWITCH_NEG, gpio.FALLING,
+          HitNegativeRail)
 
 
-  def Move(self, steps, forward=1, ramp_seconds=0, final_wait=0.0002):
+  def Move(self, steps, forward=1, ramp_seconds=0, final_wait=0.0005):
     if self.dry_run:
       print "DRY RUN: Moving %d steps in direction: %d" % (steps, forward)
     else:
       print "Moving %d steps in direction: %d" % (steps, forward)
+    if self.use_arduino:
+      return self.io.Move(forward, steps, final_wait)
+
     if self.use_separate_process:
       if forward:
         backward = "False"
@@ -120,10 +125,11 @@ class RobotRail(object):
       print "At position: %f" % position
 
   def CalibrateToZero(self, carefully=True):
-    steps = InchesToSteps(200)
+    print "CalibrateToZero"
+    steps = InchesToSteps(70)
     # if not carefully:
     #   self.FillPositions([0])
     #   self.motor.Move(InchesToSteps(200), forward=True, final_wait=0.002)
     # else:
-    self.motor.Move(steps, forward=True, final_wait=0.01)
+    self.motor.Move(steps, forward=True)#, final_wait=0.01)
     self.position = 0

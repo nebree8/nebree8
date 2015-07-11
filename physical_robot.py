@@ -33,7 +33,8 @@ class PhysicalRobot(Robot):
     self.calibrated = True
 
   def MoveToPosition(self, position_in_inches):
-    self.CalibrateToZero()
+    if not self.calibrated:
+      self.CalibrateToZero()
     self.cannot_interrupt = True
     self.ChuckHoldHeadPressure()
     time.sleep(2)

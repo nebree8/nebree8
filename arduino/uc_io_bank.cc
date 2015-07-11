@@ -11,6 +11,7 @@
 #include "../arduinoio/lib/arduinoio.h"
 #include "MS5803/SparkFun_MS5803_I2C.h"
 #include "pressure_sensor_module.h"
+#include "motor_module.h"
 #include "uc_io_module.h"
 //#include "uc_servo_module.h"
 
@@ -27,7 +28,10 @@ void setup() {
   arduino_io.Add(new arduinoio::SerialRXModule(NULL, 0));
   arduino_io.Add(new nebree8::UCIOModule());
   //arduino_io.Add(new nebree8::UCServoModule());
-  arduino_io.Add(new nebree8::PressureSensorModule());
+  //arduino_io.Add(new nebree8::PressureSensorModule());
+  //arduino_io.Add(new nebree8::MotorModule());
+  pinMode(6, OUTPUT);
+  digitalWrite(6, HIGH);
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
 //pinMode(6, OUTPUT);

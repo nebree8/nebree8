@@ -145,7 +145,6 @@ class PressureSensorModule : public arduinoio::UCModule {
     command[6] = pressure_valve_pin_;
     command[7] = on;
     message_.Reset(kLocalAddress, kSetIoSize, (unsigned char*) command);
-    outgoing_message_ready_ = true;
   }
 
  private:

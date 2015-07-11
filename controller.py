@@ -70,8 +70,8 @@ class Controller:
         if i == 0:
           creating_message = " <===== ACTIVE"
         i += 1;
-        name_and_drink.append(action.user_name, action.drink_name)
-        name_and_drink_lines.append("%d.\tCreating %s a %s%d\n" %
+        name_and_drink.append((action.user_name, action.drink_name))
+        name_and_drink_lines.append("%d.\tCreating %s a %s%s\n" %
             (i, action.user_name, action.drink_name, creating_message))
     name_and_drink_lines.append("\n\n\n Holding Pressure: %s" % self.robot.pressurized)
     queue_txt = open("/home/pi/nebree82/nebree8/monitor/data/queue.txt", "w")
