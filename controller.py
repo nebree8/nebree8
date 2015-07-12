@@ -87,7 +87,7 @@ class Controller:
             (i, action.user_name, action.recipe.name, creating_message,
               drink_parts))
     name_and_drink_lines.append("\n\n\n Holding Pressure: %s" % self.robot.pressurized)
-    queue_txt = open("/home/pi/nebree82/nebree8/monitor/data/queue.txt", "w")
+    queue_txt = open("monitor/data/queue.txt", "w")
     queue_txt.write("\n".join(name_and_drink_lines))
     queue_txt.close()
 

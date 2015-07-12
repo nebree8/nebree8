@@ -68,7 +68,12 @@
         <core-collapse id="drink_details" opened="{{show_details}}">
           <template repeat="{{ingredient in details}}">
             <div layout horizontal>
-              <paper-slider value="{{ingredient.parts}}" min="0" max="{{ingredient.total_parts}}" snaps=true></paper-slider>
+              <template if="{{ingredient.parts !== undefined}}">
+                <paper-slider value="{{ingredient.parts}}" min="0" max="10" snaps=true></paper-slider>
+              </template>
+              <template if="{{ingredient.drops !== undefined}}">
+                <paper-slider value="{{ingredient.drops}}" min="0" max="10" snaps=true></paper-slider>
+              </template>
               <paper-item label="{{ingredient.name}}"></paper-item>
               <div on-tap="{{drinkTapped}}" flex></div>
             </div>
@@ -109,6 +114,10 @@
       details: {
         value: "",
         reflect: true
+      },
+      total_oz: {
+        value: "",
+        reflect: true,
       },
       show_detals: {
         value: false,
@@ -172,16 +181,20 @@
         return;
       }
       var params = {
-        "alt":"json",
         "user_name":this.$.name_input.value,
-        "drink_name":this.drink
+        "total_oz": this.total_oz,
+        "drink_name":this.drink,
+        "ingredients": this.details
       };
+    /*
     //var details_sliders = this.$.details_slider;
     //var details_names = this.$.details_name;
       for (var i = 0; i < this.details.length; i++) {
+        params.ingredients.
         params["ingredient=" + this.details[i].name] = this.details[i].parts;
       }
-      this.$.ajax_submit.params = params;
+      */
+      this.$.ajax_submit.params = {"recipe": JSON.stringify(params)};
       this.$.ajax_submit.go();
       //alert("create drink with name: " + this.$.name_input.value);
     },

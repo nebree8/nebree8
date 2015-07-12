@@ -22,6 +22,7 @@ from actions.pressurize import HoldPressure, ReleasePressure
 from controller import Controller
 from config import ingredients
 from drinks import manual_db
+from drinks.recipe import Recipe
 from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink
 
 TEMPLATE_DIR="templates/"
@@ -186,20 +187,13 @@ def actions_for_recipe(recipe):
     return actions
 
 
-class AllRecpipesLookupHandler(webapp2.RequestHandler):
+class AllDrinksHandler(webapp2.RequestHandler):
   def get(self):
     drinks = []
     for drink in manual_db.db:
-      ingredients = []
-      for ingredient in drink.ingredients:
-        ingredients.append({'name': ingredient.name,
-            'parts': ingredient.qty.parts,
-            'total_parts': ingredient.qty.total_parts})
-      image_url = drink.name.replace(' ', '_').lower() + '.jpg'
-      drinks.append({'name': drink.name,
-                     'ingredients': ingredients,
-                     'image': image_url})
-
+      data = drink.json
+      data['image'] = drink.name.replace(' ', '_').lower() + '.jpg'
+      drinks.append(data)
     self.response.write(json.dumps(drinks))
     print "responding to drinks request"
 
@@ -269,27 +263,18 @@ class Test1Handler(webapp2.RequestHandler):
             self.response.write("valve and oz arguments are required.")
 
 
-class CreateDrinkHandler(webapp2.RequestHandler):
+class CustomDrinkHandler(webapp2.RequestHandler):
   def post(self):
     print "New drink handler."
     try:
-      drink_name = self.request.get('drink_name')
-      user_name = self.request.get('user_name')
-      ingredient_list = []
-      if drink_name == "Random Sour":
+      recipe_obj = json.loads(self.request.get('recipe'))
+      if recipe_obj['drink_name'] == "Random Sour":
         recipe = RandomSourDrink()
-      elif drink_name == "Random Bitter":
+      elif recipe_obj['drink_name'] == "Random Bitter":
         recipe = RandomSpirituousDrink()
       else:
-        for arg in self.request.arguments():
-          print "%s -> %s" % (arg, self.request.get(arg))
-          if "ingredient=" in arg:
-            parts = float(self.request.get(arg))
-            ingredient = arg.replace("ingredient=", "")
-            ingredient_list.append(manual_db.Ingredient(manual_db.Oz(parts), ingredient))
-        ingredients.ScaleDrinkSize(ingredient_list)
-        recipe = manual_db.Recipe(drink_name, ingredient_list, user_name=user_name)
-      recipe.user_name = user_name
+        recipe = Recipe.from_json(recipe_obj)
+      print "Drink requested: %s", recipe
       controller.EnqueueGroup(actions_for_recipe(recipe))
       self.response.status = 200
       self.response.write("ok")
@@ -320,9 +305,8 @@ def StartServer(port):
     #app = webapp2.WSGIApplication([
     app = PausableWSGIApplication([
         # User UI
-        ('/all_drinks', AllRecpipesLookupHandler),
-        ('/create_drink', CreateDrinkHandler),
-        ('/drinks.js', DrinkDbHandler),
+        ('/all_drinks', AllDrinksHandler),
+        ('/create_drink', CustomDrinkHandler),
         # User API
         ('/api/drink', DrinkHandler),
         # Debug UI
