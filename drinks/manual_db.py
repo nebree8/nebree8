@@ -15,7 +15,7 @@ db = [
         ingredients = [
             Ingredient(Parts(4), 'Bourbon'),
             Ingredient(Parts(1), 'Simple Syrup'),
-            Ingredient(Drops(1), 'Angostura Bitters')]),
+            Ingredient(Drops(2), 'Angostura Bitters')]),
     Recipe(
         name = 'Daquiri',
         total_oz = 2.75, #topped off with soda
@@ -71,7 +71,7 @@ db = [
         ingredients = [
             Ingredient(Parts(5), 'Rye'),
             Ingredient(Parts(2), 'Sweet Vermouth'),
-            Ingredient(Parts(1), 'Angostura Bitters')]),
+            Ingredient(Drops(2), 'Angostura Bitters')]),
     Recipe(
         name = 'Gin & Tonic',
         total_oz = 5,
@@ -243,7 +243,7 @@ db = [
         ingredients = [
             Ingredient(Parts(4), 'Alcohol'),
             Ingredient(Parts(1), 'Sweet'),
-            Ingredient(Parts(1), 'Bitters')]),
+            Ingredient(Drops(2), 'Bitters')]),
 ]
 
 TEST_DRINK = Recipe(
