@@ -184,6 +184,25 @@ def actions_for_recipe(recipe):
     return actions
 
 
+def recipe_from_json_object(recipe_obj):
+    """Takes a dict decoded from a JSON recipe and returns a Recipe object."""
+    if recipe_obj['drink_name'] == "Random Sour":
+        recipe = RandomSourDrink()
+        recipe.user_name = recipe_obj['user_name']
+    elif recipe_obj['drink_name'] == "Random Boozy":
+        recipe = RandomSpirituousDrink()
+        recipe.user_name = recipe_obj['user_name']
+    elif recipe_obj['drink_name'] == "Random Bubbly Boozy":
+        recipe = RandomBubblySpirituousDrink()
+        recipe.user_name = recipe_obj['user_name']
+    elif recipe_obj['drink_name'] == "Random Bubbly Sour":
+        recipe = RandomBubblySourDrink()
+        recipe.user_name = recipe_obj['user_name']
+    else:
+        recipe = Recipe.from_json(recipe_obj)
+    return recipe
+
+
 class AllDrinksHandler(webapp2.RequestHandler):
   def get(self):
     drinks = []
@@ -263,23 +282,9 @@ class Test1Handler(webapp2.RequestHandler):
 
 class CustomDrinkHandler(webapp2.RequestHandler):
   def post(self):
-    print "New drink handler."
     try:
       recipe_obj = json.loads(self.request.get('recipe'))
-      if recipe_obj['drink_name'] == "Random Sour":
-        recipe = RandomSourDrink()
-        recipe.user_name = recipe_obj['user_name']
-      elif recipe_obj['drink_name'] == "Random Boozy":
-        recipe = RandomSpirituousDrink()
-        recipe.user_name = recipe_obj['user_name']
-      elif recipe_obj['drink_name'] == "Random Bubbly Boozy":
-        recipe = RandomBubblySpirituousDrink()
-        recipe.user_name = recipe_obj['user_name']
-      elif recipe_obj['drink_name'] == "Random Bubbly Sour":
-        recipe = RandomBubblySourDrink()
-        recipe.user_name = recipe_obj['user_name']
-      else:
-        recipe = Recipe.from_json(recipe_obj)
+      recipe = recipe_from_json_object(recipe_obj)
       print "Drink requested: %s", recipe
       controller.EnqueueGroup(actions_for_recipe(recipe))
       self.response.status = 200

@@ -97,6 +97,10 @@ class Controller:
       return (([self.current_action] if self.current_action else []) +
           list(self.queue))
 
+  def __len__(self):
+      with self.queue_lock:
+          return len(self.queue)
+
   def KillProcess(self):
     time.sleep(1)
     os._exit(1)

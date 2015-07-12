@@ -6,10 +6,12 @@ from actions.action import Action
 
 class WaitForGlassPlaced(Action):
     def __call__(self, robot):
+      self.force = False
       sleep(.1)
       self.initial = robot.load_cell.recent_summary(secs=.1)
       sleep(.1)
       while True:
         self.summary = robot.load_cell.recent_summary(secs=.1)
-        if self.summary.mean > self.initial.mean + self.initial.stddev * 3:
+        if (self.summary.mean > self.initial.mean + self.initial.stddev * 3 or
+                self.force):
           return
