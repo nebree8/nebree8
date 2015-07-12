@@ -123,13 +123,13 @@ class RobotRail(object):
     for position in absolute_positions:
       forward = position > self.position
       steps = InchesToSteps(abs(position - self.position))
-      self.motor.Move(steps - InchesToSteps(0.18), forward=forward)
+      self.motor.Move(steps, forward=forward)
       if forward:
         self.position += StepsToInches(steps)
-        #self.position += 0.18 #75  # 2:30am edit -- might be bad
+        #self.position += 0.1 #75  # 2:30am edit -- might be bad
       else:
         self.position -= StepsToInches(steps)
-        #self.position -= 0.18 #75
+        #self.position -= 0.1 #75
       print "At position: %f" % position
 
   def CalibrateToZero(self, carefully=True):

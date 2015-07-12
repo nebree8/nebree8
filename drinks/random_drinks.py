@@ -11,6 +11,7 @@ INGREDIENTS = {
   "chocolate bitters" : [0, 0, 0, 1, 0],
   "orange bitters" : [0, 0, 0, 1, 0],
   "bourbon" : [1, 0, 0, 0, 0],
+  "bourbon_backup" : [1, 0, 0, 0, 0],
   "galliano" : [0.5, 0.5, 0, 0, 0],
   "campari" : [0.5, 0.5, 0, 1, 0],
   "triple sec" : [0.5, 0.5, 0, 0, 0],
@@ -28,6 +29,7 @@ INGREDIENTS = {
   "simple" : [0, 1, 0, 0, 0],
   "stoli" : [1, 0, 0, 0, 0],
   "tequila" : [1, 0, 0, 0, 0],
+  "tequila_backup" : [1, 0, 0, 0, 0],
   "triple sec" : [0.5, 0.5, 0, 0, 0],
   "vodka" : [1, 0, 0, 0, 0],
   "dry vermouth" : [0, 0, 0, 1, 0],
@@ -53,7 +55,7 @@ def RandomDrink(target_weight, drink_name = 'Random drink'):
   while total_weight != target_weight:
     if not recipe or attempts > 100:
       recipe = Recipe(name = drink_name, ingredients=[])
-      total_weight = [0, 0, 0, 0]
+      total_weight = [0, 0, 0, 0, 0]
       attempts = 0
     ingredient = random.choice(FILTERED_INGREDIENTS.keys())
     min_gap = 1000
