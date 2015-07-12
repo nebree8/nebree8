@@ -6,6 +6,7 @@ import json
 import logging
 import re
 import socket
+import sys
 import time
 
 from actions.compressor import CompressorToggle
@@ -281,6 +282,8 @@ class CustomDrinkHandler(webapp2.RequestHandler):
       self.response.status = 200
       self.response.write("ok")
     except ValueError:
+      print 'Error parsing custom drink request: %s\n%s' % (
+          self.request.get('recipe', None), sys.exc_info()[0])
       self.response.status = 400
       self.response.write("valve and oz arguments are required.")
 
