@@ -17,6 +17,7 @@ class MeterSimple(Action):
     self.tare_reading = tare.mean
     self.target_reading = (tare.mean + OZ_TO_ADC_VALUES * self.oz_to_meter)
     last_summary = tare
+    print "Metering to oz %f or %s" % (self.oz_to_meter, self.target_reading)
     with robot.OpenValve(self.valve_to_actuate):
       while last_summary.mean < self.target_reading:
         time.sleep(.05)
