@@ -28,8 +28,9 @@ class Recipe(object):
 
     @staticmethod
     def from_json(obj):
+        ingredients = [Ingredient.from_json(i) for i in obj['ingredients']]
         return Recipe(name=obj['drink_name'], total_oz=obj['total_oz'],
-                      ingredients=[Ingredient.from_json(i) for i in obj['ingredients']],
+                      ingredients=[i for i in ingredients if i.qty],
                       user_name=obj.get('user_name', None))
 
 
@@ -49,7 +50,7 @@ class Ingredient(object):
         for k, v in obj.iteritems():
             if k in UNITS:
                 qty = UNITS[k](v)
-        if not qty:
+        if qty is None:
             raise ValueError('Unsupported quantity for ingredient: %s', obj)
         return Ingredient(qty, obj['name'])
 
@@ -71,6 +72,9 @@ class Oz(Unit):
     def json(self):
         return {'oz': self.oz}
 
+    def __nonzero__(self):
+        return self.oz != 0
+
 
 class Parts(Unit):
     def __init__(self, parts):
@@ -83,6 +87,9 @@ class Parts(Unit):
     @property
     def json(self):
         return {'parts': self.parts}
+
+    def __nonzero__(self):
+        return self.parts != 0
 
 
 class Drops(Unit):
@@ -99,4 +106,7 @@ class Drops(Unit):
     @property
     def json(self):
         return {'drops': self.drops}
+
+    def __nonzero__(self):
+        return self.drops != 0
 

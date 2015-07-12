@@ -263,6 +263,24 @@ db = [
             Ingredient(Parts(1), 'Sweet'),
             Ingredient(Parts(1), 'Sour'),
             Ingredient(Parts(1), 'Soda')]),
+    Recipe(
+        name = 'Custom Ice',
+        total_oz = .1,
+        ingredients = [
+            Ingredient(Parts(0), 'Agave'),
+            Ingredient(Parts(0), 'Grenadine'),
+            Ingredient(Parts(1), 'Simple'),
+            Ingredient(Parts(0), 'Lemon'),
+            Ingredient(Parts(0), 'Lime'),
+            Ingredient(Parts(0), 'Orange'),
+            Ingredient(Parts(0), 'Tonic'),
+            Ingredient(Parts(0), 'Cola'),
+            Ingredient(Parts(0), 'Water'),
+            Ingredient(Parts(0), 'Soda'),
+            Ingredient(Drops(0), 'Chocolate Bitters'),
+            Ingredient(Drops(0), 'Angostura Bitters'),
+            Ingredient(Drops(0), 'Peychauds Bitters'),
+            Ingredient(Drops(0), 'Orange Bitters')]),
 ]
 
 TEST_DRINK = Recipe(

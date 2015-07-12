@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 import webapp2
-import BaseHTTPServer
 import json
 import logging
-import re
 import socket
 import time
+import traceback
 
 from actions.compressor import CompressorToggle
 from actions.compressor import State
@@ -167,7 +166,6 @@ def actions_for_recipe(recipe):
     logging.info("Enqueuing actions for recipe %s", recipe)
     actions = []
     for ingredient in recipe.ingredients:
-        print ingredient.name
         valve = ingredients.IngredientNameToValvePosition(ingredient.name, recipe.name)
         actions.append(Move(valve_position(valve)))
         if hasattr(ingredient.qty, 'drops'):
@@ -179,7 +177,6 @@ def actions_for_recipe(recipe):
         else:
             raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
                     ingredient.name, recipe.name, recipe)
-        print " is at pos: %d" % valve
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
     actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
@@ -288,6 +285,9 @@ class CustomDrinkHandler(webapp2.RequestHandler):
       self.response.status = 200
       self.response.write("ok")
     except ValueError:
+      print 'Error parsing custom drink request: %s' % (
+              self.request.get('recipe', None))
+      traceback.print_exc()
       self.response.status = 400
       self.response.write("valve and oz arguments are required.")
 
