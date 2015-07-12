@@ -5,6 +5,8 @@ import time
 from actions.action import Action
 from actions.meter import OZ_TO_ADC_VALUES, _tare
 
+METER_OZ_OFFSET=0.25
+
 class MeterSimple(Action):
   def __init__(self, valve_to_actuate, oz_to_meter):
     self.valve_to_actuate = valve_to_actuate
@@ -15,7 +17,7 @@ class MeterSimple(Action):
     self.initial_reading = robot.load_cell.recent_summary(secs=.2).mean
     tare = _tare(robot)
     self.tare_reading = tare.mean
-    self.target_reading = (tare.mean + OZ_TO_ADC_VALUES * self.oz_to_meter)
+    self.target_reading = (tare.mean + OZ_TO_ADC_VALUES * max(self.oz_to_meter - METER_OZ_OFFSET, .05))
     last_summary = tare
     print "Metering to oz %f or %s" % (self.oz_to_meter, self.target_reading)
     with robot.OpenValve(self.valve_to_actuate):

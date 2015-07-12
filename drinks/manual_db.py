@@ -303,8 +303,8 @@ def LiveDB():
         all_ingredients_live = False
     if all_ingredients_live or "Random" in drink.name:
       print "adding: %s" % drink.name
-      live_db.append(copy.deepcopy(drink))
-      live_db[-1].total_oz *= ingredients.SCALE
+      live_db.append(Recipe(name=drink.name, ingredients=drink.ingredients,
+                            total_oz=drink.total_oz * ingredients.SCALE))
     else:
       print "skipping: %s" % drink.name
   return live_db
