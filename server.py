@@ -270,8 +270,10 @@ class CustomDrinkHandler(webapp2.RequestHandler):
       recipe_obj = json.loads(self.request.get('recipe'))
       if recipe_obj['drink_name'] == "Random Sour":
         recipe = RandomSourDrink()
+        recipe.user_name = recipe_obj['user_name']
       elif recipe_obj['drink_name'] == "Random Bitter":
         recipe = RandomSpirituousDrink()
+        recipe.user_name = recipe_obj['user_name']
       else:
         recipe = Recipe.from_json(recipe_obj)
       print "Drink requested: %s", recipe
