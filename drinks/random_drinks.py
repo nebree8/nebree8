@@ -37,7 +37,7 @@ INGREDIENTS = {
   "soda" : [0, 0, 0, 1, 1],
   "tonic" : [0, 0.2, 0, 1, 1],
   "cola" : [0, 0.5, 0.3, 0, 1],
-  "water" : [0, 0, 0, 0, 0],
+  #"water" : [0, 0, 0, 0, 0],
 }
 
 
@@ -54,10 +54,12 @@ def RandomDrink(target_weight, drink_name = 'Random drink'):
   attempts = 0
   while total_weight != target_weight:
     if not recipe or attempts > 100:
+      print "starting random recipe"
       recipe = Recipe(name = drink_name, ingredients=[])
       total_weight = [0, 0, 0, 0, 0]
       attempts = 0
     ingredient = random.choice(FILTERED_INGREDIENTS.keys())
+    print "Adding random ingredient: %s" % INGREDIENTS[ingredient]
     min_gap = 1000
     for target, (x, y) in zip(target_weight,
                               zip(INGREDIENTS[ingredient], total_weight)):
@@ -70,6 +72,9 @@ def RandomDrink(target_weight, drink_name = 'Random drink'):
       recipe.ingredients.append(Ingredient(Oz(min_gap), ingredient))
       total_weight = [x + y * min_gap for x, y in zip(total_weight, INGREDIENTS[ingredient])]
     attempts += 1
+  sum_weights = sum(total_weight) - total_weight[3] # Bitters weigh nothing
+  for ingredient in recipe.ingredients:
+    ingredient.qty.oz *= 4.0 / sum_weights
   return recipe
 
 

@@ -238,12 +238,28 @@ db = [
             Ingredient(Parts(1), 'Sweet'),
             Ingredient(Parts(1), 'Sour')]),
     Recipe(
-        name = 'Random Bitter',
+        name = 'Random Boozy',
         total_oz = 3,
         ingredients = [
             Ingredient(Parts(4), 'Alcohol'),
             Ingredient(Parts(1), 'Sweet'),
-            Ingredient(Drops(2), 'Bitters')]),
+            Ingredient(Drops(1), 'Bitters')]),
+    Recipe(
+        name = 'Random Bubbly Boozy',
+        total_oz = 3,
+        ingredients = [
+            Ingredient(Parts(4), 'Alcohol'),
+            Ingredient(Parts(1), 'Sweet'),
+            Ingredient(Parts(1), 'Soda'),
+            Ingredient(Drops(1), 'Bitters')]),
+    Recipe(
+        name = 'Random Bubbly Sour',
+        total_oz = 3,
+        ingredients = [
+            Ingredient(Parts(2), 'Alcohol'),
+            Ingredient(Parts(1), 'Sweet'),
+            Ingredient(Parts(1), 'Sour'),
+            Ingredient(Parts(1), 'Soda')]),
 ]
 
 TEST_DRINK = Recipe(

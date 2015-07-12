@@ -53,6 +53,16 @@ class Controller:
         self.app.drop_all = False
 
   def EnqueueGroup(self, action_group):
+    enqueued_usernames = set()
+    queue_contents = self.InspectQueue()
+    for action in queue_contents:
+      if type(action) == WaitForGlassRemoval:
+        enqueued_usernames.add(action.user_name)
+    for action in action_group:
+      if type(action) == WaitForGlassRemoval:
+        if action.user_name in enqueued_usernames:
+          print "Tried to enqueue a second drink for %s" % action.user_name
+          return
     with self.queue_lock:
       for action in action_group:
         self.queue.append(action)
@@ -71,9 +81,11 @@ class Controller:
         if i == 0:
           creating_message = " <===== ACTIVE"
         i += 1;
-        name_and_drink.append((action.user_name, action.drink_name))
-        name_and_drink_lines.append("%d.\tCreating %s a %s%s\n" %
-            (i, action.user_name, action.drink_name, creating_message))
+        name_and_drink.append((action.user_name, action.recipe.name))
+        drink_parts = ", ".join(str(i) for i in action.recipe.ingredients)
+        name_and_drink_lines.append("%d.\tCreating %s a %s%s (%s)\n" %
+            (i, action.user_name, action.recipe.name, creating_message,
+              drink_parts))
     name_and_drink_lines.append("\n\n\n Holding Pressure: %s" % self.robot.pressurized)
     queue_txt = open("/home/pi/nebree82/nebree8/monitor/data/queue.txt", "w")
     queue_txt.write("\n".join(name_and_drink_lines))

@@ -5,9 +5,9 @@ from time import sleep
 from actions.action import Action
 
 class WaitForGlassRemoval(Action):
-    def __init__(self, user_name, drink_name):
+    def __init__(self, user_name, recipe):
       self.user_name = user_name
-      self.drink_name = drink_name
+      self.recipe = recipe
 
     def __call__(self, robot):
       sleep(.1)

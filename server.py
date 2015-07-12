@@ -181,7 +181,7 @@ def actions_for_recipe(recipe):
         print " is at pos: %d" % valve
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
-    actions.append(WaitForGlassRemoval(recipe.user_name, recipe.name))
+    actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
     actions.append(WaitForGlassPlaced())
     return actions
 
@@ -213,9 +213,13 @@ class DrinkHandler(webapp2.RequestHandler):
                     self.response.write("Making drink %s" % drink)
                     controller.EnqueueGroup(actions_for_recipe(drink))
                     return
+        elif self.request.get('random') == 'bubbly sour':
+            controller.EnqueueGroup(actions_for_recipe(RandomBubblySourDrink()))
+        elif self.request.get('random') == 'bubbly boozy':
+            controller.EnqueueGroup(actions_for_recipe(RandomBubblySpirituousDrink()))
         elif self.request.get('random') == 'sour':
             controller.EnqueueGroup(actions_for_recipe(RandomSourDrink()))
-        elif self.request.get('random') == 'spirituous':
+        elif self.request.get('random') == 'boozy':
             controller.EnqueueGroup(actions_for_recipe(RandomSpirituousDrink()))
         self.response.status = 400
 

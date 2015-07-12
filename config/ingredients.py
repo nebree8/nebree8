@@ -60,7 +60,8 @@ def IngredientNameToValvePosition(ingredient, drink_name):
   ingredient = ingredient.replace(" syrup", "")
   if drink_name != "Prime":
     if ingredient + "_backup" in ingredient_list:
-      ingredient = ingredient + "_backup"
+      suffix = random.choice(["", "_backup"])
+      ingredient = ingredient + suffix
   valve = ingredient_list.index(ingredient)
   return valve
 

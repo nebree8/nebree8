@@ -24,7 +24,7 @@ class Ingredient(object):
         self.qty = qty
         self.name = name
     def __str__(self):
-        return "% 6s %s" % (self.qty, self.name)
+        return "% 6s %s" % (self.qty, self.name.replace("_backup", ""))
 
 class Unit(object):
     def __str__(self):
