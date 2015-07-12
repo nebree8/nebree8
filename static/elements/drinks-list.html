@@ -8,8 +8,9 @@
       <template repeat="{{recipe in recipes}}">
         <drink-selector
         id="drink"
-        drink="{{recipe.name}}"
+        drink="{{recipe.drink_name}}"
         image="{{recipe.image}}"
+        total_oz="{{recipe.total_oz}}"
         details="{{recipe.ingredients}}"
         gray_out="{{grayOut}}"
         hide_if_not_selected="{{drinkSelected}}"

@@ -20,6 +20,7 @@ function install_once {
   install_polymer
 
   curl https://raw.githubusercontent.com/mbostock/d3/master/d3.min.js > static/d3.v3.min.js 
+  mkdir -p monitor/data
 }
 
 function initialize {
