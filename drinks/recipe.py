@@ -34,6 +34,9 @@ class Unit(object):
 class Oz(Unit):
     def __init__(self, oz):
         self.oz = oz
+    @property
+    def json(self):
+        return {'oz': self.oz}
 
 
 class Parts(Unit):
@@ -44,6 +47,9 @@ class Parts(Unit):
     @property
     def oz(self):
       return self.total_oz * (self.parts * 1./self.total_parts)
+    @property
+    def json(self):
+        return {'parts': self.parts}
 
 
 class Drops(Unit):
@@ -57,4 +63,7 @@ class Drops(Unit):
     @property
     def parts(self):
         return 1
+    @property
+    def json(self):
+        return {'drops': self.drops}
 
