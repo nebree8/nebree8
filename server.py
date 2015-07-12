@@ -219,9 +219,9 @@ class PrimeHandler(webapp2.RequestHandler):
     def post(self):
         controller.EnqueueGroup(actions_for_recipe(
             manual_db.Recipe(name='Prime', ingredients=[
-                manual_db.Ingredient(manual_db.Oz(.10), ingredient)
-                #for ingredient in ingredients.IngredientsOrdered() if ingredient != "air"],
-                for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
+                manual_db.Ingredient(manual_db.Oz(.50), ingredient)
+                for ingredient in ingredients.IngredientsOrdered() if ingredient != "air"],
+                #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
                 user_name="dev console")))
 
 

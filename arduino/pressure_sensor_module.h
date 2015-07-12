@@ -58,7 +58,7 @@ class PressureSensorModule : public arduinoio::UCModule {
     }
     if (timed_callback_ == NULL) {
       timed_callback_ = new arduinoio::TimedCallback<PressureSensorModule>(
-          state_ == ERROR ? 2000 : 1000, this,
+          state_ == ERROR ? 2000 : 200, this,
           &PressureSensorModule::ReadPressure);
     }
     timed_callback_->Update();
@@ -133,6 +133,10 @@ class PressureSensorModule : public arduinoio::UCModule {
       moving_do_nothing_ = false;
       return true;
     } else if (strncmp(command, external_MOVE, external_MOVE_LENGTH) == 0) {
+      ClosePressureValve();
+      if (state_ == INCREASE_PRESSURE) {
+        state_ = MAINTAIN_PRESSURE;
+      }
       moving_do_nothing_ = true;
     } else if (strncmp(command, external_MDONE, external_MDONE_LENGTH) == 0) {
       moving_do_nothing_ = false;

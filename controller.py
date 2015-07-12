@@ -42,6 +42,7 @@ class Controller:
         self.WriteToFile()
       except ActionException, e:
         self.last_exception = e
+        print e
         logging.info("Waiting for resume signal...")
         self.resume_lock.acquire()
         logging.info("Resume signal received, continuing to process actions.")

@@ -1,7 +1,7 @@
 import random
 
 from config import ingredients
-from drinks.recipe import Recipe, Ingredient, Oz
+from drinks.recipe import Recipe, Ingredient, Oz, Drops
 
 
 INGREDIENTS = {
@@ -55,7 +55,7 @@ def RandomDrink(target_weight, drink_name = 'Random drink'):
   total_weight = None
   attempts = 0
   while total_weight != target_weight:
-    if not recipe or attempts > 100:
+    if not recipe or attempts > 500:
       print "starting random recipe"
       recipe = Recipe(name = drink_name, ingredients=[])
       total_weight = [0, 0, 0, 0, 0]
@@ -73,10 +73,15 @@ def RandomDrink(target_weight, drink_name = 'Random drink'):
         min_gap /= 2.0
       recipe.ingredients.append(Ingredient(Oz(min_gap), ingredient))
       total_weight = [x + y * min_gap for x, y in zip(total_weight, INGREDIENTS[ingredient])]
+    else:
+      print "skipping since gap is %f" % min_gap
     attempts += 1
   sum_weights = sum(total_weight) - total_weight[3] # Bitters weigh nothing
   for ingredient in recipe.ingredients:
-    ingredient.qty.oz *= 4.0 / sum_weights * ingredients.SCALE
+    if "itters" in ingredient.name:
+      ingredient.qty = Drops(ingredients.SCALE)
+    else:
+      ingredient.qty.oz *= 4.0 / sum_weights * ingredients.SCALE
   return recipe
 
 

@@ -5,7 +5,7 @@ import time
 from actions.action import Action
 from actions.meter import OZ_TO_ADC_VALUES, _tare
 
-METER_OZ_OFFSET=0.25
+METER_OZ_OFFSET=0.4
 
 class MeterSimple(Action):
   def __init__(self, valve_to_actuate, oz_to_meter):
@@ -23,7 +23,7 @@ class MeterSimple(Action):
     with robot.OpenValve(self.valve_to_actuate):
       while last_summary.mean < self.target_reading:
         time.sleep(.05)
-        last_summary = robot.load_cell.recent_summary(secs=.2)
+        last_summary = robot.load_cell.recent_summary(secs=.1)
         self.current_reading = last_summary.mean
       self.final_reading = self.current_reading
     time.sleep(1)
