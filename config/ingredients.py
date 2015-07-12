@@ -9,9 +9,9 @@ from drinks import recipe
 # MUST MAP TO ORDER OF PHYSICAL VALVES
 INGREDIENTS_ORDERED = (
     "bourbon",
-    "bourbon_backup", #backup bottle
+    "air", #"bourbon_backup", #backup bottle
     "tequila",
-    "tequila_backup", #backup bottle
+    "air", #"tequila_backup", #backup bottle
     "galliano",
     "chocolate bitters", #small bottle location
     "scotch",
@@ -21,7 +21,7 @@ INGREDIENTS_ORDERED = (
     "triple sec",
     "frangelico",
     "angostura bitters", #small bottle location
-    "sweet vermouth",
+    "air",  # "sweet vermouth",
     "kahlua",
     "gin",
     "campari",
@@ -33,8 +33,8 @@ INGREDIENTS_ORDERED = (
     "simple",
     "lemon",
     "lime",
-    "orange bitters", #small bottle location
-    "orange",
+    "air",  #"orange bitters", #small bottle location
+    "air",  #"orange",
     "tonic",
     "cola",
     "water",
@@ -67,13 +67,14 @@ def IngredientNameToValvePosition(ingredient, drink_name):
 
 
 def ScaleDrinkSize(ingredient_list):
-  total_desired_oz = 4
-  total_oz = 0
-  for ingredient in ingredient_list:
-    if type(ingredient.qty) == recipe.Oz:
-      total_oz += ingredient.qty.oz
-  adjustment = total_desired_oz * 1.0 / total_oz
-  for ingredient in ingredient_list:
-    if type(ingredient.qty) == recipe.Oz:
-      ingredient.qty.oz *= adjustment
+  pass
+  # total_desired_oz = 4
+  # total_oz = 0
+  # for ingredient in ingredient_list:
+  #   if type(ingredient.qty) == recipe.Oz:
+  #     total_oz += ingredient.qty.oz
+  # adjustment = total_desired_oz * 1.0 / total_oz
+  # for ingredient in ingredient_list:
+  #   if type(ingredient.qty) == recipe.Oz:
+  #     ingredient.qty.oz *= adjustment
 

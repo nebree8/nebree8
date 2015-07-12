@@ -1,6 +1,6 @@
 import random
 
-from config.ingredients import INGREDIENTS_ORDERED
+from config import ingredients
 from drinks.recipe import Recipe, Ingredient, Oz
 
 
@@ -44,8 +44,10 @@ INGREDIENTS = {
 def RandomDrink(target_weight, drink_name = 'Random drink'):
   """Returns a Recipe."""
   FILTERED_INGREDIENTS = {}
-  for i in INGREDIENTS_ORDERED:
-    if i not in INGREDIENTS:
+  for i in ingredients.IngredientsOrdered():
+    if i == "air":
+      pass
+    elif i not in INGREDIENTS:
       print "No random config for", i
     else:
       FILTERED_INGREDIENTS[i] = INGREDIENTS[i]

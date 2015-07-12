@@ -23,7 +23,7 @@ from controller import Controller
 from config import ingredients
 from drinks import manual_db
 from drinks.recipe import Recipe
-from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink
+from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomBubblySourDrink, RandomBubblySpirituousDrink
 
 TEMPLATE_DIR="templates/"
 STATIC_FILE_DIR="static/"
@@ -190,7 +190,7 @@ def actions_for_recipe(recipe):
 class AllDrinksHandler(webapp2.RequestHandler):
   def get(self):
     drinks = []
-    for drink in manual_db.db:
+    for drink in manual_db.LiveDB():
       data = drink.json
       data['image'] = drink.name.replace(' ', '_').lower() + '.jpg'
       drinks.append(data)
@@ -222,7 +222,7 @@ class PrimeHandler(webapp2.RequestHandler):
     def post(self):
         controller.EnqueueGroup(actions_for_recipe(
             manual_db.Recipe(name='Prime', ingredients=[
-                manual_db.Ingredient(manual_db.Oz(.25), ingredient)
+                manual_db.Ingredient(manual_db.Oz(.10), ingredient)
                 for ingredient in ingredients.IngredientsOrdered() if ingredient != "air"],
                 user_name="dev console")))
 
@@ -271,8 +271,14 @@ class CustomDrinkHandler(webapp2.RequestHandler):
       if recipe_obj['drink_name'] == "Random Sour":
         recipe = RandomSourDrink()
         recipe.user_name = recipe_obj['user_name']
-      elif recipe_obj['drink_name'] == "Random Bitter":
+      elif recipe_obj['drink_name'] == "Random Boozy":
         recipe = RandomSpirituousDrink()
+        recipe.user_name = recipe_obj['user_name']
+      elif recipe_obj['drink_name'] == "Random Bubbly Boozy":
+        recipe = RandomBubblySpirituousDrink()
+        recipe.user_name = recipe_obj['user_name']
+      elif recipe_obj['drink_name'] == "Random Bubbly Sour":
+        recipe = RandomBubblySourDrink()
         recipe.user_name = recipe_obj['user_name']
       else:
         recipe = Recipe.from_json(recipe_obj)

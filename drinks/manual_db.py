@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from recipe import Recipe, Ingredient, Oz, Parts, Drops
+from config import ingredients
 
 db = [
     Recipe(
@@ -270,6 +271,24 @@ TEST_DRINK = Recipe(
             Ingredient(Parts(1), 'Bourbon'),
             Ingredient(Parts(1), 'Rye'),
             Ingredient(Parts(1), 'Rum')])
+
+def LiveDB():
+  live_ingredients = ingredients.IngredientsOrdered()
+  live_db = []
+  for drink in db:
+    all_ingredients_live = True
+    for ingredient in drink.ingredients:
+      if ingredient.name.lower().replace(" juice", "").replace(" syrup", "") not in live_ingredients:
+        print "dont have: %s" % ingredient.name
+        all_ingredients_live = False
+    if all_ingredients_live or "Random" in drink.name:
+      print "adding: %s" % drink.name
+      drink.total_oz /= 4.0
+      live_db.append(drink)
+    else:
+      print "skipping: %s" % drink.name
+  return live_db
+
 
 
 if __name__ == "__main__":
