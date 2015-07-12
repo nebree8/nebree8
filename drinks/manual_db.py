@@ -71,7 +71,7 @@ db = [
         ingredients = [
             Ingredient(Parts(5), 'Rye'),
             Ingredient(Parts(2), 'Sweet Vermouth'),
-            Ingredient(Parts(1), 'Angostura')]),
+            Ingredient(Parts(1), 'Angostura Bitters')]),
     Recipe(
         name = 'Gin & Tonic',
         total_oz = 5,
