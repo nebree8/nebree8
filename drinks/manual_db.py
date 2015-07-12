@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+import copy
+
 from recipe import Recipe, Ingredient, Oz, Parts, Drops
 from config import ingredients
 
@@ -283,8 +285,8 @@ def LiveDB():
         all_ingredients_live = False
     if all_ingredients_live or "Random" in drink.name:
       print "adding: %s" % drink.name
-      drink.total_oz /= 4.0
-      live_db.append(drink)
+      live_db.append(copy.deepcopy(drink))
+      live_db[-1].total_oz *= ingredients.SCALE
     else:
       print "skipping: %s" % drink.name
   return live_db

@@ -66,6 +66,9 @@ def IngredientNameToValvePosition(ingredient, drink_name):
   return valve
 
 
+SCALE = 0.25
+
+
 def ScaleDrinkSize(ingredient_list):
   pass
   # total_desired_oz = 4

@@ -76,7 +76,7 @@ def RandomDrink(target_weight, drink_name = 'Random drink'):
     attempts += 1
   sum_weights = sum(total_weight) - total_weight[3] # Bitters weigh nothing
   for ingredient in recipe.ingredients:
-    ingredient.qty.oz *= 4.0 / sum_weights
+    ingredient.qty.oz *= 4.0 / sum_weights * ingredients.SCALE
   return recipe
 
 
