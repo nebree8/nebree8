@@ -28,8 +28,8 @@ void setup() {
   arduino_io.Add(new arduinoio::SerialRXModule(NULL, 0));
   arduino_io.Add(new nebree8::UCIOModule());
   //arduino_io.Add(new nebree8::UCServoModule());
-  //arduino_io.Add(new nebree8::PressureSensorModule());
-  //arduino_io.Add(new nebree8::MotorModule());
+  arduino_io.Add(new nebree8::PressureSensorModule());
+  arduino_io.Add(new nebree8::MotorModule());
   pinMode(6, OUTPUT);
   digitalWrite(6, HIGH);
   pinMode(13, OUTPUT);

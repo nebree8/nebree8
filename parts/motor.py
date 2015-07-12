@@ -111,6 +111,9 @@ class StepperMotor(object):
 def InchesToSteps(inches):
   return int(inches / 2.81 * 800)  # 14 teeth -> 2.81 inches
 
+def StepsToInches(steps):
+  return steps * 2.81 / 800
+
 class RobotRail(object):
   def __init__(self, motor):
     self.motor = motor
@@ -120,8 +123,13 @@ class RobotRail(object):
     for position in absolute_positions:
       forward = position > self.position
       steps = InchesToSteps(abs(position - self.position))
-      self.motor.Move(steps, forward=forward)
-      self.position = position
+      self.motor.Move(steps - InchesToSteps(0.18), forward=forward)
+      if forward:
+        self.position += StepsToInches(steps)
+        #self.position += 0.18 #75  # 2:30am edit -- might be bad
+      else:
+        self.position -= StepsToInches(steps)
+        #self.position -= 0.18 #75
       print "At position: %f" % position
 
   def CalibrateToZero(self, carefully=True):

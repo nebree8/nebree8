@@ -37,10 +37,12 @@ class PhysicalRobot(Robot):
       self.CalibrateToZero()
     self.cannot_interrupt = True
     self.ChuckHoldHeadPressure()
-    time.sleep(2)
+    time.sleep(0.5)
     self.rail.FillPositions([position_in_inches])
     self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
     self.cannot_interrupt = False
+    if position_in_inches < -65.25:
+      self.rail.position = -65.25
 
   def PressurizeHead(self):
     print "Pressurize Head"

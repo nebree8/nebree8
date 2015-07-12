@@ -27,6 +27,11 @@ const int HOLD_PRESSURE_LENGTH = 5;
 // command[8] = hold (if not 0x01, the device just reads and waits).
 // command[9] = pressure valve pin
 
+const char* external_MOVE = "MOVE";
+const int external_MOVE_LENGTH = 4;
+const char* external_MDONE = "MDONE";
+const int external_MDONE_LENGTH = 5;
+
 class PressureSensorModule : public arduinoio::UCModule {
  public:
   PressureSensorModule() {
@@ -36,6 +41,7 @@ class PressureSensorModule : public arduinoio::UCModule {
     timed_callback_ = NULL;
     outgoing_message_ready_ = false;
     state_ = DEPRESSURIZED;
+    moving_do_nothing_ = false;
   }
 
   enum State {
@@ -52,7 +58,7 @@ class PressureSensorModule : public arduinoio::UCModule {
     }
     if (timed_callback_ == NULL) {
       timed_callback_ = new arduinoio::TimedCallback<PressureSensorModule>(
-          state_ == ERROR ? 2000 : 300, this,
+          state_ == ERROR ? 2000 : 1000, this,
           &PressureSensorModule::ReadPressure);
     }
     timed_callback_->Update();
@@ -60,11 +66,12 @@ class PressureSensorModule : public arduinoio::UCModule {
   }
 
   void ReadPressure() {
+    timed_callback_ = NULL;
+    if (moving_do_nothing_) return;
     float *pressure_float = (float*) pressure_;
-    pressure_float[0] = sensor_->getPressure(ADC_4096);  // high-level precision
+    pressure_float[0] = sensor_->getPressure(ADC_512);  // lower-level precision
     pressure_float[1] = last_reading_;
     pressure_float[2] = second_last_reading_;
-    timed_callback_ = NULL;
     switch (state_) {
       case MAINTAIN_PRESSURE:
         if (pressure_float[0] < hold_pressure_mbar_min_) {
@@ -116,16 +123,21 @@ class PressureSensorModule : public arduinoio::UCModule {
         state_ = DEPRESSURIZED;
         ClosePressureValve();
       }
+      moving_do_nothing_ = false;
       return true;
     } else if (strncmp(command, GET_PRESSURE, GET_PRESSURE_LENGTH) == 0) {
       const int kOutgoingAddress = 99;
       pressure_[kPressureSize - 1] = state_;
       message_.Reset(kOutgoingAddress, kPressureSize, pressure_);
       outgoing_message_ready_ = true;
+      moving_do_nothing_ = false;
       return true;
-    } else {
-      return false;
+    } else if (strncmp(command, external_MOVE, external_MOVE_LENGTH) == 0) {
+      moving_do_nothing_ = true;
+    } else if (strncmp(command, external_MDONE, external_MDONE_LENGTH) == 0) {
+      moving_do_nothing_ = false;
     }
+    return false;
   }
 
   void ClosePressureValve() {
@@ -137,7 +149,8 @@ class PressureSensorModule : public arduinoio::UCModule {
   }
 
   void SetPressureValve(char on) {
-    //const int kLocalAddress = 0;
+  //pinMode(pressure_valve_pin_, OUTPUT);
+  //digitalWrite(pressure_valve_pin_, on == 0x01 ? HIGH : LOW);
     const int kLocalAddress = 0;
     const int kSetIoSize = 8;
     char command[kSetIoSize];
@@ -145,6 +158,7 @@ class PressureSensorModule : public arduinoio::UCModule {
     command[6] = pressure_valve_pin_;
     command[7] = on;
     message_.Reset(kLocalAddress, kSetIoSize, (unsigned char*) command);
+    outgoing_message_ready_ = true;
   }
 
  private:
@@ -163,6 +177,7 @@ class PressureSensorModule : public arduinoio::UCModule {
   float second_last_reading_;
 
   bool outgoing_message_ready_;
+  bool moving_do_nothing_;
 };
 
 }  // namespace nebree8

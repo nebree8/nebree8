@@ -39,6 +39,7 @@ class Controller:
           self.app.drop_all = True
         logging.info("Executing %s", self.current_action.inspect())
         self.current_action(self.robot)
+        self.WriteToFile()
       except ActionException, e:
         self.last_exception = e
         logging.info("Waiting for resume signal...")

@@ -166,7 +166,8 @@ def actions_for_recipe(recipe):
     logging.info("Enqueuing actions for recipe %s", recipe)
     actions = []
     for ingredient in recipe.ingredients:
-        valve = ingredients.INGREDIENTS_ORDERED.index(ingredient.name.lower())
+        print ingredient.name
+        valve = ingredients.IngredientNameToValvePosition(ingredient.name, recipe.name)
         actions.append(Move(valve_position(valve)))
         if hasattr(ingredient.qty, 'drops'):
             actions.append(MeterBitters(
@@ -177,6 +178,7 @@ def actions_for_recipe(recipe):
         else:
             raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
                     ingredient.name, recipe.name, recipe)
+        print " is at pos: %d" % valve
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
     actions.append(WaitForGlassRemoval(recipe.user_name, recipe.name))
@@ -222,8 +224,8 @@ class PrimeHandler(webapp2.RequestHandler):
     def post(self):
         controller.EnqueueGroup(actions_for_recipe(
             manual_db.Recipe(name='Prime', ingredients=[
-                manual_db.Ingredient(manual_db.Oz(.10), ingredient)
-                for ingredient in ingredients.INGREDIENTS_ORDERED if ingredient != "air"],
+                manual_db.Ingredient(manual_db.Oz(.25), ingredient)
+                for ingredient in ingredients.IngredientsOrdered() if ingredient != "air"],
                 user_name="dev console")))
 
 
@@ -377,6 +379,13 @@ def main():
         from physical_robot import PhysicalRobot
         robot = PhysicalRobot()
     controller = Controller(robot)
+    """
+    for _ in range(15):
+      with robot.OpenValve(30):
+          time.sleep(.25)
+      time.sleep(1)
+    return
+    #"""
     StartServer(args.port)
 
 if __name__ == "__main__":

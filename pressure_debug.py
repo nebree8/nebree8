@@ -38,7 +38,7 @@ def old_test():
 
 def new_test():
   ard = arduino.Arduino()
-  ard.HoldPressure(7, hold=False)
+  ard.HoldPressure(7, hold=True)
   #ard.HoldPressure(7, hold=True)
   while True:
     for hold in [True]:#, False):

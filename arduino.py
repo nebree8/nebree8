@@ -65,8 +65,12 @@ class Arduino:
     for pin, value in self.outputs.iteritems():
       raw_message.append(chr(pin))
       raw_message.append(chr(value))
-    command = "SET_IO" + "".join(raw_message)
-    self.interface.Write(0, command)
+    batch_size = 40 # MUST BE EVEN
+    for batch in range(0, len(raw_message) / batch_size + 1):
+      start = batch * batch_size
+      end = start + batch_size
+      command = "SET_IO" + "".join(raw_message[start:end])
+      self.interface.Write(0, command)
 
   def __RefreshOutputs(self):
     while True:

@@ -82,17 +82,17 @@ class Outputs(enum.Enum):
   VALVE_19 = 2030
   VALVE_20 = 2032
 
-  # VALVE_21 = 2023
-  # VALVE_22 = 2025
-  # VALVE_23 = 2027
-  # VALVE_24 = 2029
-  # VALVE_25 = 2031
-  # VALVE_26 = 2033
-  # VALVE_27 = 2035
-  # VALVE_28 = 2037
+  VALVE_21 = 2039
+  VALVE_22 = 2025
+  VALVE_23 = 2027
+  VALVE_24 = 2029
+  VALVE_25 = 2031
+  VALVE_26 = 2033
+  VALVE_27 = 2035
+  VALVE_28 = 2037
 
-  # VALVE_29 = 2046
-  # VALVE_30 = 2048
+  VALVE_29 = 2046
+  VALVE_30 = 2048
 
   CHUCK = 2008
   # COMPRESSOR_HEAD = 2004
@@ -124,24 +124,24 @@ VALVES = (
     Outputs.VALVE_10,
     Outputs.VALVE_11,
     Outputs.VALVE_12,
-#   Outputs.VALVE_13,
-#   Outputs.VALVE_14,
-#   Outputs.VALVE_15,
-#   Outputs.VALVE_16,
-#   Outputs.VALVE_17,
-#   Outputs.VALVE_18,
-#   Outputs.VALVE_19,
-#   Outputs.VALVE_20,
-#   Outputs.VALVE_21,
-#   Outputs.VALVE_22,
-#   Outputs.VALVE_23,
-#   Outputs.VALVE_24,
-#   Outputs.VALVE_25,
-#   Outputs.VALVE_26,
-#   Outputs.VALVE_27,
-#   Outputs.VALVE_28,
-#   Outputs.VALVE_29,
-#   Outputs.VALVE_30,
+    Outputs.VALVE_13,
+    Outputs.VALVE_14,
+    Outputs.VALVE_15,
+    Outputs.VALVE_16,
+    Outputs.VALVE_17,
+    Outputs.VALVE_18,
+    Outputs.VALVE_19,
+    Outputs.VALVE_20,
+    Outputs.VALVE_21,
+    Outputs.VALVE_22,
+    Outputs.VALVE_23,
+    Outputs.VALVE_24,
+    Outputs.VALVE_25,
+    Outputs.VALVE_26,
+    Outputs.VALVE_27,
+    Outputs.VALVE_28,
+    Outputs.VALVE_29,
+    Outputs.VALVE_30,
 )
 
 
@@ -207,7 +207,8 @@ class IOBank(object):
     else:
       if self.arduino:
         print "Arduino write (%d) = %d" % (output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
-        self.arduino.WriteOutput(output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
+        self.arduino.WriteOutput(output_enum.value - _ARDUINO_ADDRESS_OFFSET,
+                                 value)
 
   def HoldPressure(self):
     self.arduino.HoldPressure(PRESSURE_VALVE_PIN, hold=True)
@@ -220,7 +221,7 @@ class IOBank(object):
         ARDUINO_RAIL_TRIGGER_NEGATIVE, ARDUINO_RAIL_TRIGGER_POSITIVE,
         ARDUINO_STEPPER_DONE,
         forward, steps, final_wait)
-    time.sleep(0.5)
+    time.sleep(1.0)
     while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
       time.sleep(0.05)
 
