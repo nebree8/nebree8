@@ -8,37 +8,68 @@ from drinks import recipe
 
 # MUST MAP TO ORDER OF PHYSICAL VALVES
 INGREDIENTS_ORDERED = (
-    "bourbon",
-    "air", #"bourbon_backup", #backup bottle
     "tequila",
-    "air", #"tequila_backup", #backup bottle
-    "galliano",
-    "chocolate bitters", #small bottle location
-    "scotch",
-    "rye",
-    "rum",
-    "vodka",
-    "triple sec",
-    "frangelico",
-    "angostura bitters", #small bottle location
-    "air",  # "sweet vermouth",
-    "kahlua",
-    "gin",
-    "campari",
-    "dry vermouth",
-    "peychauds bitters", #small bottle location
-    "agave",
-    "pimms",
-    "grenadine",
-    "simple",
-    "lemon",
     "lime",
-    "air",  #"orange bitters", #small bottle location
-    "air",  #"orange",
-    "tonic",
-    "cola",
-    "water",
-    "soda",
+    "agave",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+    "air",
+#   "bourbon", # "bourbon",
+#   "air", #backup bottle
+#   "tequila",
+#   "tequila_backup", #backup bottle
+#   "galliano",
+#   "chocolate bitters", #small bottle location # WILL
+#   "scotch",
+#   "rye",
+#   "rum",
+#   "vodka",  # MISSING
+#   "triple sec", # MISSING
+#   "frangelico",
+#   "angostura bitters", #small bottle location
+#   "sweet vermouth", # MISSING
+#   "kahlua",
+#   "gin",
+#   "campari",
+#   "dry vermouth",
+#   "peychauds bitters", #small bottle location # WILL
+#   "agave",  # NOT LINED UP
+#   "pimms",  # WILL
+#   "grenadine",
+#   "simple",
+#   "air", #"lemon",
+#   "air", #"lime",
+#   "orange bitters", #small bottle location
+#   "air", #"orange",
+#   "tonic",
+#   "cola",
+#   "water",
+#   "soda",
 )
 
 OVERRIDES = {
@@ -66,7 +97,7 @@ def IngredientNameToValvePosition(ingredient, drink_name):
   return valve
 
 
-SCALE = 0.25
+SCALE = 0.9
 
 
 def ScaleDrinkSize(ingredient_list):

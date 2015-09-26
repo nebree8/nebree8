@@ -83,7 +83,7 @@ class Controller:
           creating_message = " <===== ACTIVE"
         i += 1;
         name_and_drink.append((action.user_name, action.recipe.name))
-        drink_parts = ", ".join(str(i) for i in action.recipe.ingredients)
+        drink_parts = ", ".join(i.name for i in action.recipe.ingredients)
         name_and_drink_lines.append("%d.\tCreating %s a %s%s (%s)\n" %
             (i, action.user_name, action.recipe.name, creating_message,
               drink_parts))

@@ -7,6 +7,16 @@ from actions.meter import OZ_TO_ADC_VALUES, _tare
 
 METER_OZ_OFFSET=0.4
 
+# class MeterSimple(Action):
+#   def __init__(self, valve_to_actuate, oz_to_meter):
+#     self.valve_to_actuate = valve_to_actuate
+#     self.oz_to_meter = oz_to_meter
+#   def __call__(self, robot):
+#     if self.oz_to_meter == 0:
+#       logging.warning("oz_to_meter was zero, returning early.")
+#     with robot.OpenValve(self.valve_to_actuate):
+#       time.sleep(13.5 * self.oz_to_meter)
+#     time.sleep(1)
 class MeterSimple(Action):
   def __init__(self, valve_to_actuate, oz_to_meter):
     self.valve_to_actuate = valve_to_actuate

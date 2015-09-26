@@ -10,6 +10,7 @@ class WaitForGlassRemoval(Action):
       self.recipe = recipe
 
     def __call__(self, robot):
+      return  # HOTFIX
       sleep(.1)
       self.initial = robot.load_cell.recent_summary(secs=.1)
       sleep(.1)

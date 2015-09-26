@@ -5,7 +5,7 @@ import time
 
 from actions.action import Action
 
-BITTER_METER_TIME_SECS=.20
+BITTER_METER_TIME_SECS=.25
 
 class MeterBitters(Action):
   def __init__(self, valve_to_actuate, drops_to_meter):

@@ -10,8 +10,8 @@ db = [
         total_oz = 2.75,
         ingredients = [
             Ingredient(Parts(2), 'Tequila'),
-            Ingredient(Parts(1), 'Lime Juice'),
-            Ingredient(Parts(1), 'Agave Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Agave Syrup')]),
     Recipe(
         name = 'Old Fashioned',
         total_oz = 3,
@@ -24,8 +24,8 @@ db = [
         total_oz = 2.75, #topped off with soda
         ingredients = [
             Ingredient(Parts(2), 'Rum'),
-            Ingredient(Parts(1), 'Lime Juice'),
-            Ingredient(Parts(1), 'Simple Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup')]),
     Recipe(
         name = 'Gin Gimlet', #top with tonic to be a G&T
         total_oz = 2.75,
@@ -37,16 +37,16 @@ db = [
         total_oz = 2.75,
         ingredients = [
             Ingredient(Parts(2), 'Rye'),
-            Ingredient(Parts(1), 'Lemon Juice'),
-            Ingredient(Parts(1), 'Simple Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup')]),
     Recipe(
         name = 'Pimms Cup',
         total_oz = 4,
         ingredients = [
             Ingredient(Parts(6), 'Gin'),
             Ingredient(Parts(3), 'Pimms'),
-            Ingredient(Parts(1), 'Lemon Juice'),
-            Ingredient(Parts(1), 'Simple Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup')]),
     Recipe(
         name = 'Negroni',
         total_oz = 2.75,
@@ -76,7 +76,7 @@ db = [
             Ingredient(Parts(2), 'Sweet Vermouth'),
             Ingredient(Drops(2), 'Angostura Bitters')]),
     Recipe(
-        name = 'Gin & Tonic',
+        name = 'Gin and Tonic',
         total_oz = 5,
         ingredients = [
             Ingredient(Parts(3), 'Gin'),
@@ -87,7 +87,7 @@ db = [
         ingredients = [
             Ingredient(Parts(1), 'Scotch')]),
     Recipe(
-        name = 'Scotch & Water',
+        name = 'Scotch and Water',
         total_oz = 3,
         ingredients = [
             Ingredient(Parts(3), 'Scotch'),
@@ -117,10 +117,10 @@ db = [
         total_oz = 4,
         ingredients = [
             Ingredient(Parts(5), 'Rum'),
-            Ingredient(Parts(1), 'Lime'),
-            Ingredient(Parts(12), 'Cola')]),
+            Ingredient(Parts(1.5), 'Lime'),
+            Ingredient(Parts(10), 'Cola')]),
     Recipe(
-        name = 'Rum & Coke',
+        name = 'Rum and Coke',
         total_oz = 5,
         ingredients = [
             Ingredient(Parts(2), 'Rum'),
@@ -172,15 +172,15 @@ db = [
             Ingredient(Parts(3), 'Orange')]),
     Recipe(
         name = 'Gin Fizz',
-        total_oz = 5,
+        total_oz = 3.75,
         ingredients = [
             Ingredient(Parts(4.5), 'Gin'),
-            Ingredient(Parts(3), 'Lemon Juice'),
-            Ingredient(Parts(1), 'Simple Syrup'),
+            Ingredient(Parts(4.5), 'Lime Juice'),
+            #Ingredient(Parts(1), 'Simple Syrup'),
             Ingredient(Parts(8), 'Soda')]),
     Recipe(
         name = 'Yellow Bird',
-        total_oz = 5,
+        total_oz = 3.75,
         ingredients = [
             Ingredient(Parts(2), 'Rum'),
             Ingredient(Parts(1), 'Lime Juice'),
@@ -194,12 +194,12 @@ db = [
             Ingredient(Parts(1), 'Lime Juice'),
             Ingredient(Parts(1), 'Triple Sec')]),
     Recipe(
-        name = 'Lemon Drop',
+        name = 'Lime Drop',
         total_oz = 2.75,
         ingredients = [
             Ingredient(Parts(2), 'Vodka'),
-            Ingredient(Parts(1), 'Lemon Juice'),
-            Ingredient(Parts(1), 'Simple Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup')]),
     Recipe(
         name = 'Long Island Ice Tea',
         total_oz = 5,
@@ -208,9 +208,9 @@ db = [
             Ingredient(Parts(1), 'Gin'),
             Ingredient(Parts(1), 'Tequila'),
             Ingredient(Parts(1), 'Rum'),
-            Ingredient(Parts(1), 'Lemon Juice'),
             Ingredient(Parts(1), 'Lime Juice'),
-            Ingredient(Parts(1), 'Simple Syrup'),
+            Ingredient(Parts(1), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup'),
             Ingredient(Parts(1), 'Triple Sec'),
             Ingredient(Parts(0.5), 'Cola')]),
     Recipe(
@@ -218,20 +218,20 @@ db = [
         total_oz = 2.75,
         ingredients = [
             Ingredient(Parts(2), 'Gin'),
-            Ingredient(Parts(1), 'Lemon Juice'),
-            Ingredient(Parts(1), 'Simple Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup')]),
     Recipe(
-        name = 'Virgin Lemonade',
+        name = 'Virgin Limeade',
         total_oz = 2.75,
         ingredients = [
-            Ingredient(Parts(1), 'Lemon Juice'),
-            Ingredient(Parts(1), 'Simple Syrup')]),
+            Ingredient(Parts(1.5), 'Lime Juice'),
+            Ingredient(Parts(0.5), 'Simple Syrup')]),
     Recipe(
         name = 'Grenadine Punch',
         total_oz = 2.75,
         ingredients = [
             Ingredient(Parts(2), 'Grenadine'),
-            Ingredient(Parts(1), 'Lemon Juice'),
+            Ingredient(Parts(1), 'Lime Juice'),
             Ingredient(Parts(1), 'Lime Juice')]),
     Recipe(
         name = 'Random Sour',
@@ -270,9 +270,9 @@ db = [
             Ingredient(Parts(0), 'Agave'),
             Ingredient(Parts(0), 'Grenadine'),
             Ingredient(Parts(1), 'Simple'),
-            Ingredient(Parts(0), 'Lemon'),
+            #Ingredient(Parts(0), 'Lime'),
             Ingredient(Parts(0), 'Lime'),
-            Ingredient(Parts(0), 'Orange'),
+            #Ingredient(Parts(0), 'Orange'),
             Ingredient(Parts(0), 'Tonic'),
             Ingredient(Parts(0), 'Cola'),
             Ingredient(Parts(0), 'Water'),
@@ -298,7 +298,7 @@ def LiveDB():
   for drink in db:
     all_ingredients_live = True
     for ingredient in drink.ingredients:
-      if ingredient.name.lower().replace(" juice", "").replace(" syrup", "") not in live_ingredients:
+      if ingredient.name.lower().replace(" juice", "").replace(" syrup", "").replace("_backup", "") not in live_ingredients:
         print "dont have: %s" % ingredient.name
         all_ingredients_live = False
     if all_ingredients_live or "Random" in drink.name:
