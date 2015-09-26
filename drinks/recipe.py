@@ -16,7 +16,8 @@ class Recipe(object):
           self.user_name = user_name
 
     def __str__(self):
-        return "%s\n  %s\n\n" % (self.name, "\n  ".join(map(str, self.ingredients)))
+        user_name = ' for %s' % self.user_name if self.user_name else ''
+        return "%s%s\n  %s\n\n" % (self.name, user_name, "\n  ".join(map(str, self.ingredients)))
 
     @property
     def json(self):
