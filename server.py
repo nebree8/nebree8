@@ -166,8 +166,12 @@ def actions_for_recipe(recipe):
     """
     logging.info("Enqueuing actions for recipe %s", recipe)
     actions = []
-    for ingredient in recipe.ingredients:
-        valve = ingredients.IngredientNameToValvePosition(ingredient.name, recipe.name)
+    sorted_ingredients = sorted(
+        recipe.ingredients,
+        key=lambda i: ingredients.IngredientNameToValvePosition(i.name, recipe.name))
+    for ingredient in sorted_ingredients:
+        valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                          recipe.name)
         actions.append(Move(valve_position(valve)))
         if hasattr(ingredient.qty, 'drops'):
             actions.append(MeterBitters(
