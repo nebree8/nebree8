@@ -10,7 +10,7 @@ from collections import deque, namedtuple
 SAMPLES_PER_SECOND=256
 ADS1115 = 1
 
-Summary = namedtuple('Summary', ['records', 'mean', 'stddev', 'timestamp'])
+Summary = namedtuple('Summary', ['records', 'mean', 'stddev', 'timestamp', 'healthy'])
 
 class LoadCellMonitor(threading.Thread):
     """Continuously monitors and logs weight sensor readings."""
@@ -53,7 +53,8 @@ class LoadCellMonitor(threading.Thread):
           stddev = math.sqrt(sum((v - mean)**2 for t, v in recs) / (n - 1))
         else:
           stddev = 0.
-        return Summary(recs, mean, stddev, max(ts for ts, v in recs))
+        healthy = (mean > 5 and mean < 1450 and stddev > 0)
+        return Summary(recs, mean, stddev, max(ts for ts, v in recs), healthy)
 
     def stop(self):
         self.shutdown = True
