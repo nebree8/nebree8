@@ -53,7 +53,7 @@ class LoadCellMonitor(threading.Thread):
           stddev = math.sqrt(sum((v - mean)**2 for t, v in recs) / (n - 1))
         else:
           stddev = 0.
-        healthy = (mean > 5 and mean < 1450 and stddev > 0)
+        healthy = (mean > 5 and mean < 1450 and stddev > 0.5)
         return Summary(recs, mean, stddev, max(ts for ts, v in recs), healthy)
 
     def stop(self):

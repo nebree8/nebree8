@@ -354,7 +354,7 @@ def StartServer(port, syncer):
         ('/.*', StaticFileHandler),
     ])
     controller.app = app
-    if syncer: syncer.run()
+    if syncer: syncer.start()
     print "serving at http://%s:%i" % (socket.gethostname(), port)
     httpserver.serve(app, host="0.0.0.0", port=port, start_loop=True)
 
