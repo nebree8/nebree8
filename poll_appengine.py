@@ -86,6 +86,8 @@ class SyncToServer(threading.Thread):
                             print "Placing glass"
                             actions[0].force = True
                 self.write(queue)
+            except urllib2.URLError, e:
+                logging.warning("URLError: %s", e)
             except ValueError, e:
                 print e
             time.sleep(self.poll_frequency_secs)
