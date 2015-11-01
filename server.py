@@ -23,6 +23,7 @@ from config import ingredients
 from drinks import manual_db
 from drinks.recipe import Recipe
 from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomBubblySourDrink, RandomBubblySpirituousDrink
+from drinks.water_down import water_down_recipe
 import poll_appengine
 
 TEMPLATE_DIR="templates/"
@@ -205,6 +206,7 @@ def recipe_from_json_object(recipe_obj):
         elif recipe_obj['drink_name'] == "Random Bubbly Sour":
             recipe = RandomBubblySourDrink()
             recipe.user_name = recipe_obj['user_name']
+    recipe = water_down_recipe(recipe)
     return recipe
 
 
