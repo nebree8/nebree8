@@ -8,68 +8,37 @@ from drinks import recipe
 
 # MUST MAP TO ORDER OF PHYSICAL VALVES
 INGREDIENTS_ORDERED = (
-    "tequila",
-    "lime",
-    "agave",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-    "air",
-#   "bourbon", # "bourbon",
-#   "air", #backup bottle
-#   "tequila",
-#   "tequila_backup", #backup bottle
-#   "galliano",
-#   "chocolate bitters", #small bottle location # WILL
-#   "scotch",
-#   "rye",
-#   "rum",
-#   "vodka",  # MISSING
-#   "triple sec", # MISSING
-#   "frangelico",
-#   "angostura bitters", #small bottle location
-#   "sweet vermouth", # MISSING
-#   "kahlua",
-#   "gin",
-#   "campari",
-#   "dry vermouth",
-#   "peychauds bitters", #small bottle location # WILL
-#   "agave",  # NOT LINED UP
-#   "pimms",  # WILL
-#   "grenadine",
-#   "simple",
-#   "air", #"lemon",
-#   "air", #"lime",
-#   "orange bitters", #small bottle location
-#   "air", #"orange",
-#   "tonic",
-#   "cola",
-#   "water",
-#   "soda",
+   "bourbon", # "bourbon",
+   "honey", #backup bottle
+   "tequila",
+   "maple", #backup bottle
+   "agave",  # NOT LINED UP
+   "chocolate bitters", #small bottle location # WILL
+   "scotch",
+   "rye",
+   "rum",
+   "vodka",  # MISSING
+   "triple sec", # MISSING
+   "frangelico",
+   "angostura bitters", #small bottle location
+   "sweet vermouth", # MISSING
+   "kahlua",
+   "gin",
+   "campari",
+   "dry vermouth",
+   "peychauds bitters", #small bottle location # WILL
+   "grenadine",
+   "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
+   "pimms",  # WILL
+   "simple",
+   "lemon",
+   "lime",
+   "orange bitters", #small bottle location
+   "tonic",
+   "orange",
+   "cola",
+   "soda",
+   "water",
 )
 
 OVERRIDES = {
