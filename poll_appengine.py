@@ -64,7 +64,7 @@ class SyncToServer(threading.Thread):
         last_drink_id = None
         while True:
             try:
-                queue = json.loads(self.get('drink_queue'))
+                queue = json.loads(self.get('next_drink'))
                 if not self.controller and queue:
                     json_recipe = queue[0]
                     drink_id = json_recipe['id']

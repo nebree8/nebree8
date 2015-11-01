@@ -16,7 +16,7 @@ class FakeRobot(Robot):
     self.pressurized = False
 
   def __check_position(self, valve_no):
-    if abs(self.position - (-10.5 - 4. * (14 - valve_no))) > 1:
+    if abs(self.position - (-9.625 - 1.875 * valve_no)) > 1:
       raise ActionException("Caddy wasn't in the right position!")
 
   @staticmethod
