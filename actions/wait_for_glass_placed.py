@@ -10,6 +10,7 @@ class WaitForGlassPlaced(Action):
       sleep(.1)
       self.initial = robot.load_cell.recent_summary(secs=.1)
       if not self.initial.healthy:
+        print "unhealthy load cell; sleeping 15s"
         sleep(15)
         return
       sleep(.1)

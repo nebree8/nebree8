@@ -8,37 +8,42 @@ from drinks import recipe
 
 # MUST MAP TO ORDER OF PHYSICAL VALVES
 INGREDIENTS_ORDERED = (
-   "bourbon", # "bourbon",
-   "honey", #backup bottle
-   "tequila",
-   "maple", #backup bottle
-   "agave",  # NOT LINED UP
-   "chocolate bitters", #small bottle location # WILL
-   "scotch",
-   "rye",
-   "rum",
-   "vodka",  # MISSING
-   "triple sec", # MISSING
-   "frangelico",
-   "angostura bitters", #small bottle location
-   "sweet vermouth", # MISSING
-   "kahlua",
+   "vodka",
    "gin",
-   "campari",
+   "bourbon", # "bourbon",
+   "tequila",
+   "rum",
    "dry vermouth",
-   "peychauds bitters", #small bottle location # WILL
-   "grenadine",
-   "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
+   "chocolate bitters", #small bottle location # WILL
+   "rye",
    "pimms",  # WILL
-   "simple",
-   "lemon",
-   "lime",
-   "orange bitters", #small bottle location
-   "tonic",
-   "orange",
+   "campari",
+   "scotch",
    "cola",
+   "angostura bitters", #small bottle location
+   "simple",
+   "frangelico",
+   "peppermint schnapps", # peppermint schnapps
+   "triple sec", # MISSING
+   "kahlua",
+   "peychauds bitters", #small bottle location # WILL
+   "sweet vermouth", # MISSING
+   "grenadine",
+   "lime",
+   "agave",  # NOT LINED UP
+   "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
+   "triple sec_backup", # MISSING
+   "soda_backup",
+   "orange",
    "soda",
-   "water",
+   "tonic",
+   "lemon",
+   "air",
+
+   #"honey", #backup bottle
+   #"maple", #backup bottle
+   #"orange bitters", #small bottle location
+   #"water",
 )
 
 OVERRIDES = {

@@ -31,12 +31,15 @@ INGREDIENTS = {
   "tequila" : [1, 0, 0, 0, 0],
   "tequila_backup" : [1, 0, 0, 0, 0],
   "triple sec" : [0.5, 0.5, 0, 0, 0],
+  "triple sec_backup" : [0.5, 0.5, 0, 0, 0],
   "vodka" : [1, 0, 0, 0, 0],
   "dry vermouth" : [0, 0, 0, 1, 0],
   "sweet vermouth" : [0, 0, 0, 1, 0],
   "soda" : [0, 0, 0, 1, 1],
+  "soda_backup" : [0, 0, 0, 1, 1],
   "tonic" : [0, 0.2, 0, 1, 1],
   "cola" : [0, 0.5, 0.3, 0, 1],
+  "peppermint schnapps" : [0.5, 0.5, 0, 0, 0],
   #"water" : [0, 0, 0, 0, 0],
 }
 

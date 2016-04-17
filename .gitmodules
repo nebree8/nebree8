@@ -7,3 +7,6 @@
 [submodule "MS5803-14BA_Breakout"]
 	path = MS5803-14BA_Breakout
 	url = https://github.com/sparkfun/MS5803-14BA_Breakout
+[submodule "Adafruit_NeoPixel"]
+	path = Adafruit_NeoPixel
+	url = https://github.com/adafruit/Adafruit_NeoPixel
