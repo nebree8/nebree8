@@ -103,3 +103,6 @@ class PhysicalRobot(Robot):
 
   def DeactivateCompressor(self):
     self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+
+  def SetLed(self, x, y, r, g, b):
+    self.io.arduino.SetLed(x, y, r, g, b)

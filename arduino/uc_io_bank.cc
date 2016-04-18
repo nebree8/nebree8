@@ -33,11 +33,12 @@ void setup() {
   //arduino_io.Add(new nebree8::UCServoModule());
   arduino_io.Add(new nebree8::PressureSensorModule());
   arduino_io.Add(new nebree8::MotorModule());
-  const int kNumLeds = 300;
+  // I seem to run out of ram with > 100
+  const int kNumLeds = 100;
   nebree8::LedModule *led_module = new nebree8::LedModule(kNumLeds, LED_SIGNAL_PIN);
   arduino_io.Add(led_module);
   // Try a teal led.
-  led_module->LightRegion(5.0, 0.0, 0, 128, 128);
+  led_module->LightRegion(7.0, 4.0, 0, 128, 128);
   pinMode(6, OUTPUT);
   digitalWrite(6, HIGH);
   pinMode(13, OUTPUT);

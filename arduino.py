@@ -43,6 +43,14 @@ class Arduino:
     command = "HOLDP" + "".join(raw_message)
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
+  def SetLed(self, x, y, red, green, blue):
+    raw_message = [red, green, blue]
+    raw_message.extend(struct.unpack('4B', struct.pack('<f', x)))
+    raw_message.extend(struct.unpack('4B', struct.pack('<f', y)))
+    raw_message = [chr(x) for x in raw_message]
+    command = "ONE_LED" + "".join(raw_message)
+    self.signal_refresh.put((True, command), block=True, timeout=None)
+
   def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
       positive_trigger_pin, done_pin, forward, steps, final_wait):
     raw_message = []
