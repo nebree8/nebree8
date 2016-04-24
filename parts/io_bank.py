@@ -216,12 +216,12 @@ class IOBank(object):
   def ReleasePressure(self):
     self.arduino.HoldPressure(PRESSURE_VALVE_PIN, hold=False)
 
-  def Move(self, forward, steps, final_wait):
+  def Move(self, forward, steps, final_wait, max_wait=4000):
     self.arduino.Move(ARDUINO_STEPPER_DIR, ARDUINO_STEPPER_PULSE,
         ARDUINO_RAIL_TRIGGER_NEGATIVE, ARDUINO_RAIL_TRIGGER_POSITIVE,
         ARDUINO_STEPPER_DONE,
-        forward, steps, final_wait)
-    time.sleep(1.0)
+        forward, steps, final_wait, max_wait)
+    #time.sleep(1.0)
     while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
       time.sleep(0.05)
 

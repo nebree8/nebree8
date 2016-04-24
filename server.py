@@ -164,6 +164,10 @@ def valve_position(valve_no):
 def led_position(valve_no):
     return 1.875 * valve_no
 
+def LedAction(valve, r, g, b):
+    return Led(max(0, led_position(valve) - 1.0), r, g, b,
+        valve % 2 == 1)
+
 def actions_for_recipe(recipe):
     """Returns the actions necessary to make the given recipe.
 
@@ -177,12 +181,12 @@ def actions_for_recipe(recipe):
     for ingredient in sorted_ingredients:
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
-        actions.append(Led(led_position(valve), 255, 0, 0))
+        actions.append(LedAction(valve, 255, 0, 0))
     for ingredient in sorted_ingredients:
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
         actions.append(Move(valve_position(valve)))
-        actions.append(Led(led_position(valve), 0, 255, 0))
+        actions.append(LedAction(valve, 0, 255, 0))
         if hasattr(ingredient.qty, 'drops'):
             actions.append(MeterBitters(
                 valve_to_actuate=valve, drops_to_meter=ingredient.qty.drops))
@@ -192,14 +196,14 @@ def actions_for_recipe(recipe):
         else:
             raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
                     ingredient.name, recipe.name, recipe)
-        actions.append(Led(led_position(valve), 0, 128, 255))
+        actions.append(LedAction(valve, 0, 128, 255))
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
     actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
     for ingredient in sorted_ingredients:
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
-        actions.append(Led(led_position(valve), 0, 0, 0))
+        actions.append(LedAction(valve, 0, 0, 0))
     actions.append(WaitForGlassPlaced())
     return actions
 
@@ -284,11 +288,11 @@ class FillHandler(webapp2.RequestHandler):
             valve = int(args[2])
             oz = float(args[0])
             controller.EnqueueGroup([
-              Led(led_position(valve), 255, 0, 0),
+              LedAction(valve, 255, 0, 0),
               Move(valve_position(valve)),
-              Led(led_position(valve), 0, 255, 0),
+              LedAction(valve, 0, 255, 0),
               Meter(valve_to_actuate=valve, oz_to_meter=oz),
-              Led(led_position(valve), 0, 128, 255)])
+              LedAction(valve, 0, 128, 255)])
         except ValueError:
             self.response.status = 400
             self.response.write("valve and oz arguments are required.")

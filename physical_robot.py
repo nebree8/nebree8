@@ -106,3 +106,15 @@ class PhysicalRobot(Robot):
 
   def SetLed(self, x, y, r, g, b):
     self.io.arduino.SetLed(x, y, r, g, b)
+
+  def UpdateLeds(self):
+    self.io.arduino.UpdateLeds()
+
+  def Shake(self):
+    self.ChuckHoldHeadPressure()
+    time.sleep(2.0)
+    for i in range(8):
+      steps = 100
+      min_wait = 250  # us
+      self.io.Move(True, steps, min_wait, max_wait=400)
+      self.io.Move(False, steps, min_wait, max_wait=400)

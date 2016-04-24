@@ -13,13 +13,14 @@ class Arduino:
     self.outputs = {}
     self.signal_refresh = Queue.Queue(1)
     self.incoming_messages = Queue.Queue(10)
+    self.output_updates = Queue.Queue(100)
     self.thread = threading.Thread(target=self.__RefreshOutputs)
     self.thread.daemon = True
     self.thread.start()
 
   def WriteOutput(self, pin, value):
-    self.outputs[pin] = value
     try:
+      self.output_updates.put((pin, value), block=True)
       self.signal_refresh.put((False, None), block=False, timeout=None)
     except Queue.Full:
       pass
@@ -51,8 +52,12 @@ class Arduino:
     command = "ONE_LED" + "".join(raw_message)
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
+  def UpdateLeds(self):
+    command = "LED_GO"
+    self.signal_refresh.put((True, command), block=True, timeout=None)
+
   def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
-      positive_trigger_pin, done_pin, forward, steps, final_wait):
+      positive_trigger_pin, done_pin, forward, steps, final_wait, max_wait):
     raw_message = []
     if forward:
       forward = 0x01
@@ -60,8 +65,13 @@ class Arduino:
       forward = 0x00
     raw_message.extend((
       stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin, positive_trigger_pin, done_pin, forward))
+    if max_wait < 1000:
+      raw_message.append(10)
+    else:
+      raw_message.append(0)
     raw_message.extend(struct.unpack('4B', struct.pack('<i', steps)))
-    raw_message.extend(struct.unpack('4B', struct.pack('<i', int(1.0 / final_wait))))
+    # print "max_wait: %s" % max_wait
+    # raw_message.extend(struct.unpack('4B', struct.pack('<i', 4000)))
     raw_message = [chr(x) for x in raw_message]
     command = "MOVE" + "".join(raw_message)
     print "Move command: %s" % [ord(x) for x in raw_message]
@@ -84,6 +94,13 @@ class Arduino:
     while True:
       try:
         use_this_command, command = self.signal_refresh.get(True, 1. / _REFRESH_RATE)
+        while True:
+          try:
+            pin, value = self.output_updates.get(False)
+            self.outputs[pin] = value
+            print "output set"
+          except Queue.Empty:
+            break
         if use_this_command:
           self.interface.Write(0, command)
           #f command[0:4] == "MOVE":

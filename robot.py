@@ -37,3 +37,8 @@ class Robot(object):
     """Turns on leds in a region around (x, y).
     """
     raise NotImplementedError()
+
+  def UpdateLeds(self):
+    """Turns on leds in a region around (x, y).
+    """
+    raise NotImplementedError()

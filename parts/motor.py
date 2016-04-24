@@ -58,7 +58,7 @@ class StepperMotor(object):
           HitNegativeRail)
 
 
-  def Move(self, steps, forward=1, ramp_seconds=0, final_wait=0.0005):
+  def Move(self, steps, forward=1, ramp_seconds=0, final_wait=0.0005, max_wait=4000):
     if self.dry_run:
       print "DRY RUN: Moving %d steps in direction: %d" % (steps, forward)
     else:
