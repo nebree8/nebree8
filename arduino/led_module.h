@@ -56,7 +56,7 @@ class LedModule : public arduinoio::UCModule {
         uint8_t green_amp = static_cast<uint8_t>(g / dist_squared_decay);
         uint8_t blue_amp = static_cast<uint8_t>(b / dist_squared_decay);
         if (red_amp > 16 || green_amp > 16 || blue_amp > 16 ||
-            r + g + b == 0) {
+            (r == 0 && g == 0 && b == 0)) {
           const uint16_t index = GetLedIndex(led_x, led_y);
           neopixel_[index / PIXELS_PER_BLOCK]->setPixelColor(index,
               red_amp, green_amp, blue_amp);
@@ -107,8 +107,15 @@ class LedModule : public arduinoio::UCModule {
       float y = x_y_pos[1];
       LightRegion(x, y, red, green, blue);
       return true;
-    }
-    if (strncmp(command, LED_GO, LED_GO_LENGTH) == 0) {
+    } else if (strncmp(command, SET_ALL_LED, SET_ALL_LED_LENGTH) == 0) {
+      char red = command[SET_ALL_LED_LENGTH];
+      char green = command[SET_ALL_LED_LENGTH + 1];
+      char blue = command[SET_ALL_LED_LENGTH + 2];
+      for (int i = 0; i < num_leds_; ++i) {
+        neopixel_[i / PIXELS_PER_BLOCK]->setPixelColor(i, red, green, blue);
+      }
+      return true;
+    } else if (strncmp(command, LED_GO, LED_GO_LENGTH) == 0) {
       UpdatePixels();
       return true;
     }

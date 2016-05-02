@@ -107,6 +107,9 @@ class PhysicalRobot(Robot):
   def SetLed(self, x, y, r, g, b):
     self.io.arduino.SetLed(x, y, r, g, b)
 
+  def AllLed(self, r, g, b):
+    self.io.arduino.AllLed(r, g, b)
+
   def UpdateLeds(self):
     self.io.arduino.UpdateLeds()
 

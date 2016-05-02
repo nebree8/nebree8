@@ -9,6 +9,7 @@ import os
 from actions.action import ActionException
 from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.move import Move
+from led_show import LedShow
 
 class Controller:
   def __init__(self, robot):
@@ -31,7 +32,16 @@ class Controller:
   def __Process(self):
     while True:
       logging.info("Waiting for actions...")
-      self.queued_sem.acquire() # Ensure there are items to process.
+      led_show = LedShow(self.robot)
+      ran_led_show = False
+      while True:
+        if self.queued_sem.acquire(blocking=False): # Ensure there are items to process.
+          break
+        ran_led_show = True
+        led_show.Update()
+      if ran_led_show:
+        print "Led clear."
+        led_show.Clear()
       with self.queue_lock:
         self.current_action = self.queue.popleft()
       try:

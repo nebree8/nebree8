@@ -1,9 +1,14 @@
+import logging
 import struct
 import threading
 import time
 import Queue
 
 from arduinoio import serial_control
+
+logging.basicConfig(level=logging.INFO,
+    format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+    datefmt='%m-%d %H:%M:%S')
 
 _REFRESH_RATE = 5  # Refreshes per second
 
@@ -52,6 +57,12 @@ class Arduino:
     command = "ONE_LED" + "".join(raw_message)
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
+  def AllLed(self, red, green, blue):
+    raw_message = [red, green, blue]
+    raw_message = [chr(x) for x in raw_message]
+    command = "ALL_LED" + "".join(raw_message)
+    self.signal_refresh.put((True, command), block=True, timeout=None)
+
   def UpdateLeds(self):
     command = "LED_GO"
     self.signal_refresh.put((True, command), block=True, timeout=None)
@@ -98,7 +109,7 @@ class Arduino:
           try:
             pin, value = self.output_updates.get(False)
             self.outputs[pin] = value
-            print "output set"
+            logging.info("output set")
           except Queue.Empty:
             break
         if use_this_command:

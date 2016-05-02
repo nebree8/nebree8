@@ -290,7 +290,8 @@ TEST_DRINK = Recipe(
             Ingredient(Parts(2), 'Vodka'),
             Ingredient(Parts(1), 'Bourbon'),
             Ingredient(Parts(1), 'Rye'),
-            Ingredient(Parts(1), 'Rum')])
+            Ingredient(Parts(1), 'Rum')],
+        user_name="Test")
 
 def LiveDB():
   live_ingredients = ingredients.IngredientsOrdered()
