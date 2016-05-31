@@ -20,6 +20,8 @@ class LoadCellMonitor(threading.Thread):
         if not adc:
           try:
               from Adafruit_ADS1x15 import ADS1x15
+              from Adafruit_I2C import Adafruit_I2C
+              Adafruit_I2C.getPiI2CBusNumber = staticmethod(lambda: 1)
               self.adc = ADS1x15(ic=ADS1115)
           except IOError:
               print ("Failed to open i2c device -- have you run ./setup.py " +
