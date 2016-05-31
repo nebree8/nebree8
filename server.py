@@ -17,7 +17,8 @@ from actions.meter_simple import MeterSimple as Meter
 from actions.meter_bitters import MeterBitters
 from actions.move import Move
 from actions.wait_for_glass_removal import WaitForGlassRemoval
-from actions.wait_for_glass_placed import WaitForGlassPlaced
+from actions.dispense_cup import DispenseCup
+#from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.pressurize import HoldPressure, ReleasePressure
 from controller import Controller
 from config import ingredients
@@ -182,6 +183,8 @@ def actions_for_recipe(recipe):
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
         actions.append(LedAction(valve, 255, 0, 0))
+    actions.append(Move(-3.625))
+    actions.append(DispenseCup())
     for ingredient in sorted_ingredients:
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
@@ -204,7 +207,7 @@ def actions_for_recipe(recipe):
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
         actions.append(LedAction(valve, 0, 0, 0))
-    actions.append(WaitForGlassPlaced())
+    #actions.append(WaitForGlassPlaced())
     return actions
 
 

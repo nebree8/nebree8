@@ -3,7 +3,7 @@ import time
 
 from parts import io_bank
 from robot import Robot
-from parts.load_cell import LoadCellMonitor
+from parts.load_cell import LoadCellMonitor, FakeLoadCellMonitor
 from parts.motor import StepperMotor, RobotRail
 
 
@@ -17,7 +17,8 @@ class PhysicalRobot(Robot):
     self.io = io_bank.IOBank()
     motor = StepperMotor(io=self.io, use_separate_process=True)  # Not a dry run
     self.rail = RobotRail(motor)
-    self.load_cell = LoadCellMonitor()
+    #self.load_cell = LoadCellMonitor()
+    self.load_cell = FakeLoadCellMonitor()
     self.calibrated = False
     self.pressurized = False
 
@@ -62,6 +63,14 @@ class PhysicalRobot(Robot):
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
     self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
+
+  def LowerCup(self):
+    """Drops the cup container."""
+    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 0)
+
+  def RaiseCup(self):
+    """Raises the cup container."""
+    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 1)
 
   def ChuckHoldHeadPressure(self):
     return self.ChuckVent()

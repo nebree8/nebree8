@@ -101,6 +101,7 @@ class Outputs(enum.Enum):
   # For chuck, close head, open vent
   # For cleanup, open both
   COMPRESSOR = 2006
+  CUP_DISPENSER = 2052
 
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
 ARDUINO_STEPPER_DONE = 44

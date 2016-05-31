@@ -47,3 +47,9 @@ class Robot(object):
     """Sets all leds to a color
     """
     raise NotImplementedError()
+
+  def LowerCup(self):
+      pass
+
+  def RaiseCup(self):
+      pass
