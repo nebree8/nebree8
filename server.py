@@ -17,7 +17,7 @@ from actions.meter_simple import MeterSimple as Meter
 from actions.meter_bitters import MeterBitters
 from actions.move import Move
 from actions.wait_for_glass_removal import WaitForGlassRemoval
-from actions.dispense_cup import DispenseCup
+from actions.dispense_cup import DispenseCup, ReleaseCup
 #from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.pressurize import HoldPressure, ReleasePressure
 from controller import Controller
@@ -32,6 +32,7 @@ TEMPLATE_DIR="templates/"
 STATIC_FILE_DIR="static/"
 robot = None
 controller = None
+CUP_DISPENSE_POSITION = -3.465
 
 class CustomJsonEncoder(json.JSONEncoder):
   def default(self, obj):
@@ -183,7 +184,7 @@ def actions_for_recipe(recipe):
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
         actions.append(LedAction(valve, 255, 0, 0))
-    actions.append(Move(-3.625))
+    actions.append(Move(CUP_DISPENSE_POSITION))
     actions.append(DispenseCup())
     for ingredient in sorted_ingredients:
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
@@ -283,6 +284,20 @@ class ReleasePressureHandler(webapp2.RequestHandler):
         controller.EnqueueGroup([ReleasePressure()])
 
 
+class DispenseCupHandler(webapp2.RequestHandler):
+    def post(self):
+        controller.EnqueueGroup([DispenseCup()])
+
+
+class DispenseCupFullTestHandler(webapp2.RequestHandler):
+    def post(self):
+        controller.EnqueueGroup([
+            Move(CUP_DISPENSE_POSITION),
+            DispenseCup(),
+            Move(valve_position(0)),
+            ReleaseCup()])
+
+
 class FillHandler(webapp2.RequestHandler):
     def post(self):
         print "FILL HANDLER"
@@ -373,6 +388,8 @@ def StartServer(port, syncer):
         ('/api/prime', PrimeHandler),
         ('/api/hold_pressure', HoldPressureHandler),
         ('/api/release_pressure', ReleasePressureHandler),
+        ('/api/dispense_cup', DispenseCupHandler),
+        ('/api/dispense_cup_full_test', DispenseCupFullTestHandler),
         ('/api/move.*', MoveHandler),
         ('/api/fill.*', FillHandler),
         ('/api/test1.*', Test1Handler),

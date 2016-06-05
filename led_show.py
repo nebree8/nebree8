@@ -18,7 +18,6 @@ class LedShow(object):
     self.rindex = 179
 
   def Update(self):
-    print "Led show!"
     self.r = clamp(self.r + 4)
     self.g = clamp(self.g * 2 + 1)
     self.b = clamp(self.b + 12)
@@ -33,7 +32,6 @@ class LedShow(object):
     self.SetFromIndex(self.index)
     self.SetFromIndex(self.rindex)
     self.robot.UpdateLeds()
-    print "Led show done!"
 
   def SetFromIndex(self, index):
     x = (index % 60)

@@ -7,6 +7,15 @@ class DispenseCup(Action):
 
   def __call__(self, robot):
     robot.LowerCup()
-    time.sleep(1.0)
+    robot.ChuckVent()
+    time.sleep(5.0)
     robot.RaiseCup()
-    time.sleep(1.0)
+    time.sleep(2.0)
+
+
+class ReleaseCup(Action):
+  def __init__(self):
+    pass
+
+  def __call__(self, robot):
+    robot.Vent()

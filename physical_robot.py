@@ -65,11 +65,11 @@ class PhysicalRobot(Robot):
 
   def LowerCup(self):
     """Drops the cup container."""
-    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 0)
+    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 1)
 
   def RaiseCup(self):
     """Raises the cup container."""
-    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 1)
+    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 0)
 
   def ChuckHoldHeadPressure(self):
     return self.ChuckVent()
