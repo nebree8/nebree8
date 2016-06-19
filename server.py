@@ -184,8 +184,6 @@ def actions_for_recipe(recipe):
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
         actions.append(LedAction(valve, 255, 0, 0))
-    actions.append(Move(CUP_DISPENSE_POSITION))
-    actions.append(DispenseCup())
     for ingredient in sorted_ingredients:
         valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                           recipe.name)
