@@ -18,8 +18,8 @@ INGREDIENTS_ORDERED = (
    "rye",
    "pimms",  # WILL
    "campari",
-   "scotch",
-   "cola",
+   "scotch", # no ice
+   "amaretto",
    "angostura bitters", #small bottle location
    "simple",
    "frangelico",
@@ -33,12 +33,12 @@ INGREDIENTS_ORDERED = (
    "agave",  # NOT LINED UP
    "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
    "triple sec_backup", # MISSING
-   "soda_backup",
-   "orange",
    "soda",
+   "orange",
+   "air",
    "tonic",
    "lemon",
-   "air",
+   "maple syrup",
 
    #"honey", #backup bottle
    #"maple", #backup bottle
