@@ -1,3 +1,8 @@
+# Custom additions
+monitor/data
+remote_queue.txt
+static/d3.v3.min.js
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
