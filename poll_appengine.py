@@ -11,9 +11,16 @@ import threading
 import urllib
 import urllib2
 
+import gflags
+
 from actions.action import Action
+from config import ingredients
 from drinks.recipe import Recipe
 from server import actions_for_recipe, recipe_from_json_object
+
+FLAGS = gflags.FLAGS
+gflags.DEFINE_bool("check_ingredients", True,
+                   "Cross check list of ingredients with INGREDIENTS_ORDERED")
 
 
 class UpdateProgressAction(Action):
@@ -49,6 +56,25 @@ class SyncToServer(threading.Thread):
     self.poll_frequency_secs = poll_frequency_secs
     self.controller = controller
     self.daemon = True
+    if FLAGS.check_ingredients:
+      config = json.loads(self.get('get_config'))
+      logging.info("Frontend config=%s", config)
+      backend_ingredients = set(i for i in ingredients.IngredientsOrdered()
+                                if i != "air" and not i.endswith(" backup"))
+      frontend_ingredients = set()
+      for ingredient in config.get("Ingredients", []):
+        name = ingredient.get('Name', '')
+        if ingredient.get('Available', False) and name:
+          frontend_ingredients.add(name)
+      if backend_ingredients - frontend_ingredients:
+        logging.error('Ingredients missing from frontend: %s',
+                      ', '.join(backend_ingredients - frontend_ingredients))
+      if frontend_ingredients - backend_ingredients:
+        logging.error('Ingredients missing from backend: %s',
+                      ', '.join(frontend_ingredients - backend_ingredients))
+      if frontend_ingredients != backend_ingredients:
+        raise NotImplementedError("Ingredients differ on backend and frontend. "
+                                  + "Disable check with --nocheck_ingredients")
 
   def get(self, url):
     return urllib2.urlopen(self.base_url + url).read()
