@@ -1,10 +1,10 @@
-
 import time
 
 from actions.action import ActionException
 from contextlib import contextmanager
 from parts.load_cell import FakeLoadCellMonitor
 from robot import Robot
+
 
 class FakeRobot(Robot):
   def __init__(self):
@@ -22,9 +22,11 @@ class FakeRobot(Robot):
   @staticmethod
   def __run_with_delay(delay_sec, fn):
     import threading
+
     def W():
       time.sleep(delay_sec)
       fn()
+
     t = threading.Thread(target=W)
     t.daemon = True
     t.start()
@@ -35,7 +37,7 @@ class FakeRobot(Robot):
 
   def CalibrateToZero(self, carefully=False):
     self._FakeMove(0)
-    
+
   def MoveToPosition(self, position_in_inches):
     old_stddev = self.load_cell.stddev
     self.load_cell.stddev *= 10
@@ -76,7 +78,7 @@ class FakeRobot(Robot):
 
   def SetLed(self, x, y, r, g, b):
     pass
-    
+
   def UpdateLeds(self):
     pass
 

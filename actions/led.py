@@ -1,5 +1,6 @@
 from actions.action import Action, ActionException
 
+
 class Led(Action):
   def __init__(self, x, r, g, b, back=False):
     self.x = x

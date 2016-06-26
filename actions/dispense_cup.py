@@ -1,6 +1,7 @@
 from actions.action import Action, ActionException
 import time
 
+
 class DispenseCup(Action):
   def __init__(self):
     pass

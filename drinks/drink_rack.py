@@ -1,5 +1,6 @@
 import csv
 
+
 class DrinkRack(object):
   def __init__(self, csv_filename):
     # Read positions and drinks file.
@@ -14,7 +15,7 @@ class DrinkRack(object):
   def IngredientToPosition(self, ingredient):
     """Returns a tuple of (ingredient, position). May alias ingredient."""
     if ingredient not in self.drinks_to_positions:
-      for alias in self.drink_aliases.get(ingredient, ingredient) 
+      for alias in self.drink_aliases.get(ingredient, ingredient):
         if alias in self.drinks_to_positions:
           ingredient = alias
     if ingredient not in self.drinks_to_positions:

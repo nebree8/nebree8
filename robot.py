@@ -1,6 +1,7 @@
 # Encapsulates all the mechanical functions and sensors that comprise the
 # Nebree8 robot.
 
+
 class Robot(object):
   def __init__(self):
     self.cannot_interrupt = False
@@ -49,7 +50,7 @@ class Robot(object):
     raise NotImplementedError()
 
   def LowerCup(self):
-      pass
+    pass
 
   def RaiseCup(self):
-      pass
+    pass

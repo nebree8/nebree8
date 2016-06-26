@@ -13,26 +13,29 @@ MAX_TARE_STDDEV = 3.
 TARE_TIMEOUT_SECS = 20.
 MAX_METER_SECS = 15.
 
+
 class TareTimeout(ActionException):
   """Thrown when attempt to tare times out"""
 
 
 class MeterTimeout(ActionException):
   """Throw when metering takes too long after tare."""
-  def __init__(self, tare, target_ts, recent_readings,
-      complete_readings):
+
+  def __init__(self, tare, target_ts, recent_readings, complete_readings):
     super(MeterTimeout, self).__init__()
     self.tare = tare
     self.target_ts = target_ts
     self.recent_readings = recent_readings
     self.complete_readings = complete_readings
+
   def __str__(self):
     return ("Failed to meter within %s seconds. Tare=%s, Recent=%s" %
-        (MAX_METER_SECS, self.tare, self.recent_readings))
+            (MAX_METER_SECS, self.tare, self.recent_readings))
 
 
 def _format_summary(start_ts, s):
-  return 'elapsed=%s mean=%s stddev=%s' % (s.timestamp - start_ts, s.mean, s.stddev)
+  return 'elapsed=%s mean=%s stddev=%s' % (s.timestamp - start_ts, s.mean,
+                                           s.stddev)
 
 
 def _tare(robot):
@@ -48,9 +51,9 @@ def _tare(robot):
     sleep(.1)
     tare = robot.load_cell.recent_summary(secs=.1)
   if tare.stddev > MAX_TARE_STDDEV:
-    raise TareTimeout('Reading standard deviation while taring above ' +
-        '%s for %s secs. Last result: %s' % (
-          MAX_TARE_STDDEV, TARE_TIMEOUT_SECS, tare))
+    logging.error('Reading standard deviation while taring above ' +
+                  '%s for %s secs. Last result: %s' % (MAX_TARE_STDDEV,
+                                                       TARE_TIMEOUT_SECS, tare))
   return tare
 
 
@@ -73,8 +76,10 @@ def _predict_fill_completion(summary, target_reading):
     return summary.timestamp + MAX_METER_SECS, w[0], w[1]
   return (target_ts, w[0], w[1])
 
+
 FillInfo = namedtuple('FillInfo', ['m_actuation_delay', 'target_ts', 'summary',
-    'slope', 'intercept'])
+                                   'slope', 'intercept'])
+
 
 def _wait_until_filled(tare, load_cell, target_reading, deadline):
   summary = tare
@@ -84,7 +89,9 @@ def _wait_until_filled(tare, load_cell, target_reading, deadline):
   while target_ts - VALVE_ACTUATION_DELAY_SECS > time():
     yield FillInfo(mes_actuation_delay, target_ts, summary, slope, intercept)
     if time() > deadline:
-      raise MeterTimeout(tare=tare, target_ts=target_ts,
+      raise MeterTimeout(
+          tare=tare,
+          target_ts=target_ts,
           recent_readings=summary,
           complete_readings=load_cell.recent_summary(secs=MAX_METER_SECS))
     sleep(.01)
@@ -93,8 +100,8 @@ def _wait_until_filled(tare, load_cell, target_reading, deadline):
     if not mes_actuation_delay and summary.mean > tare.mean + tare.stddev * 3:
       mes_actuation_delay = time() - tare.timestamp
       logging.info("Detected increase in weight after %ss", mes_actuation_delay)
-    target_ts, slope, intercept = _predict_fill_completion(
-        summary, target_reading)
+    target_ts, slope, intercept = _predict_fill_completion(summary,
+                                                           target_reading)
 
 
 class Meter(Action):
@@ -104,7 +111,7 @@ class Meter(Action):
 
   def __call__(self, robot):
     if self.oz_to_meter == 0:
-        logging.warning("oz_to_meter was zero, returning early.")
+      logging.warning("oz_to_meter was zero, returning early.")
     start_ts = time()
     print "Waiting to tare"
     self.tare = _tare(robot)
@@ -112,12 +119,12 @@ class Meter(Action):
     self.adc_units_to_meter = self.oz_to_meter * OZ_TO_ADC_VALUES
     self.target_reading = self.adc_units_to_meter + self.tare.mean
     print "target_reading=%s oz_to_meter=%s self.tare.mean=%s" % (
-       self.target_reading, self.oz_to_meter, self.tare.mean)
+        self.target_reading, self.oz_to_meter, self.tare.mean)
     self.measured_actuation_delay = 2.
     last_print = 0
     self.last_readings = self.tare
     while (self.last_readings.mean <
-            (self.adc_units_to_meter * .8) + self.tare.mean):
+           (self.adc_units_to_meter * .8) + self.tare.mean):
       with robot.OpenValve(self.valve_to_actuate):
         for info in _wait_until_filled(
             tare=self.tare,
@@ -139,4 +146,3 @@ class Meter(Action):
       self.last_readings = robot.load_cell.recent_summary(secs=.3)
       print "Readings after sleep: %s" % (
           _format_summary(start_ts, self.last_readings))
-

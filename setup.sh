@@ -54,6 +54,11 @@ function install_polymer {
   run bower update
 }
 
+function reformat {
+  find . -type d \( -path ./adafruit -o -path ./arduinoio \) -prune -o -type f -name '*.py' -print0 |
+  xargs -0 -n1 yapf -i -r --style ~/.style.yapf
+}
+
 function all {
   install_once
   initialize

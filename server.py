@@ -29,73 +29,80 @@ from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomB
 from drinks.water_down import water_down_recipe
 import poll_appengine
 
-TEMPLATE_DIR="templates/"
-STATIC_FILE_DIR="static/"
+TEMPLATE_DIR = "templates/"
+STATIC_FILE_DIR = "static/"
 robot = None
 controller = None
 CUP_DISPENSE_POSITION = -3.465
 
+
 class CustomJsonEncoder(json.JSONEncoder):
   def default(self, obj):
-    if (hasattr(obj, '__class__') and
-        obj.__class__.__name__ in ('ActionException', 'LoadCellMonitor',
-            'TareTimeout', 'MeterTimeout')):
+    if (hasattr(obj, '__class__') and obj.__class__.__name__ in
+        ('ActionException', 'LoadCellMonitor', 'TareTimeout', 'MeterTimeout')):
       key = '__%s__' % obj.__class__.__name__
       return {key: obj.__dict__}
     return json.JSONEncoder.default(self, obj)
 
+
 def GetTemplate(filename):
-    return open(TEMPLATE_DIR + filename).read()
+  return open(TEMPLATE_DIR + filename).read()
 
 
 def ServeFile(filename):
-    class ServeFileImpl(webapp2.RequestHandler):
-        def get(self):
-            self.response.write(open(filename).read())
-    return ServeFileImpl
+  class ServeFileImpl(webapp2.RequestHandler):
+    def get(self):
+      self.response.write(open(filename).read())
+
+  return ServeFileImpl
 
 
 class LoadCellJson(webapp2.RequestHandler):
-    def get(self):
-        self.response.write("[")
-        self.response.write(','.join('[%s, %f]' % rec
-                            for rec in robot.load_cell.recent(1000)))
-        self.response.write("]")
+  def get(self):
+    self.response.write("[")
+    self.response.write(','.join('[%s, %f]' % rec
+                                 for rec in robot.load_cell.recent(1000)))
+    self.response.write("]")
 
 
 class DrinkDbHandler(webapp2.RequestHandler):
   def get(self):
     self.response.content_type = 'application/javascript'
-    self.response.write("db = ['%s'];" % "','".join(
-      r.name for r in manual_db.db))
+    self.response.write("db = ['%s'];" % "','".join(r.name
+                                                    for r in manual_db.db))
 
 
 class InspectQueueJson(webapp2.RequestHandler):
-    def get(self):
-        """Displays the state of the action queue."""
-        self.response.write(json.dumps({
-          'actions': [action.inspect() for action in controller.InspectQueue()],
-          'exception': controller.last_exception}, cls=CustomJsonEncoder))
+  def get(self):
+    """Displays the state of the action queue."""
+    self.response.write(json.dumps({
+        'actions': [action.inspect() for action in controller.InspectQueue()],
+        'exception': controller.last_exception
+    },
+                                   cls=CustomJsonEncoder))
+
 
 class InspectQueue(webapp2.RequestHandler):
-    def get(self):
-        """Displays the state of the action queue."""
-        actions = controller.InspectQueue()
-        content = []
-        if not actions:
-            content.append("Queue is empty")
-        else:
-            for action in actions:
-                d = action.inspect()
-                name, props = d['name'], d['args']
-                content.append(name)
-                for prop in props.items():
-                  content.append('\t%s: %s' % prop)
-        self.response.write(GetTemplate('queue.html').format(
-          exception=controller.last_exception, content='\n'.join(content),
-          robot_dict=robot.__dict__))
+  def get(self):
+    """Displays the state of the action queue."""
+    actions = controller.InspectQueue()
+    content = []
+    if not actions:
+      content.append("Queue is empty")
+    else:
+      for action in actions:
+        d = action.inspect()
+        name, props = d['name'], d['args']
+        content.append(name)
+        for prop in props.items():
+          content.append('\t%s: %s' % prop)
+    self.response.write(GetTemplate('queue.html').format(
+        exception=controller.last_exception,
+        content='\n'.join(content),
+        robot_dict=robot.__dict__))
 
-META_REFRESH="""
+
+META_REFRESH = """
 <html>
   <head>
     <title>{msg}</title>
@@ -106,6 +113,7 @@ META_REFRESH="""
 </body>
 </html>
 """
+
 
 class RetryQueue(webapp2.RequestHandler):
   def post(self):
@@ -128,110 +136,115 @@ class SkipQueue(webapp2.RequestHandler):
 
 
 class StaticFileHandler(webapp2.RequestHandler):
-    """Serve static files out of STATIC_FILE_DIR."""
-    def get(self):
-        if '.svg' in self.request.path:
-            self.response.content_type = 'application/svg+xml'
-        elif '.png' in self.request.path:
-            self.response.content_type = 'image/png'
-        elif '.jpg' in self.request.path:
-            self.response.content_type = 'image/jpg'
-        elif '.js' in self.request.path:
-            self.response.content_type = 'application/javascript'
-        relative_path = self.to_relative_path(self.request.path)
-        path = STATIC_FILE_DIR + relative_path
-        try:
-            logging.debug("%s => %s", self.request.path, path)
-            self.response.write(open(path).read())
-        except IOError:
-            print "404 could not load: %s" % path
-            self.response.status = 404
+  """Serve static files out of STATIC_FILE_DIR."""
 
-    def to_relative_path(self, path):
-        if len(path) > 0 and path[0] == "/":
-            return path[1:]
+  def get(self):
+    if '.svg' in self.request.path:
+      self.response.content_type = 'application/svg+xml'
+    elif '.png' in self.request.path:
+      self.response.content_type = 'image/png'
+    elif '.jpg' in self.request.path:
+      self.response.content_type = 'image/jpg'
+    elif '.js' in self.request.path:
+      self.response.content_type = 'application/javascript'
+    relative_path = self.to_relative_path(self.request.path)
+    path = STATIC_FILE_DIR + relative_path
+    try:
+      logging.debug("%s => %s", self.request.path, path)
+      self.response.write(open(path).read())
+    except IOError:
+      print "404 could not load: %s" % path
+      self.response.status = 404
+
+  def to_relative_path(self, path):
+    if len(path) > 0 and path[0] == "/":
+      return path[1:]
 
 
 def SingleActionHandler(action):
-    """Create a handler for queueing the given action class"""
-    class Handler(webapp2.RequestHandler):
-        def post(self):
-            controller.EnqueueGroup([action(),])
-            self.response.write("%s action queued." % action.__name__)
-    return Handler
+  """Create a handler for queueing the given action class"""
+
+  class Handler(webapp2.RequestHandler):
+    def post(self):
+      controller.EnqueueGroup([action(),])
+      self.response.write("%s action queued." % action.__name__)
+
+  return Handler
 
 
 def valve_position(valve_no):
-    return -9.625 - 1.875 * valve_no
+  return -9.625 - 1.875 * valve_no
+
 
 def led_position(valve_no):
-    return 1.875 * valve_no
+  return 1.875 * valve_no
+
 
 def LedAction(valve, r, g, b):
-    return Led(max(0, led_position(valve) - 1.0), r, g, b,
-        valve % 2 == 1)
+  return Led(max(0, led_position(valve) - 1.0), r, g, b, valve % 2 == 1)
+
 
 def actions_for_recipe(recipe):
-    """Returns the actions necessary to make the given recipe.
+  """Returns the actions necessary to make the given recipe.
 
     recipe: manual_db.Recipe
     """
-    logging.info("Enqueuing actions for recipe %s", recipe)
-    actions = []
-    sorted_ingredients = sorted(
-        recipe.ingredients,
-        key=lambda i: ingredients.IngredientNameToValvePosition(i.name, recipe.name))
-    for ingredient in sorted_ingredients:
-        valve = ingredients.IngredientNameToValvePosition(ingredient.name,
-                                                          recipe.name)
-        actions.append(LedAction(valve, 255, 0, 0))
-    for ingredient in sorted_ingredients:
-        valve = ingredients.IngredientNameToValvePosition(ingredient.name,
-                                                          recipe.name)
-        actions.append(Move(valve_position(valve)))
-        actions.append(LedAction(valve, 0, 255, 0))
-        if hasattr(ingredient.qty, 'drops'):
-            actions.append(MeterBitters(
-                valve_to_actuate=valve, drops_to_meter=ingredient.qty.drops))
-        elif hasattr(ingredient.qty, 'oz'):
-            actions.append(Meter(
-                valve_to_actuate=valve, oz_to_meter=ingredient.qty.oz))
-        else:
-            raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
-                    ingredient.name, recipe.name, recipe)
-        actions.append(LedAction(valve, 0, 128, 255))
-    actions.append(Move(-57.875))
-    actions.append(DispenseIce())
-    actions.append(Move(0.0))
-    #actions.append(Move(0.0))
-    actions.append(Home(carefully=False))
-    actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
-    for ingredient in sorted_ingredients:
-        valve = ingredients.IngredientNameToValvePosition(ingredient.name,
-                                                          recipe.name)
-        actions.append(LedAction(valve, 0, 0, 0))
-    #actions.append(WaitForGlassPlaced())
-    return actions
+  logging.info("Enqueuing actions for recipe %s", recipe)
+  actions = []
+  sorted_ingredients = sorted(
+      recipe.ingredients,
+      key=lambda i: ingredients.IngredientNameToValvePosition(i.name, recipe.name))
+  for ingredient in sorted_ingredients:
+    valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                      recipe.name)
+    actions.append(LedAction(valve, 255, 0, 0))
+  for ingredient in sorted_ingredients:
+    valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                      recipe.name)
+    actions.append(Move(valve_position(valve)))
+    actions.append(LedAction(valve, 0, 255, 0))
+    if hasattr(ingredient.qty, 'drops'):
+      actions.append(MeterBitters(valve_to_actuate=valve,
+                                  drops_to_meter=ingredient.qty.drops))
+    elif hasattr(ingredient.qty, 'oz'):
+      actions.append(Meter(valve_to_actuate=valve,
+                           oz_to_meter=ingredient.qty.oz))
+    else:
+      raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
+                      ingredient.name, recipe.name, recipe)
+    actions.append(LedAction(valve, 0, 128, 255))
+  actions.append(Move(-57.875))
+  actions.append(DispenseIce())
+  actions.append(Move(0.0))
+  #actions.append(Move(0.0))
+  actions.append(Home(carefully=False))
+  actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
+  for ingredient in sorted_ingredients:
+    valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                      recipe.name)
+    actions.append(LedAction(valve, 0, 0, 0))
+  #actions.append(WaitForGlassPlaced())
+  return actions
 
 
 def recipe_from_json_object(recipe_obj):
-    """Takes a dict decoded from a JSON recipe and returns a Recipe object."""
-    recipe = Recipe.from_json(recipe_obj)
-    if not recipe.ingredients:
-        if recipe_obj['drink_name'] == "Random Sour":
-            recipe = RandomSourDrink()
-            recipe.user_name = recipe_obj['user_name']
-        elif recipe_obj['drink_name'] == "Random Boozy":
-            recipe = RandomSpirituousDrink()
-            recipe.user_name = recipe_obj['user_name']
-        elif recipe_obj['drink_name'] == "Random Bubbly Boozy":
-            recipe = RandomBubblySpirituousDrink()
-            recipe.user_name = recipe_obj['user_name']
-        elif recipe_obj['drink_name'] == "Random Bubbly Sour":
-            recipe = RandomBubblySourDrink()
-            recipe.user_name = recipe_obj['user_name']
-    recipe = water_down_recipe(recipe)
-    return recipe
+  """Takes a dict decoded from a JSON recipe and returns a Recipe object."""
+  recipe = Recipe.from_json(recipe_obj)
+  if not recipe.ingredients:
+    if recipe_obj['drink_name'] == "Random Sour":
+      recipe = RandomSourDrink()
+      recipe.user_name = recipe_obj['user_name']
+    elif recipe_obj['drink_name'] == "Random Boozy":
+      recipe = RandomSpirituousDrink()
+      recipe.user_name = recipe_obj['user_name']
+    elif recipe_obj['drink_name'] == "Random Bubbly Boozy":
+      recipe = RandomBubblySpirituousDrink()
+      recipe.user_name = recipe_obj['user_name']
+    elif recipe_obj['drink_name'] == "Random Bubbly Sour":
+      recipe = RandomBubblySourDrink()
+      recipe.user_name = recipe_obj['user_name']
+  recipe = water_down_recipe(recipe)
+  return recipe
 
 
 class AllDrinksHandler(webapp2.RequestHandler):
@@ -246,87 +259,90 @@ class AllDrinksHandler(webapp2.RequestHandler):
 
 
 class DrinkHandler(webapp2.RequestHandler):
-    def post(self):
-        name = self.request.get('name')
-        if name:
-            for drink in manual_db.db:
-                if drink.name.lower() == name.lower():
-                    self.response.write("Making drink %s" % drink)
-                    controller.EnqueueGroup(actions_for_recipe(drink))
-                    return
-        elif self.request.get('random') == 'bubbly sour':
-            controller.EnqueueGroup(actions_for_recipe(RandomBubblySourDrink()))
-        elif self.request.get('random') == 'bubbly boozy':
-            controller.EnqueueGroup(actions_for_recipe(RandomBubblySpirituousDrink()))
-        elif self.request.get('random') == 'sour':
-            controller.EnqueueGroup(actions_for_recipe(RandomSourDrink()))
-        elif self.request.get('random') == 'boozy':
-            controller.EnqueueGroup(actions_for_recipe(RandomSpirituousDrink()))
-        self.response.status = 400
+  def post(self):
+    name = self.request.get('name')
+    if name:
+      for drink in manual_db.db:
+        if drink.name.lower() == name.lower():
+          self.response.write("Making drink %s" % drink)
+          controller.EnqueueGroup(actions_for_recipe(drink))
+          return
+    elif self.request.get('random') == 'bubbly sour':
+      controller.EnqueueGroup(actions_for_recipe(RandomBubblySourDrink()))
+    elif self.request.get('random') == 'bubbly boozy':
+      controller.EnqueueGroup(actions_for_recipe(RandomBubblySpirituousDrink()))
+    elif self.request.get('random') == 'sour':
+      controller.EnqueueGroup(actions_for_recipe(RandomSourDrink()))
+    elif self.request.get('random') == 'boozy':
+      controller.EnqueueGroup(actions_for_recipe(RandomSpirituousDrink()))
+    self.response.status = 400
 
 
 class PrimeHandler(webapp2.RequestHandler):
-    def post(self):
-        controller.EnqueueGroup(actions_for_recipe(
-            manual_db.Recipe(name='Prime', ingredients=[
-                manual_db.Ingredient(manual_db.Oz(.725), ingredient)
-                for ingredient in ingredients.IngredientsOrdered()[15:] if ingredient != "air"],
-                #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
-                user_name="dev console")))
+  def post(self):
+    controller.EnqueueGroup(actions_for_recipe(manual_db.Recipe(
+        name='Prime',
+        ingredients=[
+            manual_db.Ingredient(
+                manual_db.Oz(.725), ingredient)
+            for ingredient in ingredients.IngredientsOrdered()[15:]
+            if ingredient != "air"
+        ],
+        #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
+        user_name="dev console")))
 
 
 class HoldPressureHandler(webapp2.RequestHandler):
-    def post(self):
-        print "Hold pressure."
-        controller.EnqueueGroup([HoldPressure()])
+  def post(self):
+    print "Hold pressure."
+    controller.EnqueueGroup([HoldPressure()])
 
 
 class ReleasePressureHandler(webapp2.RequestHandler):
-    def post(self):
-        controller.EnqueueGroup([ReleasePressure()])
+  def post(self):
+    controller.EnqueueGroup([ReleasePressure()])
 
 
 class DispenseCupHandler(webapp2.RequestHandler):
-    def post(self):
-        controller.EnqueueGroup([DispenseCup()])
+  def post(self):
+    controller.EnqueueGroup([DispenseCup()])
 
 
 class DispenseCupFullTestHandler(webapp2.RequestHandler):
-    def post(self):
-        controller.EnqueueGroup([
-            Move(CUP_DISPENSE_POSITION),
-            DispenseCup(),
-            Move(valve_position(0)),
-            ReleaseCup()])
+  def post(self):
+    controller.EnqueueGroup([
+        Move(CUP_DISPENSE_POSITION), DispenseCup(), Move(valve_position(0)),
+        ReleaseCup()
+    ])
 
 
 class FillHandler(webapp2.RequestHandler):
-    def post(self):
-        print "FILL HANDLER"
-        try:
-            args = self.request.get('text').replace(" ", "").partition(",")
-            valve = int(args[2])
-            oz = float(args[0])
-            controller.EnqueueGroup([
-              LedAction(valve, 255, 0, 0),
-              Move(valve_position(valve)),
-              LedAction(valve, 0, 255, 0),
-              Meter(valve_to_actuate=valve, oz_to_meter=oz),
-              LedAction(valve, 0, 128, 255)])
-        except ValueError:
-            self.response.status = 400
-            self.response.write("valve and oz arguments are required.")
+  def post(self):
+    print "FILL HANDLER"
+    try:
+      args = self.request.get('text').replace(" ", "").partition(",")
+      valve = int(args[2])
+      oz = float(args[0])
+      controller.EnqueueGroup([
+          LedAction(valve, 255, 0, 0), Move(valve_position(valve)),
+          LedAction(valve, 0, 255, 0),
+          Meter(valve_to_actuate=valve, oz_to_meter=oz),
+          LedAction(valve, 0, 128, 255)
+      ])
+    except ValueError:
+      self.response.status = 400
+      self.response.write("valve and oz arguments are required.")
 
 
 class Test1Handler(webapp2.RequestHandler):
-    def post(self):
-        print "TEST1 HANDLER"
-        try:
-            test_drink = manual_db.TEST_DRINK
-            controller.EnqueueGroup(actions_for_recipe(test_drink))
-        except ValueError:
-            self.response.status = 400
-            self.response.write("valve and oz arguments are required.")
+  def post(self):
+    print "TEST1 HANDLER"
+    try:
+      test_drink = manual_db.TEST_DRINK
+      controller.EnqueueGroup(actions_for_recipe(test_drink))
+    except ValueError:
+      self.response.status = 400
+      self.response.write("valve and oz arguments are required.")
 
 
 class CustomDrinkHandler(webapp2.RequestHandler):
@@ -340,108 +356,123 @@ class CustomDrinkHandler(webapp2.RequestHandler):
       self.response.write("ok")
     except ValueError:
       print 'Error parsing custom drink request: %s' % (
-              self.request.get('recipe', None))
+          self.request.get('recipe', None))
       traceback.print_exc()
       self.response.status = 400
       self.response.write("valve and oz arguments are required.")
 
 
 class MoveHandler(webapp2.RequestHandler):
-    def post(self):
-      print self.request
-      controller.EnqueueGroup([Move(float(self.request.get('text')))])
+  def post(self):
+    print self.request
+    controller.EnqueueGroup([Move(float(self.request.get('text')))])
 
 
 class PausableWSGIApplication(webapp2.WSGIApplication):
   def __init__(self, routes=None, debug=False, config=None):
-    super(PausableWSGIApplication, self).__init__(routes=routes, debug=debug, config=config)
+    super(PausableWSGIApplication, self).__init__(routes=routes,
+                                                  debug=debug,
+                                                  config=config)
     self.drop_all = False
 
   def __call__(self, environ, start_response):
     while self.drop_all:
       time.sleep(1.0)
-    return super(PausableWSGIApplication, self).__call__(environ, start_response)
+    return super(PausableWSGIApplication, self).__call__(environ,
+                                                         start_response)
+
 
 def StartServer(port, syncer):
-    from paste import httpserver
-    logging.info("Starting server on port %d", port)
-    #app = webapp2.WSGIApplication([
-    app = PausableWSGIApplication([
-        # User UI
-        ('/all_drinks', AllDrinksHandler),
-        ('/create_drink', CustomDrinkHandler),
-        # User API
-        ('/api/drink', DrinkHandler),
-        # Debug UI
-        ('/load_cell', ServeFile(STATIC_FILE_DIR + 'load_cell.html')),
-        ('/load_cell.json', LoadCellJson),
-        ('/queue', InspectQueue),
-        ('/queue.json', InspectQueueJson),
-        # Control API
-        ('/queue-retry', RetryQueue),
-        ('/queue-clear', ClearQueue),
-        ('/queue-skip', SkipQueue),
-        # Debug API
-        ('/api/calibrate', SingleActionHandler(Home)),
-        ('/api/compressor-on',
-         SingleActionHandler(lambda: CompressorToggle(State.ON))),
-        ('/api/compressor-off',
-         SingleActionHandler(lambda: CompressorToggle(State.OFF))),
-        ('/api/prime', PrimeHandler),
-        ('/api/hold_pressure', HoldPressureHandler),
-        ('/api/release_pressure', ReleasePressureHandler),
-        ('/api/dispense_cup', DispenseCupHandler),
-        ('/api/dispense_cup_full_test', DispenseCupFullTestHandler),
-        ('/api/move.*', MoveHandler),
-        ('/api/fill.*', FillHandler),
-        ('/api/test1.*', Test1Handler),
-        # Default to serving static files.
-        ('/', ServeFile(STATIC_FILE_DIR + 'index.html')),
-        ('/.*', StaticFileHandler),
-    ])
-    controller.app = app
-    controller.EnqueueGroup([HoldPressure()])
-    if syncer: syncer.start()
-    print "serving at http://%s:%i" % (socket.gethostname(), port)
-    httpserver.serve(app, host="0.0.0.0", port=port, start_loop=True)
+  from paste import httpserver
+  logging.info("Starting server on port %d", port)
+  #app = webapp2.WSGIApplication([
+  app = PausableWSGIApplication([
+      # User UI
+      ('/all_drinks', AllDrinksHandler),
+      ('/create_drink', CustomDrinkHandler),
+      # User API
+      ('/api/drink', DrinkHandler),
+      # Debug UI
+      ('/load_cell', ServeFile(STATIC_FILE_DIR + 'load_cell.html')),
+      ('/load_cell.json', LoadCellJson),
+      ('/queue', InspectQueue),
+      ('/queue.json', InspectQueueJson),
+      # Control API
+      ('/queue-retry', RetryQueue),
+      ('/queue-clear', ClearQueue),
+      ('/queue-skip', SkipQueue),
+      # Debug API
+      ('/api/calibrate', SingleActionHandler(Home)),
+      ('/api/compressor-on',
+       SingleActionHandler(lambda: CompressorToggle(State.ON))),
+      ('/api/compressor-off',
+       SingleActionHandler(lambda: CompressorToggle(State.OFF))),
+      ('/api/prime', PrimeHandler),
+      ('/api/hold_pressure', HoldPressureHandler),
+      ('/api/release_pressure', ReleasePressureHandler),
+      ('/api/dispense_cup', DispenseCupHandler),
+      ('/api/dispense_cup_full_test', DispenseCupFullTestHandler),
+      ('/api/move.*', MoveHandler),
+      ('/api/fill.*', FillHandler),
+      ('/api/test1.*', Test1Handler),
+      # Default to serving static files.
+      ('/', ServeFile(STATIC_FILE_DIR + 'index.html')),
+      ('/.*', StaticFileHandler),
+  ])
+  controller.app = app
+  controller.EnqueueGroup([HoldPressure()])
+  if syncer: syncer.start()
+  print "serving at http://%s:%i" % (socket.gethostname(), port)
+  httpserver.serve(app, host="0.0.0.0", port=port, start_loop=True)
+
 
 def main():
-    import argparse
-    parser = argparse.ArgumentParser(description="N.E.BRE-8 control server")
-    parser.add_argument('--port', type=int, default=8000, help='Port to run on')
-    parser.add_argument('--fake', dest='fake', action='store_true')
-    parser.add_argument('--nofake', dest='fake', action='store_false')
-    parser.add_argument('--logfile', default="", help='File to log to. If empty, does not log to a file')
-    parser.add_argument('--logtostderr', dest='logtostderr', action='store_true')
-    parser.add_argument('--loglevel', default='info', help='Log level (debug, info, warning, error)')
-    parser.add_argument('--frontend', default='http://nebree8.appspot.com', help='Frontend server to sync with, if any')
-    parser.add_argument('--fe_poll_freq', type=int, default=5, help='Frontend polling frequency in seconds')
-    parser.set_defaults(fake=False, logtostderr=True)
-    args = parser.parse_args()
+  import argparse
+  parser = argparse.ArgumentParser(description="N.E.BRE-8 control server")
+  parser.add_argument('--port', type=int, default=8000, help='Port to run on')
+  parser.add_argument('--fake', dest='fake', action='store_true')
+  parser.add_argument('--nofake', dest='fake', action='store_false')
+  parser.add_argument('--logfile',
+                      default="",
+                      help='File to log to. If empty, does not log to a file')
+  parser.add_argument('--logtostderr', dest='logtostderr', action='store_true')
+  parser.add_argument('--loglevel',
+                      default='info',
+                      help='Log level (debug, info, warning, error)')
+  parser.add_argument('--frontend',
+                      default='http://nebree8.appspot.com',
+                      help='Frontend server to sync with, if any')
+  parser.add_argument('--fe_poll_freq',
+                      type=int,
+                      default=5,
+                      help='Frontend polling frequency in seconds')
+  parser.set_defaults(fake=False, logtostderr=True)
+  args = parser.parse_args()
 
-    # Set up logging
-    rootLogger = logging.getLogger()
-    rootLogger.setLevel(getattr(logging, args.loglevel.upper()))
-    if args.logfile:
-        rootLogger.addHandler(logging.FileHandler(args.logfile))
-    if args.logtostderr:
-        rootLogger.addHandler(logging.StreamHandler())
+  # Set up logging
+  rootLogger = logging.getLogger()
+  rootLogger.setLevel(getattr(logging, args.loglevel.upper()))
+  if args.logfile:
+    rootLogger.addHandler(logging.FileHandler(args.logfile))
+  if args.logtostderr:
+    rootLogger.addHandler(logging.StreamHandler())
 
-    global robot
-    global controller
-    if args.fake:
-        from fake_robot import FakeRobot
-        robot = FakeRobot()
-    else:
-        from physical_robot import PhysicalRobot
-        robot = PhysicalRobot()
-    controller = Controller(robot)
-    syncer = None
-    if args.frontend:
-        print 'Polling frontend at --frontend=%s' % args.frontend
-        syncer = poll_appengine.SyncToServer(
-                args.frontend + '/api/', args.fe_poll_freq, controller)
-    StartServer(args.port, syncer)
+  global robot
+  global controller
+  if args.fake:
+    from fake_robot import FakeRobot
+    robot = FakeRobot()
+  else:
+    from physical_robot import PhysicalRobot
+    robot = PhysicalRobot()
+  controller = Controller(robot)
+  syncer = None
+  if args.frontend:
+    print 'Polling frontend at --frontend=%s' % args.frontend
+    syncer = poll_appengine.SyncToServer(args.frontend + '/api/',
+                                         args.fe_poll_freq, controller)
+  StartServer(args.port, syncer)
+
 
 if __name__ == "__main__":
-    main()
+  main()

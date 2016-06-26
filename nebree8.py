@@ -9,9 +9,13 @@ Components:
 
 import argparse
 
+
 def main(args):
   parser = argparse.ArgumentParser(description='Drink to mix')
-  parser.add_argument('--drink', type=str, nargs="?", default="margarita",
+  parser.add_argument('--drink',
+                      type=str,
+                      nargs="?",
+                      default="margarita",
                       help='Name of a drink')
   args = parser.parse_args()
   print "Not yet implemented"
