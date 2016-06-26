@@ -6,7 +6,7 @@
 #include "../arduinoio/lib/uc_module.h"
 #include "../arduinoio/lib/message.h"
 #include "../arduinoio/lib/timed_callback.h"
-#include "MS5803/SparkFun_MS5803_I2C.h"
+#include "../MS5803-14BA_Breakout/Libraries/Arduino/src/SparkFun_MS5803_I2C.h"
 
 namespace nebree8 {
 

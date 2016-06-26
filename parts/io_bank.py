@@ -100,8 +100,8 @@ class Outputs(enum.Enum):
   # To pressurize, open head, close vent
   # For chuck, close head, open vent
   # For cleanup, open both
-  COMPRESSOR = 2038
-  CUP_DISPENSER = 2006
+  COMPRESSOR = 2006
+  CUP_DISPENSER = 2038
 
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
 #   ARDUINO_STEPPER_DONE = 44
@@ -185,7 +185,7 @@ class IOBank(object):
       self.thread = threading.Thread(target=self.__RefreshShiftOutputs)
       self.thread.daemon = True
       self.thread.start()
-    self.WriteOutput(Outputs.COMPRESSOR, 1)
+    self.WriteOutput(Outputs.COMPRESSOR, 0)
 
   def ReadInput(self, input_enum):
     return gpio.input(input_enum.value)

@@ -10,7 +10,7 @@
 #include "../arduinoio/lib/serial_module.h"
 #include "../arduinoio/lib/arduinoio.h"
 #include "../Adafruit_NeoPixel/Adafruit_NeoPixel.h"
-#include "MS5803/SparkFun_MS5803_I2C.h"
+#include "../MS5803-14BA_Breakout/Libraries/Arduino/src/SparkFun_MS5803_I2C.h"
 #include "led_module.h"
 #include "motor_module.h"
 #include "pressure_sensor_module.h"
@@ -40,8 +40,6 @@ void setup() {
   // I seem to run out of ram with > 100
   // Try a teal led.
   //led_module->LightRegion(7.0, 4.0, 0, 128, 128);
-  pinMode(6, OUTPUT);
-  digitalWrite(6, HIGH);
   pinMode(13, OUTPUT);
   digitalWrite(13, LOW);
 //pinMode(6, OUTPUT);
