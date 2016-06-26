@@ -12,7 +12,6 @@ import urllib
 import urllib2
 
 from actions.action import Action
-from drinks import random_drinks
 from drinks.recipe import Recipe
 from server import actions_for_recipe, recipe_from_json_object
 
@@ -27,7 +26,7 @@ class UpdateProgressAction(Action):
     self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
 
 
-class DummyApp:
+class DummyApp(object):
   pass
 
 
@@ -86,8 +85,8 @@ class SyncToServer(threading.Thread):
           actions = self.controller.InspectQueue()
           if actions:
             print "Current action: ", actions[0].inspect()
-            if actions[
-                0].__class__.__name__ == 'WaitForGlassPlaced' and self.controller.robot.__class__.__name__ == 'FakeRobot':
+            if (actions[0].__class__.__name__ == 'WaitForGlassPlaced' and
+                self.controller.robot.__class__.__name__ == 'FakeRobot'):
               print "Placing glass"
               actions[0].force = True
         self.write(queue)
