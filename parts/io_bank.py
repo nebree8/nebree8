@@ -100,8 +100,8 @@ class Outputs(enum.Enum):
   # To pressurize, open head, close vent
   # For chuck, close head, open vent
   # For cleanup, open both
-  COMPRESSOR = 2038
-  CUP_DISPENSER = 2006
+  COMPRESSOR = 2006
+  CUP_DISPENSER = 2038
 
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
 #   ARDUINO_STEPPER_DONE = 44
@@ -185,7 +185,7 @@ class IOBank(object):
       self.thread = threading.Thread(target=self.__RefreshShiftOutputs)
       self.thread.daemon = True
       self.thread.start()
-    #self.WriteOutput(Outputs.COMPRESSOR, 1)
+    self.WriteOutput(Outputs.COMPRESSOR, 1)
 
   def ReadInput(self, input_enum):
     return gpio.input(input_enum.value)
@@ -226,11 +226,9 @@ class IOBank(object):
         ARDUINO_RAIL_TRIGGER_NEGATIVE, ARDUINO_RAIL_TRIGGER_POSITIVE,
         ARDUINO_STEPPER_DONE,
         forward, steps, final_wait, max_wait)
-    time.sleep(0.02)
+    #time.sleep(1.0)
     while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
       time.sleep(0.05)
-      print "Waiting for done signal on: " + str(Inputs.LIMIT_SWITCH_POS)
-    print "Finished move."
 
   def __Shift(self, byte):
     SLEEP_TIME = 0.0001

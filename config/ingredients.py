@@ -38,7 +38,7 @@ INGREDIENTS_ORDERED = (
    "air",
    "tonic",
    "lemon",
-   "maple",
+   "maple syrup",
 
    #"honey", #backup bottle
    #"maple", #backup bottle
