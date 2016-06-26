@@ -15,7 +15,7 @@ function install_once {
     imagemagick
   run sudo pip install --upgrade pip
   run sudo pip install --upgrade \
-    RPi.GPIO \
+    RPi.GPIO \  # TODO: This only works on the Pi.
     enum34 WebOb Paste webapp2
   install_polymer
   curl https://d3js.org/d3.v3.min.js > static/d3.v3.min.js

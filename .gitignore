@@ -1,5 +1,5 @@
 # Custom additions
-monitor/data
+monitor/data/queue.txt
 remote_queue.txt
 static/d3.v3.min.js
 
