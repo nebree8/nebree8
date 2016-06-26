@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
-import webapp2
 import json
 import logging
 import socket
+import sys
 import time
 import traceback
+
+import gflags
+import webapp2
 
 from actions.compressor import CompressorToggle
 from actions.compressor import State
@@ -28,6 +31,8 @@ from drinks.recipe import Recipe
 from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomBubblySourDrink, RandomBubblySpirituousDrink
 from drinks.water_down import water_down_recipe
 import poll_appengine
+
+FLAGS = gflags.FLAGS
 
 TEMPLATE_DIR = "templates/"
 STATIC_FILE_DIR = "static/"
@@ -427,39 +432,19 @@ def StartServer(port, syncer):
 
 
 def main():
-  import argparse
-  parser = argparse.ArgumentParser(description="N.E.BRE-8 control server")
-  parser.add_argument('--port', type=int, default=8000, help='Port to run on')
-  parser.add_argument('--fake', dest='fake', action='store_true')
-  parser.add_argument('--nofake', dest='fake', action='store_false')
-  parser.add_argument('--logfile',
-                      default="",
-                      help='File to log to. If empty, does not log to a file')
-  parser.add_argument('--logtostderr', dest='logtostderr', action='store_true')
-  parser.add_argument('--loglevel',
-                      default='info',
-                      help='Log level (debug, info, warning, error)')
-  parser.add_argument('--frontend',
-                      default='http://nebree8.appspot.com',
-                      help='Frontend server to sync with, if any')
-  parser.add_argument('--fe_poll_freq',
-                      type=int,
-                      default=5,
-                      help='Frontend polling frequency in seconds')
-  parser.set_defaults(fake=False, logtostderr=True)
-  args = parser.parse_args()
+  FLAGS(sys.argv)
 
   # Set up logging
   rootLogger = logging.getLogger()
-  rootLogger.setLevel(getattr(logging, args.loglevel.upper()))
-  if args.logfile:
-    rootLogger.addHandler(logging.FileHandler(args.logfile))
-  if args.logtostderr:
+  rootLogger.setLevel(getattr(logging, FLAGS.loglevel.upper()))
+  if FLAGS.logfile:
+    rootLogger.addHandler(logging.FileHandler(FLAGS.logfile))
+  if FLAGS.logtostderr:
     rootLogger.addHandler(logging.StreamHandler())
 
   global robot
   global controller
-  if args.fake:
+  if FLAGS.fake:
     from fake_robot import FakeRobot
     robot = FakeRobot()
   else:
@@ -467,12 +452,22 @@ def main():
     robot = PhysicalRobot()
   controller = Controller(robot)
   syncer = None
-  if args.frontend:
-    print 'Polling frontend at --frontend=%s' % args.frontend
-    syncer = poll_appengine.SyncToServer(args.frontend + '/api/',
-                                         args.fe_poll_freq, controller)
-  StartServer(args.port, syncer)
+  if FLAGS.frontend:
+    print 'Polling frontend at --frontend=%s' % FLAGS.frontend
+    syncer = poll_appengine.SyncToServer(FLAGS.frontend + '/api/',
+                                         FLAGS.fe_poll_freq, controller)
+  StartServer(FLAGS.port, syncer)
 
 
 if __name__ == "__main__":
+  gflags.DEFINE_integer('port', 8000, 'Port to run on')
+  gflags.DEFINE_bool('fake', False, 'Run with hardware faked out')
+  gflags.DEFINE_string('logfile', '',
+                       'File to log to. If empty, does not log to a file')
+  gflags.DEFINE_boolean('logtostderr', True, 'Log to stderr instead of a file')
+  gflags.DEFINE_enum('loglevel', 'info', ('debug', 'info', 'warning', 'error'),
+                     'Log verbosity')
+  gflags.DEFINE_string('frontend', '', 'Frontend server to sync with, if any')
+  gflags.DEFINE_integer('fe_poll_freq', 5,
+                        'Frontend polling frequency in seconds')
   main()
