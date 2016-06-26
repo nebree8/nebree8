@@ -9,40 +9,35 @@ from drinks import recipe
 INGREDIENTS_ORDERED = (
     "vodka",
     "gin",
-    "bourbon",  # "bourbon",
+    "bourbon",
     "tequila",
     "rum",
     "dry vermouth",
-    "chocolate bitters",  #small bottle location # WILL
+    "rose",
     "rye",
-    "pimms",  # WILL
     "campari",
-    "scotch",  # no ice
-    "amaretto",
+    "rye backup",
+    "bourbon backup",
+    "gin backup",
     "angostura bitters",  #small bottle location
     "simple",
     "frangelico",
-    "peppermint schnapps",  # peppermint schnapps
-    "triple sec",  # MISSING
+    "galliano",
+    "triple sec",
     "kahlua",
-    "peychauds bitters",  #small bottle location # WILL
-    "sweet vermouth",  # MISSING
+    "cola",
+    "sweet vermouth",
     "grenadine",
     "lime",
-    "agave",  # NOT LINED UP
-    "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
-    "air",
+    "agave",
+    "tequila backup",
+    "mescal",
     "soda",
     "orange",
-    "air",
+    "water",
     "tonic",
     "lemon",
-    "maple",
-
-    #"honey", #backup bottle
-    #"maple", #backup bottle
-    #"orange bitters", #small bottle location
-    #"water",
+    "rum backup",
 )
 
 OVERRIDES = {
