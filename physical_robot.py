@@ -27,7 +27,7 @@ class PhysicalRobot(Robot):
     self.rail.CalibrateToZero()
     self.cannot_interrupt = False
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
     # time.sleep(5)
     # self.io.WriteOutput(io_bank.Outputs.CHUCK, 1)
     self.calibrated = True
@@ -39,7 +39,7 @@ class PhysicalRobot(Robot):
     self.ChuckHoldHeadPressure()
     time.sleep(0.5)
     self.rail.FillPositions([position_in_inches])
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
     self.cannot_interrupt = False
     if position_in_inches < -65.25:
       self.rail.position = -65.25
@@ -48,19 +48,19 @@ class PhysicalRobot(Robot):
     print "Pressurize Head"
     #self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 1)
     #self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 0)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
 
   def Vent(self):
     #self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 1)
     #self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
 
   def ChuckVent(self):
     """Runs the compressor and holds the chuck."""
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 1)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
 
   def LowerCup(self):
@@ -81,7 +81,7 @@ class PhysicalRobot(Robot):
   def CompressorLock(self):
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 0)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
     #time.sleep(0.5)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 0)
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
@@ -107,10 +107,10 @@ class PhysicalRobot(Robot):
     print "CLOSE VALVE: %s" % valve_io
 
   def ActivateCompressor(self):
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
 
   def DeactivateCompressor(self):
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
 
   def SetLed(self, x, y, r, g, b):
     self.io.arduino.SetLed(x, y, r, g, b)

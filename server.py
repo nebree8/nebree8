@@ -18,6 +18,7 @@ from actions.meter_bitters import MeterBitters
 from actions.move import Move
 from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.dispense_cup import DispenseCup, ReleaseCup
+from actions.ice import DispenseIce
 #from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.pressurize import HoldPressure, ReleasePressure
 from controller import Controller
@@ -199,7 +200,10 @@ def actions_for_recipe(recipe):
             raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
                     ingredient.name, recipe.name, recipe)
         actions.append(LedAction(valve, 0, 128, 255))
+    actions.append(Move(-57.875))
+    actions.append(DispenseIce())
     actions.append(Move(0.0))
+    #actions.append(Move(0.0))
     actions.append(Home(carefully=False))
     actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
     for ingredient in sorted_ingredients:
@@ -266,7 +270,7 @@ class PrimeHandler(webapp2.RequestHandler):
         controller.EnqueueGroup(actions_for_recipe(
             manual_db.Recipe(name='Prime', ingredients=[
                 manual_db.Ingredient(manual_db.Oz(.725), ingredient)
-                for ingredient in ingredients.IngredientsOrdered() if ingredient != "air"],
+                for ingredient in ingredients.IngredientsOrdered()[15:] if ingredient != "air"],
                 #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
                 user_name="dev console")))
 
