@@ -74,6 +74,14 @@ class FakeRobot(Robot):
     """Stops maintaining pressure -- may leak out quickly or slowly."""
     self.pressurized = False
 
+  def SetLed(self, x, y, r, g, b):
+    pass
+    
+  def UpdateLeds(self):
+    pass
+
+  def AllLed(self, r, g, b):
+    pass
 
   def _FakeMove(self, new_position):
     time.sleep(abs(self.position - new_position) / 10.0)
