@@ -81,7 +81,7 @@ class PhysicalRobot(Robot):
   def CompressorLock(self):
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 0)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
     #time.sleep(0.5)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 0)
     self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
@@ -107,10 +107,10 @@ class PhysicalRobot(Robot):
     print "CLOSE VALVE: %s" % valve_io
 
   def ActivateCompressor(self):
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
 
   def DeactivateCompressor(self):
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
 
   def SetLed(self, x, y, r, g, b):
     self.io.arduino.SetLed(x, y, r, g, b)

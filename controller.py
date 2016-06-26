@@ -49,6 +49,7 @@ class Controller:
           self.app.drop_all = True
         logging.info("Executing %s", self.current_action.inspect())
         self.current_action(self.robot)
+        logging.info("Done with %s", self.current_action.inspect())
         self.WriteToFile()
       except ActionException, e:
         self.last_exception = e
