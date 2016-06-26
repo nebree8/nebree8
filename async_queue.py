@@ -2,11 +2,14 @@ import signal
 import time
 import Queue
 
+
 class ScheduledEvent(object):
   def Execute(self):
     pass
+
   def GetNextTime(self, current_time):
     return 0
+
 
 class AsyncQueue(object):
   def __init__(self):
@@ -36,13 +39,17 @@ class AsyncQueue(object):
       print "Bad arg: %f, steps = %d" % (time_gap, next_alarm_event.steps)
       self.HandleAlarm(None, None)
 
-
-
 # crap
-  
+
 
 class MotorUpdateEvent(async_queue.ScheduledEvent):
-  def __init__(self, steps, io, motor, forward=1, ramp_seconds=0, final_wait=0.0002):
+  def __init__(self,
+               steps,
+               io,
+               motor,
+               forward=1,
+               ramp_seconds=0,
+               final_wait=0.0002):
     self.steps = steps
     self.io = io
     self.motor = motor
@@ -83,7 +90,7 @@ class MotorUpdateEvent(async_queue.ScheduledEvent):
 
   def Complete(self):
     return (self.steps == 0 or
-            (self.motor.colliding_positive and self.forward)
-            or (self.motor.colliding_negative and not self.forward))
+            (self.motor.colliding_positive and self.forward) or
+            (self.motor.colliding_negative and not self.forward))
   # queue = async_queue.AsyncQueue()
   # queue.AddScheduledEvent(MotorUpdateEvent(steps, io, motor, forward))

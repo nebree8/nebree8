@@ -5,19 +5,38 @@ import sys
 from parts import io_bank
 from parts import motor
 
+
 def main(args):
   parser = argparse.ArgumentParser(description='Move robot stepper motor.')
-  parser.add_argument('--steps', type=int, nargs="?", default=1,
+  parser.add_argument('--steps',
+                      type=int,
+                      nargs="?",
+                      default=1,
                       help='Steps to move the motor')
-  parser.add_argument('--inches', type=float, nargs="?", default=0,
+  parser.add_argument('--inches',
+                      type=float,
+                      nargs="?",
+                      default=0,
                       help='Inches to move the motor')
-  parser.add_argument('--backward', type=str, nargs="?", default="False",
+  parser.add_argument('--backward',
+                      type=str,
+                      nargs="?",
+                      default="False",
                       help='Direction to move')
-  parser.add_argument('--dry_run', type=bool, nargs="?", default=False,
+  parser.add_argument('--dry_run',
+                      type=bool,
+                      nargs="?",
+                      default=False,
                       help='Whether to move motors')
-  parser.add_argument('--positions', type=float, nargs="+", default=(),
+  parser.add_argument('--positions',
+                      type=float,
+                      nargs="+",
+                      default=(),
                       help='List of positions to move the truck through')
-  parser.add_argument('--absolute', type=bool, nargs="?", default=False,
+  parser.add_argument('--absolute',
+                      type=bool,
+                      nargs="?",
+                      default=False,
                       help='Whether calibrate position')
   args = parser.parse_args()
   print args
@@ -45,6 +64,7 @@ def main(args):
     print "Backward %d steps" % steps
   stepper.Move(steps, forward=forward)
   #gpio.cleanup()
+
 
 if __name__ == "__main__":
   main(sys.argv)

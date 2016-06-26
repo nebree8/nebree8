@@ -5,50 +5,50 @@ import sys
 
 from drinks import recipe
 
-
 # MUST MAP TO ORDER OF PHYSICAL VALVES
 INGREDIENTS_ORDERED = (
-   "vodka",
-   "gin",
-   "bourbon", # "bourbon",
-   "tequila",
-   "rum",
-   "dry vermouth",
-   "chocolate bitters", #small bottle location # WILL
-   "rye",
-   "pimms",  # WILL
-   "campari",
-   "scotch", # no ice
-   "amaretto",
-   "angostura bitters", #small bottle location
-   "simple",
-   "frangelico",
-   "peppermint schnapps", # peppermint schnapps
-   "triple sec", # MISSING
-   "kahlua",
-   "peychauds bitters", #small bottle location # WILL
-   "sweet vermouth", # MISSING
-   "grenadine",
-   "lime",
-   "agave",  # NOT LINED UP
-   "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
-   "air",
-   "soda",
-   "orange",
-   "air",
-   "tonic",
-   "lemon",
-   "maple",
+    "vodka",
+    "gin",
+    "bourbon",  # "bourbon",
+    "tequila",
+    "rum",
+    "dry vermouth",
+    "chocolate bitters",  #small bottle location # WILL
+    "rye",
+    "pimms",  # WILL
+    "campari",
+    "scotch",  # no ice
+    "amaretto",
+    "angostura bitters",  #small bottle location
+    "simple",
+    "frangelico",
+    "peppermint schnapps",  # peppermint schnapps
+    "triple sec",  # MISSING
+    "kahlua",
+    "peychauds bitters",  #small bottle location # WILL
+    "sweet vermouth",  # MISSING
+    "grenadine",
+    "lime",
+    "agave",  # NOT LINED UP
+    "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
+    "air",
+    "soda",
+    "orange",
+    "air",
+    "tonic",
+    "lemon",
+    "maple",
 
-   #"honey", #backup bottle
-   #"maple", #backup bottle
-   #"orange bitters", #small bottle location
-   #"water",
+    #"honey", #backup bottle
+    #"maple", #backup bottle
+    #"orange bitters", #small bottle location
+    #"water",
 )
 
 OVERRIDES = {
-#    tuple(range(0, 11)) : "air",
+    #    tuple(range(0, 11)) : "air",
 }
+
 
 def IngredientsOrdered():
   ingredient_list = list(INGREDIENTS_ORDERED)
@@ -85,4 +85,3 @@ def ScaleDrinkSize(ingredient_list):
   # for ingredient in ingredient_list:
   #   if type(ingredient.qty) == recipe.Oz:
   #     ingredient.qty.oz *= adjustment
-

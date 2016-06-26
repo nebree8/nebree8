@@ -299,19 +299,20 @@ def LiveDB():
   for drink in db:
     all_ingredients_live = True
     for ingredient in drink.ingredients:
-      if ingredient.name.lower().replace(" juice", "").replace(" syrup", "").replace("_backup", "") not in live_ingredients:
+      if ingredient.name.lower().replace(" juice", "").replace(
+          " syrup", "").replace("_backup", "") not in live_ingredients:
         print "dont have: %s" % ingredient.name
         all_ingredients_live = False
     if all_ingredients_live or "Random" in drink.name:
       print "adding: %s" % drink.name
-      live_db.append(Recipe(name=drink.name, ingredients=drink.ingredients,
+      live_db.append(Recipe(name=drink.name,
+                            ingredients=drink.ingredients,
                             total_oz=drink.total_oz * ingredients.SCALE))
     else:
       print "skipping: %s" % drink.name
   return live_db
 
 
-
 if __name__ == "__main__":
-    for r in db:
-        print r
+  for r in db:
+    print r

@@ -24,12 +24,14 @@ import time
 #     gpio.setup(pin, gpio.OUT)
 # gpio.output(en_pin, 0)
 
+
 def trusty_sleep(n):
   return time.sleep(n)
   # start = time.time()
   # while (time.time() - start < n):
   #   #time.sleep(n - (time.time() - start))
   #   pass
+
 
 class StepperMotor(object):
   def __init__(self, dry_run=False, io=None, use_separate_process=False):
@@ -41,24 +43,35 @@ class StepperMotor(object):
       io = io_bank.IOBank()
     self.io = io
     if not self.use_arduino:
-      self.colliding_positive = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_POS)
-      self.colliding_negative = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_NEG)
+      self.colliding_positive = not self.io.ReadInput(
+          io_bank.Inputs.LIMIT_SWITCH_POS)
+      self.colliding_negative = not self.io.ReadInput(
+          io_bank.Inputs.LIMIT_SWITCH_NEG)
+
       def HitPositiveRail(channel):
         time.sleep(0.0001)
-        self.colliding_positive = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_POS)
+        self.colliding_positive = not self.io.ReadInput(
+            io_bank.Inputs.LIMIT_SWITCH_POS)
         print "Hit positive rail"
+
       def HitNegativeRail(channel):
         #self.colliding_negative = True
         time.sleep(0.0001)
-        self.colliding_negative = not self.io.ReadInput(io_bank.Inputs.LIMIT_SWITCH_NEG)
+        self.colliding_negative = not self.io.ReadInput(
+            io_bank.Inputs.LIMIT_SWITCH_NEG)
         print "Hit negative rail"
+
       self.io.AddCallback(io_bank.Inputs.LIMIT_SWITCH_POS, gpio.FALLING,
-          HitPositiveRail)
+                          HitPositiveRail)
       self.io.AddCallback(io_bank.Inputs.LIMIT_SWITCH_NEG, gpio.FALLING,
-          HitNegativeRail)
+                          HitNegativeRail)
 
-
-  def Move(self, steps, forward=1, ramp_seconds=0, final_wait=0.0005, max_wait=4000):
+  def Move(self,
+           steps,
+           forward=1,
+           ramp_seconds=0,
+           final_wait=0.0005,
+           max_wait=4000):
     if self.dry_run:
       print "DRY RUN: Moving %d steps in direction: %d" % (steps, forward)
     else:
@@ -73,7 +86,8 @@ class StepperMotor(object):
         backward = "True"
       subprocess.call(
           "sudo nice -n -19 sudo ./motor.py --steps %d --backward=%s" %
-          (steps, backward), shell=True)
+          (steps, backward),
+          shell=True)
       return
     self.io.WriteOutput(io_bank.Outputs.STEPPER_PULSE, 0)
     self.io.WriteOutput(io_bank.Outputs.STEPPER_DIR, forward)
@@ -84,10 +98,11 @@ class StepperMotor(object):
     # current_wait = 0.001
     # final_wait = 0.001
     for i in range(steps):
-      if (not ((self.colliding_positive and forward)
-               or (self.colliding_negative and not forward))):
+      if (not ((self.colliding_positive and forward) or
+               (self.colliding_negative and not forward))):
         #print self.pulse_state
-        self.io.WriteOutput(io_bank.Outputs.STEPPER_PULSE, int(self.pulse_state))
+        self.io.WriteOutput(io_bank.Outputs.STEPPER_PULSE,
+                            int(self.pulse_state))
         #gpio.output(pul_pin, int(self.pulse_state))
         #time.sleep(0.001)  # one millisecond
         #trusty_sleep(0.001)
@@ -108,11 +123,14 @@ class StepperMotor(object):
           pass
     self.io.WriteOutput(io_bank.Outputs.STEPPER_PULSE, 0)
 
+
 def InchesToSteps(inches):
   return int(inches / 2.81 * 800)  # 14 teeth -> 2.81 inches
 
+
 def StepsToInches(steps):
   return steps * 2.81 / 800
+
 
 class RobotRail(object):
   def __init__(self, motor):
@@ -138,5 +156,5 @@ class RobotRail(object):
     #   self.FillPositions([0])
     #   self.motor.Move(InchesToSteps(200), forward=True, final_wait=0.002)
     # else:
-    self.motor.Move(steps, forward=True)#, final_wait=0.01)
+    self.motor.Move(steps, forward=True)  #, final_wait=0.01)
     self.position = 0

@@ -12,10 +12,13 @@ import RPi.GPIO as gpio
 import arduino
 
 DEBUG = True
+
+
 def DebugPrint(*args):
   if DEBUG == True:
     print args
     #time.sleep(0.01)
+
 
 class Outputs(enum.Enum):
   STEPPER_DIR = 7
@@ -103,6 +106,7 @@ class Outputs(enum.Enum):
   COMPRESSOR = 2038
   CUP_DISPENSER = 2006
 
+
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
 #   ARDUINO_STEPPER_DONE = 44
 #   ARDUINO_STEPPER_DIR = 42
@@ -115,39 +119,37 @@ ARDUINO_STEPPER_ENABLE = 40
 ARDUINO_RAIL_TRIGGER_NEGATIVE = 36
 ARDUINO_RAIL_TRIGGER_POSITIVE = 34
 
-VALVES = (
-    Outputs.VALVE_0,
-    Outputs.VALVE_1,
-    Outputs.VALVE_2,
-    Outputs.VALVE_3,
-    Outputs.VALVE_4,
-    Outputs.VALVE_5,
-    Outputs.VALVE_6,
-    Outputs.VALVE_7,
-    Outputs.VALVE_8,
-    Outputs.VALVE_9,
-    Outputs.VALVE_10,
-    Outputs.VALVE_11,
-    Outputs.VALVE_12,
-    Outputs.VALVE_13,
-    Outputs.VALVE_14,
-    Outputs.VALVE_15,
-    Outputs.VALVE_16,
-    Outputs.VALVE_17,
-    Outputs.VALVE_18,
-    Outputs.VALVE_19,
-    Outputs.VALVE_20,
-    Outputs.VALVE_21,
-    Outputs.VALVE_22,
-    Outputs.VALVE_23,
-    Outputs.VALVE_24,
-    Outputs.VALVE_25,
-    Outputs.VALVE_26,
-    Outputs.VALVE_27,
-    Outputs.VALVE_28,
-    Outputs.VALVE_29,
-    Outputs.VALVE_30,
-)
+VALVES = (Outputs.VALVE_0,
+          Outputs.VALVE_1,
+          Outputs.VALVE_2,
+          Outputs.VALVE_3,
+          Outputs.VALVE_4,
+          Outputs.VALVE_5,
+          Outputs.VALVE_6,
+          Outputs.VALVE_7,
+          Outputs.VALVE_8,
+          Outputs.VALVE_9,
+          Outputs.VALVE_10,
+          Outputs.VALVE_11,
+          Outputs.VALVE_12,
+          Outputs.VALVE_13,
+          Outputs.VALVE_14,
+          Outputs.VALVE_15,
+          Outputs.VALVE_16,
+          Outputs.VALVE_17,
+          Outputs.VALVE_18,
+          Outputs.VALVE_19,
+          Outputs.VALVE_20,
+          Outputs.VALVE_21,
+          Outputs.VALVE_22,
+          Outputs.VALVE_23,
+          Outputs.VALVE_24,
+          Outputs.VALVE_25,
+          Outputs.VALVE_26,
+          Outputs.VALVE_27,
+          Outputs.VALVE_28,
+          Outputs.VALVE_29,
+          Outputs.VALVE_30,)
 
 
 def GetValve(index):
@@ -157,11 +159,13 @@ def GetValve(index):
 class Inputs(enum.Enum):
   LIMIT_SWITCH_POS = 23
   LIMIT_SWITCH_NEG = 24
-  
+
+
 _SHIFT_REG_REFRESH_RATE = 10000.
-_SHIFT_REG_SLEEP_TIME = 0.0002 # 1 ms -> 1khz
+_SHIFT_REG_SLEEP_TIME = 0.0002  # 1 ms -> 1khz
 _SHIFT_REG_ADDRESS_OFFSET = 1000
 _ARDUINO_ADDRESS_OFFSET = 2000
+
 
 class IOBank(object):
   def __init__(self, update_shift_reg=False, update_arduino=True):
@@ -180,7 +184,8 @@ class IOBank(object):
       gpio.setup(pin.value, gpio.IN, pull_up_down=gpio.PUD_UP)
     if update_shift_reg:
       self.current_shifted_byte = [0] * 24
-      self.current_shifted_byte[Outputs.COMPRESSOR.value - _SHIFT_REG_ADDRESS_OFFSET] = 1
+      self.current_shifted_byte[Outputs.COMPRESSOR.value -
+                                _SHIFT_REG_ADDRESS_OFFSET] = 1
       self.signal_refresh = Queue.Queue(1)
       self.thread = threading.Thread(target=self.__RefreshShiftOutputs)
       self.thread.daemon = True
@@ -192,7 +197,9 @@ class IOBank(object):
 
   # rising_or_falling should be gpio.RISING or gpio.FALLING
   def AddCallback(self, input_enum, rising_or_falling, callback):
-    gpio.add_event_detect(input_enum.value, rising_or_falling, callback=callback)
+    gpio.add_event_detect(input_enum.value,
+                          rising_or_falling,
+                          callback=callback)
 
   def WriteOutput(self, output_enum, value):
     if output_enum.value < _SHIFT_REG_ADDRESS_OFFSET:
@@ -204,14 +211,16 @@ class IOBank(object):
       # 2: set bit, then toggle clock
       shift_register_index = output_enum.value - _SHIFT_REG_ADDRESS_OFFSET
       self.current_shifted_byte[shift_register_index] = value
-      print "Update output: %s -> %s: %s" % (output_enum, value, self.current_shifted_byte)
+      print "Update output: %s -> %s: %s" % (output_enum, value,
+                                             self.current_shifted_byte)
       self.__SignalRefresh()
       time.sleep(0.1)
       if output_enum == Outputs.COMPRESSOR:
         time.sleep(0.5)
     else:
       if self.arduino:
-        print "Arduino write (%d) = %d" % (output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
+        print "Arduino write (%d) = %d" % (
+            output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
         self.arduino.WriteOutput(output_enum.value - _ARDUINO_ADDRESS_OFFSET,
                                  value)
 
@@ -223,9 +232,9 @@ class IOBank(object):
 
   def Move(self, forward, steps, final_wait, max_wait=4000):
     self.arduino.Move(ARDUINO_STEPPER_DIR, ARDUINO_STEPPER_PULSE,
-        ARDUINO_RAIL_TRIGGER_NEGATIVE, ARDUINO_RAIL_TRIGGER_POSITIVE,
-        ARDUINO_STEPPER_DONE,
-        forward, steps, final_wait, max_wait)
+                      ARDUINO_RAIL_TRIGGER_NEGATIVE,
+                      ARDUINO_RAIL_TRIGGER_POSITIVE, ARDUINO_STEPPER_DONE,
+                      forward, steps, final_wait, max_wait)
     time.sleep(1.0)
     while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
       time.sleep(0.05)
@@ -246,7 +255,8 @@ class IOBank(object):
       time.sleep(SLEEP_TIME)
       self.WriteOutput(Outputs.SHIFT_REG_CLOCK, gpio.HIGH)
       time.sleep(SLEEP_TIME)
-    self.WriteOutput(Outputs.SHIFT_REG_CLOCK, gpio.LOW)  # Reset to a safe state.
+    self.WriteOutput(Outputs.SHIFT_REG_CLOCK,
+                     gpio.LOW)  # Reset to a safe state.
     #self.WriteOutput(Outputs.SHIFT_REG_RCLOCK, gpio.LOW)
     #GPIO.output(gpiomap[swallow], GPIO.LOW)
     time.sleep(SLEEP_TIME)
@@ -260,14 +270,15 @@ class IOBank(object):
     new_compressor = 1
     while True:
       self.__Shift(self.current_shifted_byte)
-      new_compressor = self.current_shifted_byte[Outputs.COMPRESSOR.value - 1000]
+      new_compressor = self.current_shifted_byte[Outputs.COMPRESSOR.value -
+                                                 1000]
       if old_compressor != new_compressor:
         time.sleep(0.5)
       old_compressor = new_compressor
       try:
         self.signal_refresh.get(True, 1. / _SHIFT_REG_REFRESH_RATE)
       except Queue.Empty:
-        pass # No refresh signals for a while, refresh anyway.
+        pass  # No refresh signals for a while, refresh anyway.
 
   def __SignalRefresh(self):
     try:
