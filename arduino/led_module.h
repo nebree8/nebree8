@@ -131,7 +131,7 @@ class LedModule : public arduinoio::UCModule {
  private:
   int tick;
   uint8_t tick_red, tick_blue, tick_green;
-  int num_leds_ = 300;
+  int num_leds_;
   Adafruit_NeoPixel *neopixel_[3];
 };
 
