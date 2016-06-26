@@ -73,6 +73,7 @@ class SyncToServer(threading.Thread):
           drink_id = json_recipe['id']
           if drink_id == last_drink_id:
             print "Refusing to remake order %s" % last_drink_id
+            time.sleep(20)   # Sleep extra long
             continue  # Don't make the same drink twice
           last_drink_id = drink_id
           next_recipe = recipe_from_json_object(json_recipe)
