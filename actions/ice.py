@@ -1,6 +1,7 @@
 from actions.action import Action, ActionException
 import time
 
+
 class DispenseIce(Action):
   def __init__(self):
     pass

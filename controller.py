@@ -11,6 +11,7 @@ from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.move import Move
 from led_show import LedShow
 
+
 class Controller:
   def __init__(self, robot):
     self.current_action = None
@@ -35,7 +36,8 @@ class Controller:
       led_show = LedShow(self.robot)
       ran_led_show = False
       while True:
-        if self.queued_sem.acquire(blocking=False): # Ensure there are items to process.
+        if self.queued_sem.acquire(
+            blocking=False):  # Ensure there are items to process.
           break
         ran_led_show = True
         led_show.Update()
@@ -78,7 +80,7 @@ class Controller:
       for action in action_group:
         self.queue.append(action)
         # Signal that there are items to process.
-        self.queued_sem.release() 
+        self.queued_sem.release()
     self.WriteToFile()
 
   def WriteToFile(self):
@@ -91,25 +93,26 @@ class Controller:
         creating_message = ""
         if i == 0:
           creating_message = " <===== ACTIVE"
-        i += 1;
+        i += 1
         name_and_drink.append((action.user_name, action.recipe.name))
         drink_parts = ", ".join(i.name for i in action.recipe.ingredients)
         name_and_drink_lines.append("%d.\tCreating %s a %s%s (%s)\n" %
-            (i, action.user_name, action.recipe.name, creating_message,
-              drink_parts))
-    name_and_drink_lines.append("\n\n\n Holding Pressure: %s" % self.robot.pressurized)
+                                    (i, action.user_name, action.recipe.name,
+                                     creating_message, drink_parts))
+    name_and_drink_lines.append("\n\n\n Holding Pressure: %s" %
+                                self.robot.pressurized)
     queue_txt = open("monitor/data/queue.txt", "w")
     queue_txt.write("\n".join(name_and_drink_lines))
     queue_txt.close()
 
   def InspectQueue(self):
     with self.queue_lock:
-      return (([self.current_action] if self.current_action else []) +
-          list(self.queue))
+      return (([self.current_action]
+               if self.current_action else []) + list(self.queue))
 
   def __len__(self):
-      with self.queue_lock:
-          return len(self.queue)
+    with self.queue_lock:
+      return len(self.queue)
 
   def KillProcess(self):
     time.sleep(1)
@@ -121,7 +124,8 @@ class Controller:
 
   def ClearAndResume(self):
     print "Clearing queue"
-    while self.queued_sem.acquire(False): pass
+    while self.queued_sem.acquire(False):
+      pass
     self.queue.clear()
     self.__Resume()
 

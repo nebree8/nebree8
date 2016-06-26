@@ -4,7 +4,7 @@ import re
 import sys
 import urllib
 import cStringIO
- 
+
 
 class DrinkDatabase(object):
   def __init__(self):
@@ -20,7 +20,7 @@ class DrinkDatabase(object):
         "simpleSearch": drink_name,
         "_action_submit_name": "Search recipes database",
         "__formID__": "recipes_name_search",
-        }
+    }
     # url_opts = "&".join(["%s=%s" % (k, urllib.quote(v))
     #                      for k, v in form_data.iteritems()])
     url_opts = urllib.urlencode(form_data)
@@ -60,12 +60,15 @@ class DrinkDatabase(object):
     return buf.getvalue()
 
   def _ParseSecondPage(self, second_page_html):
-    ingredients_html = re.findall("\"recipeMeasure\">.*<a href=\"ingr_detail\?id=.*\">.*</a>",
-                                  second_page_html)
+    ingredients_html = re.findall(
+        "\"recipeMeasure\">.*<a href=\"ingr_detail\?id=.*\">.*</a>",
+        second_page_html)
     ingredients = []
     for ingredient in ingredients_html:
       ingredient = ingredient.lower()
-      m = re.match("\"recipemeasure\">([^<]*)<a href=\"ingr_detail\?id=.*\">([^<]*)</a>", ingredient)
+      m = re.match(
+          "\"recipemeasure\">([^<]*)<a href=\"ingr_detail\?id=.*\">([^<]*)</a>",
+          ingredient)
       if m and m.group(1) and m.group(2):
         ingredients.append((m.group(2), self.ParseVolume(m.group(1))))
       else:
@@ -83,14 +86,10 @@ class DrinkDatabase(object):
         return self._ParseSecondPage(page)
 
   def ParseVolume(self, volume):
-    volume = (volume
-        .replace("ounce", "oz")
-        .replace("ounces", "oz")
-        .replace("tbsp", "tsp")
-        .replace("dashes", "dash")
-        .replace("wedges", "wedge")
-        .replace(" of", "")
-        .replace("float", ""))
+    volume = (volume.replace("ounce", "oz").replace("ounces", "oz")
+              .replace("tbsp", "tsp").replace("dashes", "dash")
+              .replace("wedges", "wedge").replace(" of", "")
+              .replace("float", ""))
     volume = volume.strip().rstrip()
     if " oz" in volume:
       units = "oz"
@@ -127,12 +126,16 @@ def main(args):
   print drink_db.ParseVolume("1/4 oz")
   print drink_db.ParseVolume("2 1/2 oz")
   parser = argparse.ArgumentParser(description='Drink to look up')
-  parser.add_argument('--drink', type=str, nargs="?", default="margarita",
+  parser.add_argument('--drink',
+                      type=str,
+                      nargs="?",
+                      default="margarita",
                       help='Name of a drink')
   args = parser.parse_args()
   ingredients = drink_db.SearchForIngredients(args.drink)
   for ingredient in ingredients:
-    print "Ingredient: %s; Volume: %f %s" % (ingredient[0], ingredient[1][1], ingredient[1][0])
+    print "Ingredient: %s; Volume: %f %s" % (ingredient[0], ingredient[1][1],
+                                             ingredient[1][0])
 
 
 if __name__ == "__main__":

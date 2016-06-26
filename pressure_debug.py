@@ -6,6 +6,7 @@ import Queue
 from arduinoio import serial_control
 import arduino
 
+
 def ReadMessageAndReturn(interface):
   start = time.time()
   while True:
@@ -13,8 +14,7 @@ def ReadMessageAndReturn(interface):
     if message:
       print "Len = %d" % len(message.command)
       if len(message.command) == 8:
-        print "Set IO: %d %d" % (message.command[6],
-                                 message.command[7])
+        print "Set IO: %d %d" % (message.command[6], message.command[7])
         if time.time() - start > 3.0:
           return
       else:
@@ -27,6 +27,7 @@ def ReadMessageAndReturn(interface):
         print "Pressures: (psi) %s" % " ".join(pressures)
         print "state = %d" % message.command[12]
         return
+
 
 def old_test():
   interface = serial_control.SerialInterface()
@@ -41,7 +42,7 @@ def new_test():
   ard.HoldPressure(7, hold=True)
   #ard.HoldPressure(7, hold=True)
   while True:
-    for hold in [True]:#, False):
+    for hold in [True]:  #, False):
       print "Hold Pressure."
       #ard.HoldPressure(7, hold=hold)
       #ReadMessageAndReturn(ard.interface)
@@ -59,6 +60,7 @@ def new_test():
 
 def main():
   new_test()
+
 
 if __name__ == "__main__":
   main()

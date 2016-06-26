@@ -6,11 +6,13 @@ import Queue
 
 from arduinoio import serial_control
 
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(
+    level=logging.INFO,
     format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
     datefmt='%m-%d %H:%M:%S')
 
 _REFRESH_RATE = 5  # Refreshes per second
+
 
 class Arduino:
   def __init__(self):
@@ -42,8 +44,10 @@ class Arduino:
     min_pressure_mbar = min_pressure_psi * 1014 / 14.7
     max_pressure_mbar = max_pressure_psi * 1014 / 14.7
     raw_message = []
-    raw_message.extend(struct.unpack('4B', struct.pack('<f', min_pressure_mbar)))
-    raw_message.extend(struct.unpack('4B', struct.pack('<f', max_pressure_mbar)))
+    raw_message.extend(struct.unpack('4B', struct.pack('<f',
+                                                       min_pressure_mbar)))
+    raw_message.extend(struct.unpack('4B', struct.pack('<f',
+                                                       max_pressure_mbar)))
     raw_message = [chr(x) for x in raw_message]
     raw_message.extend((chr(hold), chr(pressure_valve_pin)))
     command = "HOLDP" + "".join(raw_message)
@@ -68,14 +72,16 @@ class Arduino:
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
   def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
-      positive_trigger_pin, done_pin, forward, steps, final_wait, max_wait):
+           positive_trigger_pin, done_pin, forward, steps, final_wait,
+           max_wait):
     raw_message = []
     if forward:
       forward = 0x01
     else:
       forward = 0x00
-    raw_message.extend((
-      stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin, positive_trigger_pin, done_pin, forward))
+    raw_message.extend((stepper_dir_pin, stepper_pulse_pin,
+                        negative_trigger_pin, positive_trigger_pin, done_pin,
+                        forward))
     if max_wait < 1000:
       raw_message.append(10)
     else:
@@ -88,13 +94,12 @@ class Arduino:
     print "Move command: %s" % [ord(x) for x in raw_message]
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
-
   def __SendOutputsMessage(self):
     raw_message = []
     for pin, value in self.outputs.iteritems():
       raw_message.append(chr(pin))
       raw_message.append(chr(value))
-    batch_size = 40 # MUST BE EVEN
+    batch_size = 40  # MUST BE EVEN
     for batch in range(0, len(raw_message) / batch_size + 1):
       start = batch * batch_size
       end = start + batch_size
@@ -104,7 +109,8 @@ class Arduino:
   def __RefreshOutputs(self):
     while True:
       try:
-        use_this_command, command = self.signal_refresh.get(True, 1. / _REFRESH_RATE)
+        use_this_command, command = self.signal_refresh.get(True,
+                                                            1. / _REFRESH_RATE)
         while True:
           try:
             pin, value = self.output_updates.get(False)
@@ -128,7 +134,7 @@ class Arduino:
       except Queue.Empty:
         # No refresh signals for a while, Refresh all pins
         self.__SendOutputsMessage()
-      message = None#self.interface.Read(no_checksums=True)
+      message = None  #self.interface.Read(no_checksums=True)
       if message:
         try:
           self.incoming_messages.put((False, None), block=False, timeout=None)

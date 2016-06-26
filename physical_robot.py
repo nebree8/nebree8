@@ -13,6 +13,7 @@ def IngredientToValve(ingredient_index):
 
 class PhysicalRobot(Robot):
   """Implementation of Robot that interfaces with real hardware."""
+
   def __init__(self):
     self.io = io_bank.IOBank()
     motor = StepperMotor(io=self.io, use_separate_process=True)  # Not a dry run
@@ -101,7 +102,8 @@ class PhysicalRobot(Robot):
   def OpenValve(self, valve_no):
     valve_io = io_bank.GetValve(valve_no)
     self.io.WriteOutput(valve_io, 1)
-    print "OPEN VALVE: %d -> %s (wired at %d)" % (valve_no, valve_io, valve_io.value)
+    print "OPEN VALVE: %d -> %s (wired at %d)" % (valve_no, valve_io,
+                                                  valve_io.value)
     yield
     self.io.WriteOutput(valve_io, 0)
     print "CLOSE VALVE: %s" % valve_io
