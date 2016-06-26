@@ -32,13 +32,13 @@ INGREDIENTS_ORDERED = (
    "lime",
    "agave",  # NOT LINED UP
    "peach schnapps",  # HALLOWEEN: OUT OF GALLIANO
-   "triple sec_backup", # MISSING
+   "air",
    "soda",
    "orange",
    "air",
    "tonic",
    "lemon",
-   "maple syrup",
+   "maple",
 
    #"honey", #backup bottle
    #"maple", #backup bottle

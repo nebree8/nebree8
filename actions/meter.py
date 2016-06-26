@@ -9,8 +9,8 @@ from time import time, sleep
 
 VALVE_ACTUATION_DELAY_SECS = 0.5
 OZ_TO_ADC_VALUES = 35
-MAX_TARE_STDDEV = 5.
-TARE_TIMEOUT_SECS = 2.
+MAX_TARE_STDDEV = 3.
+TARE_TIMEOUT_SECS = 20.
 MAX_METER_SECS = 15.
 
 class TareTimeout(ActionException):

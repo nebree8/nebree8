@@ -100,15 +100,15 @@ class Outputs(enum.Enum):
   # To pressurize, open head, close vent
   # For chuck, close head, open vent
   # For cleanup, open both
-  COMPRESSOR = 2006
-  CUP_DISPENSER = 2038
+  COMPRESSOR = 2038
+  CUP_DISPENSER = 2006
 
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
 #   ARDUINO_STEPPER_DONE = 44
 #   ARDUINO_STEPPER_DIR = 42
 #   ARDUINO_STEPPER_PULSE = 40
 #   ARDUINO_STEPPER_ENABLE = 38
-ARDUINO_STEPPER_DONE = 52
+ARDUINO_STEPPER_DONE = 50
 ARDUINO_STEPPER_DIR = 44
 ARDUINO_STEPPER_PULSE = 42
 ARDUINO_STEPPER_ENABLE = 40
@@ -226,7 +226,7 @@ class IOBank(object):
         ARDUINO_RAIL_TRIGGER_NEGATIVE, ARDUINO_RAIL_TRIGGER_POSITIVE,
         ARDUINO_STEPPER_DONE,
         forward, steps, final_wait, max_wait)
-    #time.sleep(1.0)
+    time.sleep(1.0)
     while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
       time.sleep(0.05)
 
