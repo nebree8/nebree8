@@ -88,3 +88,6 @@ class FakeRobot(Robot):
   def _FakeMove(self, new_position):
     time.sleep(abs(self.position - new_position) / 10.0)
     self.position = new_position * 1.0
+
+  def ChuckVent(self):
+    pass

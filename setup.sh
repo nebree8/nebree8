@@ -13,10 +13,10 @@ function install_once {
     python-smbus python-pip i2c-tools \
     libxml2 python-dev python-pycurl python-pyquery \
     imagemagick
-  run sudo pip install --upgrade pip
-  run sudo pip install --upgrade \
+  run sudo -H pip install --upgrade pip
+  run sudo -H pip install --upgrade \
     RPi.GPIO \  # TODO: This only works on the Pi.
-    enum34 WebOb Paste webapp2
+    enum34 WebOb Paste webapp2 python-gflags
   install_polymer
   curl https://d3js.org/d3.v3.min.js > static/d3.v3.min.js
   mkdir -p monitor/data
@@ -48,8 +48,8 @@ function install_polymer {
   # bower.
   # Warning: the node package is an amateur radio program!
   run sudo apt-get install nodejs nodejs-legacy npm
-  run sudo npm install -g bower
-  run sudo npm install -g vulcanize # Used to minify app
+  run sudo -H npm install -g bower
+  run sudo -H npm install -g vulcanize # Used to minify app
   mkdir -p bower_components
   run bower update
 }
