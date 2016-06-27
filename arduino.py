@@ -71,6 +71,14 @@ class Arduino:
     command = "LED_GO"
     self.signal_refresh.put((True, command), block=True, timeout=None)
 
+  def Servo(self, servo_pin, servo_degrees):
+    raw_message = []
+    raw_message.extend((servo_pin, servo_degrees))
+    raw_message = [chr(x) for x in raw_message]
+    command = "SERV" + "".join(raw_message)
+    print "Servo command: %s" % [ord(x) for x in raw_message]
+    self.signal_refresh.put((True, command), block=True, timeout=None)
+
   def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
            positive_trigger_pin, done_pin, forward, steps, final_wait,
            max_wait):

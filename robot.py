@@ -54,3 +54,9 @@ class Robot(object):
 
   def RaiseCup(self):
     pass
+
+  def StartStirMotor(self):
+    pass
+
+  def StopStirMotor(self):
+    pass

@@ -193,11 +193,13 @@ def actions_for_recipe(recipe):
   actions = []
   sorted_ingredients = sorted(
       recipe.ingredients,
-      key=lambda i: ingredients.IngredientNameToValvePosition(i.name, recipe.name))
+      key=lambda i: -ingredients.IngredientNameToValvePosition(i.name, recipe.name))
   for ingredient in sorted_ingredients:
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(LedAction(valve, 255, 0, 0))
+  # actions.append(Move(-57.875))
+  # actions.append(DispenseIce())
   for ingredient in sorted_ingredients:
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
@@ -213,8 +215,6 @@ def actions_for_recipe(recipe):
       raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
                       ingredient.name, recipe.name, recipe)
     actions.append(LedAction(valve, 0, 128, 255))
-  actions.append(Move(-57.875))
-  actions.append(DispenseIce())
   actions.append(Move(0.0))
   #actions.append(Move(0.0))
   actions.append(Home(carefully=False))
@@ -285,11 +285,45 @@ class PrimeHandler(webapp2.RequestHandler):
         ingredients=[
             manual_db.Ingredient(
                 manual_db.Oz(.725), ingredient)
-            for ingredient in ingredients.IngredientsOrdered()[15:]
+            for ingredient in ingredients.IngredientsOrdered()[:15]
             if ingredient != "air"
         ],
         #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
         user_name="dev console")))
+
+
+class FlushHandler(webapp2.RequestHandler):
+  def post(self):
+    flush_ingredients = [
+        manual_db.Ingredient(
+            manual_db.Oz(.725), ingredient)
+        for ingredient in ingredients.IngredientsOrdered()
+        if ingredient != "air"
+    ]
+
+    actions = []
+    sorted_ingredients = sorted(
+        flush_ingredients,
+        key=lambda i: ingredients.IngredientNameToValvePosition(i.name, "Flush"))
+    for ingredient in sorted_ingredients:
+      valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                        "Flush")
+      actions.append(LedAction(valve, 255, 0, 0))
+    for ingredient in sorted_ingredients:
+      valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                        "Flush")
+      actions.append(Move(valve_position(valve)))
+      actions.append(LedAction(valve, 0, 255, 0))
+      actions.append(MeterBitters(valve_to_actuate=valve,
+                                  drops_to_meter=20))
+      actions.append(LedAction(valve, 0, 128, 255))
+    actions.append(Move(0.0))
+    actions.append(Home(carefully=False))
+    for ingredient in sorted_ingredients:
+      valve = ingredients.IngredientNameToValvePosition(ingredient.name,
+                                                        "Flush")
+      actions.append(LedAction(valve, 0, 0, 0))
+    controller.EnqueueGroup(actions)
 
 
 class HoldPressureHandler(webapp2.RequestHandler):
@@ -408,6 +442,7 @@ def StartServer(port, syncer):
       ('/api/compressor-off',
        SingleActionHandler(lambda: CompressorToggle(State.OFF))),
       ('/api/prime', PrimeHandler),
+      ('/api/flush', FlushHandler),
       ('/api/hold_pressure', HoldPressureHandler),
       ('/api/release_pressure', ReleasePressureHandler),
       ('/api/dispense_cup', DispenseCupHandler),

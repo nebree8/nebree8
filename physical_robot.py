@@ -131,3 +131,9 @@ class PhysicalRobot(Robot):
       min_wait = 250  # us
       self.io.Move(True, steps, min_wait, max_wait=400)
       self.io.Move(False, steps, min_wait, max_wait=400)
+
+  def StartStirMotor(self):
+    self.io.arduino.Servo(13, 40)
+
+  def StopStirMotor(self):
+    self.io.arduino.Servo(13, 0)
