@@ -48,7 +48,7 @@ class Controller:
         self.current_action = self.queue.popleft()
       try:
         if self.current_action.sensitive():
-          self.app.drop_all = True
+          self.app.drop_all = False
         logging.info("Executing %s", self.current_action.inspect())
         self.current_action(self.robot)
         self.WriteToFile()
