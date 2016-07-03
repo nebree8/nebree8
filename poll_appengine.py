@@ -11,10 +11,16 @@ import threading
 import urllib
 import urllib2
 
+import gflags
+
 from actions.action import Action
-from drinks import random_drinks
+from config import ingredients
 from drinks.recipe import Recipe
 from server import actions_for_recipe, recipe_from_json_object
+
+FLAGS = gflags.FLAGS
+gflags.DEFINE_bool("check_ingredients", True,
+                   "Cross check list of ingredients with INGREDIENTS_ORDERED")
 
 
 class UpdateProgressAction(Action):
@@ -27,7 +33,7 @@ class UpdateProgressAction(Action):
     self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
 
 
-class DummyApp:
+class DummyApp(object):
   pass
 
 
@@ -50,6 +56,25 @@ class SyncToServer(threading.Thread):
     self.poll_frequency_secs = poll_frequency_secs
     self.controller = controller
     self.daemon = True
+    if FLAGS.check_ingredients:
+      config = json.loads(self.get('get_config'))
+      logging.info("Frontend config=%s", config)
+      backend_ingredients = set(i for i in ingredients.IngredientsOrdered()
+                                if i != "air" and not i.endswith("_backup"))
+      frontend_ingredients = set()
+      for ingredient in config.get("Ingredients", []):
+        name = ingredient.get('Name', '')
+        if ingredient.get('Available', False) and name:
+          frontend_ingredients.add(name)
+      if backend_ingredients - frontend_ingredients:
+        logging.error('Ingredients missing from frontend: %s',
+                      ', '.join(backend_ingredients - frontend_ingredients))
+      if frontend_ingredients - backend_ingredients:
+        logging.error('Ingredients missing from backend: %s',
+                      ', '.join(frontend_ingredients - backend_ingredients))
+      if frontend_ingredients != backend_ingredients:
+        raise NotImplementedError("Ingredients differ on backend and frontend. "
+                                  + "Disable check with --nocheck_ingredients")
 
   def get(self, url):
     return urllib2.urlopen(self.base_url + url).read()
@@ -74,6 +99,7 @@ class SyncToServer(threading.Thread):
           drink_id = json_recipe['id']
           if drink_id == last_drink_id:
             print "Refusing to remake order %s" % last_drink_id
+            time.sleep(20)   # Sleep extra long
             continue  # Don't make the same drink twice
           last_drink_id = drink_id
           next_recipe = recipe_from_json_object(json_recipe)
@@ -86,8 +112,8 @@ class SyncToServer(threading.Thread):
           actions = self.controller.InspectQueue()
           if actions:
             print "Current action: ", actions[0].inspect()
-            if actions[
-                0].__class__.__name__ == 'WaitForGlassPlaced' and self.controller.robot.__class__.__name__ == 'FakeRobot':
+            if (actions[0].__class__.__name__ == 'WaitForGlassPlaced' and
+                self.controller.robot.__class__.__name__ == 'FakeRobot'):
               print "Placing glass"
               actions[0].force = True
         self.write(queue)

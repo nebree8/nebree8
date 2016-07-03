@@ -31,6 +31,7 @@ from drinks.recipe import Recipe
 from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomBubblySourDrink, RandomBubblySpirituousDrink
 from drinks.water_down import water_down_recipe
 import poll_appengine
+from fake_robot import FakeRobot
 
 FLAGS = gflags.FLAGS
 
@@ -480,7 +481,6 @@ def main():
   global robot
   global controller
   if FLAGS.fake:
-    from fake_robot import FakeRobot
     robot = FakeRobot()
   else:
     from physical_robot import PhysicalRobot
