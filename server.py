@@ -67,7 +67,7 @@ class LoadCellJson(webapp2.RequestHandler):
   def get(self):
     self.response.write("[")
     self.response.write(','.join('[%s, %f]' % rec
-                                 for rec in robot.load_cell.recent(1000)))
+                                 for rec in robot.load_cell.recent_secs(10)))
     self.response.write("]")
 
 

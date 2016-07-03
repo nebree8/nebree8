@@ -7,7 +7,7 @@ import threading
 
 from collections import deque, namedtuple
 
-SAMPLES_PER_SECOND = 256
+SAMPLES_PER_SECOND = 128
 ADS1115 = 1
 
 Summary = namedtuple('Summary',
@@ -19,6 +19,7 @@ class LoadCellMonitor(threading.Thread):
 
   def __init__(self, bufsize=10000, adc=None):
     super(LoadCellMonitor, self).__init__()
+    self.lock = threading.Lock()
     self.buffer = deque(maxlen=bufsize)
     if not adc:
       try:
@@ -36,16 +37,31 @@ class LoadCellMonitor(threading.Thread):
     self.daemon = True
     self.start()
 
+  def recent_secs(self, secs):
+    r = []
+    threshold = time.time() - secs
+    with self.lock:
+      for i in reversed(self.buffer):
+        if i[0] < threshold: break
+        r.append(i)
+    return r
+
+  def recent_n(self, n):
+    r = []
+    with self.lock:
+      for i in reversed(self.buffer):
+        if len(r) >= n: break
+        r.append(i)
+    return r
+
   def recent(self, n=0, secs=0):
     """Return the last n readings as (time, value) tuples."""
-    if n <= 0 and secs <= 0:
+    if secs > 0:
+      return self.recent_secs(secs)
+    elif n > 0:
+      return self.recent_n(n)
+    else:
       return []
-    if n > 0:
-      return list(deque(self.buffer, n))
-    n = SAMPLES_PER_SECOND * secs * 2
-    recs = list(deque(self.buffer, n))
-    threshold = time.time() - secs
-    return [(ts, v) for ts, v in recs if ts > threshold]
 
   def recent_summary(self, n=0, secs=0):
     """Return a Summary of the last n readings."""
@@ -70,7 +86,11 @@ class LoadCellMonitor(threading.Thread):
       try:
         val = self.adc.readADCSingleEnded(1, 4096, SAMPLES_PER_SECOND)
         ts = time.time()
-        self.buffer.append((ts, val))
+        with self.lock:
+          self.buffer.append((ts, val))
+        sleepfor = ts + .01 - time.time()
+        if sleepfor > 0:
+          time.sleep(sleepfor)
       except TypeError:  # Happens if the read fails.
         pass
 
@@ -99,7 +119,7 @@ def main():
   monitor = LoadCellMonitor(bufsize=100000)
   while True:
     time.sleep(1)
-    recent = monitor.recent_summary(secs=1)
+    recent = monitor.recent_summary(secs=0.1)
     n = len(recent.records)
     print "n=%i mean=%f stddev=%f" % (n, recent.mean, recent.stddev)
 
