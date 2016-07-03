@@ -14,8 +14,11 @@ import urllib2
 import gflags
 
 from actions.action import Action
+from actions.wait_for_glass_removal import WaitForGlassRemoval
+from actions.wait_for_glass_placed import WaitForGlassPlaced
 from config import ingredients
 from drinks.recipe import Recipe
+from fake_robot import FakeRobot
 from server import actions_for_recipe, recipe_from_json_object
 
 FLAGS = gflags.FLAGS
@@ -112,8 +115,9 @@ class SyncToServer(threading.Thread):
           actions = self.controller.InspectQueue()
           if actions:
             print "Current action: ", actions[0].inspect()
-            if (actions[0].__class__.__name__ == 'WaitForGlassPlaced' and
-                self.controller.robot.__class__.__name__ == 'FakeRobot'):
+            if (isinstance(actions[0],
+                           (WaitForGlassRemoval, WaitForGlassPlaced)) and
+                isinstance(self.controller.robot, FakeRobot)):
               print "Placing glass"
               actions[0].force = True
         self.write(queue)
