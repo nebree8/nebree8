@@ -108,7 +108,12 @@ class SyncToServer(threading.Thread):
           next_recipe = recipe_from_json_object(json_recipe)
           print "Queueing Recipe: %s" % next_recipe
           actions = actions_for_recipe(next_recipe)
-          actions.insert(0, UpdateProgressAction(self, drink_id, 10))
+          raw_actions = actions_for_recipe(next_recipe)
+          actions = []
+          for i, action in enumerate(raw_actions):
+            progress = 10 + 90 * i / len(raw_actions)
+            actions.append(UpdateProgressAction(self, drink_id, progress))
+            actions.append(action)
           actions.append(FinishDrinkAction(self, drink_id))
           self.controller.EnqueueGroup(actions)
         else:
