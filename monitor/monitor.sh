@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 # Turn off monitor sleep
 xset s 0 0
