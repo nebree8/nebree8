@@ -11,8 +11,7 @@ class Recipe(object):
       for i in self.ingredients:
         i.qty.total_oz = total_oz
         i.qty.total_parts = self.total_parts
-    if user_name:
-      self.user_name = user_name
+    self.user_name = user_name
 
   def __str__(self):
     user_name = ' for %s' % self.user_name if self.user_name else ''

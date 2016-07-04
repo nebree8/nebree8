@@ -32,13 +32,14 @@ class Controller:
 
   def __Process(self):
     while True:
-      logging.info("Waiting for actions...")
       led_show = LedShow(self.robot)
       ran_led_show = False
       while True:
         if self.queued_sem.acquire(
             blocking=False):  # Ensure there are items to process.
           break
+        if not ran_led_show:
+          logging.info("Waiting for actions, running LED show...")
         ran_led_show = True
         led_show.Update()
       if ran_led_show:
@@ -48,8 +49,8 @@ class Controller:
         self.current_action = self.queue.popleft()
       try:
         if self.current_action.sensitive():
-          self.app.drop_all = True
-        logging.info("Executing %s", self.current_action.inspect())
+          self.app.drop_all = False
+        logging.info("Executing %s", self.current_action)
         self.current_action(self.robot)
         self.WriteToFile()
       except ActionException, e:

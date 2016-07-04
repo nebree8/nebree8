@@ -9,6 +9,7 @@ class WaitForGlassRemoval(Action):
   def __init__(self, user_name, recipe):
     self.user_name = user_name
     self.recipe = recipe
+    self.force = False
 
   def __call__(self, robot):
     sleep(.1)
@@ -16,7 +17,7 @@ class WaitForGlassRemoval(Action):
     if not self.initial.healthy:
       return
     sleep(.1)
-    while True:
+    while not self.force:
       self.summary = robot.load_cell.recent_summary(secs=.1)
       if self.summary.mean < self.initial.mean - self.initial.stddev * 3:
         return

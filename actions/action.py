@@ -16,6 +16,14 @@ class Action(object):
     """Returns a description of this action."""
     return {'name': self.__class__.__name__, 'args': self.__dict__}
 
+  def __str__(self):
+    args = sorted('%s=%s' % i for i in self.__dict__.iteritems())
+    if sum(len(s) for s in args) < 80:
+      args = ' ' + ' '.join(args)
+    else:
+      args = '\n\t' + '\n\t'.join(s.replace('\n', '\n\t') for s in args)
+    return '%s: %s' % (self.__class__.__name__, args)
+
 
 class ActionException(Exception):
   pass
