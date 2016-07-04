@@ -36,6 +36,10 @@ class UpdateProgressAction(Action):
   def __call__(self, robot):
     self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
 
+  def __str__(self):
+    return 'UpdateProgressAction: key=...%s percent=%s' % (self.key[-10:],
+                                                           self.percent)
+
 
 class DummyApp(object):
   pass
@@ -88,7 +92,6 @@ class SyncToServer(threading.Thread):
     try:
       url = self.base_url + url
       data = urllib.urlencode(kwargs)
-      print "POST %s %s" % (url, data)
       return urllib2.urlopen(url=url, data=data).read()
     except urllib2.HTTPError, e:
       print e
@@ -121,7 +124,7 @@ class SyncToServer(threading.Thread):
         else:
           actions = self.controller.InspectQueue()
           if actions:
-            print "Current action: ", actions[0].inspect()
+            print "Current action: ", actions[0]
             if (isinstance(actions[0],
                            (WaitForGlassRemoval, WaitForGlassPlaced)) and
                 isinstance(self.controller.robot, FakeRobot)):
