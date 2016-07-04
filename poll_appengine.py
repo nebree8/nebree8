@@ -1,4 +1,4 @@
-"""Polls the AppEngine frontend for recipes compile.
+"""Polls the AppEngine frontend for orders.
 
 When a recipe is found, the actions for it are pushed to the controller if
 the controller has no pending actions.
@@ -14,12 +14,13 @@ import urllib2
 import gflags
 
 from actions.action import Action
-from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.wait_for_glass_placed import WaitForGlassPlaced
+from actions.wait_for_glass_removal import WaitForGlassRemoval
 from config import ingredients
+from drinks.actions_for_recipe import actions_for_recipe
 from drinks.recipe import Recipe
+from drinks.water_down import water_down_recipe
 from fake_robot import FakeRobot
-from server import actions_for_recipe, recipe_from_json_object
 
 FLAGS = gflags.FLAGS
 gflags.DEFINE_bool("check_ingredients", True,
@@ -62,8 +63,9 @@ class SyncToServer(threading.Thread):
     if FLAGS.check_ingredients:
       config = json.loads(self.get('get_config'))
       logging.info("Frontend config=%s", config)
-      backend_ingredients = set(i for i in ingredients.IngredientsOrdered()
-                                if i != "air" and not i.endswith("_backup"))
+      backend_ingredients = set(
+          i for i in ingredients.IngredientsOrdered()
+          if i not in ("air", "") and not i.endswith("_backup"))
       frontend_ingredients = set()
       for ingredient in config.get("Ingredients", []):
         name = ingredient.get('Name', '')
@@ -105,9 +107,9 @@ class SyncToServer(threading.Thread):
             time.sleep(20)   # Sleep extra long
             continue  # Don't make the same drink twice
           last_drink_id = drink_id
-          next_recipe = recipe_from_json_object(json_recipe)
-          print "Queueing Recipe: %s" % next_recipe
-          actions = actions_for_recipe(next_recipe)
+          next_recipe = water_down_recipe(Recipe.from_json(json_recipe))
+          print "Queueing Recipe in 5 seconds: %s" % next_recipe
+          time.sleep(5)
           raw_actions = actions_for_recipe(next_recipe)
           actions = []
           for i, action in enumerate(raw_actions):

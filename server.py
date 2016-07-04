@@ -12,26 +12,23 @@ import webapp2
 
 from actions.compressor import CompressorToggle
 from actions.compressor import State
-from actions.home import Home
-#from actions.meter import Meter
-#from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
-from actions.led import Led
-from actions.meter_simple import MeterSimple as Meter
-from actions.meter_bitters import MeterBitters
-from actions.move import Move
-from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.dispense_cup import DispenseCup, ReleaseCup
-from actions.ice import DispenseIce
-#from actions.wait_for_glass_placed import WaitForGlassPlaced
+from actions.home import Home
+from actions.led import SetLedForValve
+from actions.meter_bitters import MeterBitters
+from actions.meter_simple import MeterSimple as Meter
+from actions.move import Move
 from actions.pressurize import HoldPressure, ReleasePressure
-from controller import Controller
 from config import ingredients
+from config import valve_position
+from controller import Controller
 from drinks import manual_db
-from drinks.recipe import Recipe
+from drinks.actions_for_recipe import actions_for_recipe
 from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomBubblySourDrink, RandomBubblySpirituousDrink
+from drinks.recipe import Recipe
 from drinks.water_down import water_down_recipe
-import poll_appengine
 from fake_robot import FakeRobot
+import poll_appengine
 
 FLAGS = gflags.FLAGS
 
@@ -178,61 +175,6 @@ def SingleActionHandler(action):
   return Handler
 
 
-def valve_position(valve_no):
-  return -9.625 - 1.875 * valve_no
-
-
-def led_position(valve_no):
-  return 1.875 * valve_no
-
-
-def LedAction(valve, r, g, b):
-  return Led(max(0, led_position(valve) - 1.0), r, g, b, valve % 2 == 1)
-
-
-def actions_for_recipe(recipe):
-  """Returns the actions necessary to make the given recipe.
-
-    recipe: manual_db.Recipe
-    """
-  logging.info("Enqueuing actions for recipe %s", recipe)
-  actions = []
-  sorted_ingredients = sorted(
-      recipe.ingredients,
-      key=lambda i: -ingredients.IngredientNameToValvePosition(i.name, recipe.name))
-  for ingredient in sorted_ingredients:
-    valve = ingredients.IngredientNameToValvePosition(ingredient.name,
-                                                      recipe.name)
-    actions.append(LedAction(valve, 255, 0, 0))
-  # actions.append(Move(-57.875))
-  # actions.append(DispenseIce())
-  for ingredient in sorted_ingredients:
-    valve = ingredients.IngredientNameToValvePosition(ingredient.name,
-                                                      recipe.name)
-    actions.append(Move(valve_position(valve)))
-    actions.append(LedAction(valve, 0, 255, 0))
-    if hasattr(ingredient.qty, 'drops'):
-      actions.append(MeterBitters(valve_to_actuate=valve,
-                                  drops_to_meter=ingredient.qty.drops))
-    elif hasattr(ingredient.qty, 'oz'):
-      actions.append(Meter(valve_to_actuate=valve,
-                           oz_to_meter=ingredient.qty.oz))
-    else:
-      raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
-                      ingredient.name, recipe.name, recipe)
-    actions.append(LedAction(valve, 0, 128, 255))
-  actions.append(Move(0.0))
-  #actions.append(Move(0.0))
-  actions.append(Home(carefully=False))
-  actions.append(WaitForGlassRemoval(recipe.user_name, recipe))
-  for ingredient in sorted_ingredients:
-    valve = ingredients.IngredientNameToValvePosition(ingredient.name,
-                                                      recipe.name)
-    actions.append(LedAction(valve, 0, 0, 0))
-  #actions.append(WaitForGlassPlaced())
-  return actions
-
-
 def recipe_from_json_object(recipe_obj):
   """Takes a dict decoded from a JSON recipe and returns a Recipe object."""
   recipe = Recipe.from_json(recipe_obj)
@@ -314,21 +256,21 @@ class FlushHandler(webapp2.RequestHandler):
     for ingredient in sorted_ingredients:
       valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                         "Flush")
-      actions.append(LedAction(valve, 255, 0, 0))
+      actions.append(SetLedForValve(valve, 255, 0, 0))
     for ingredient in sorted_ingredients:
       valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                         "Flush")
       actions.append(Move(valve_position(valve)))
-      actions.append(LedAction(valve, 0, 255, 0))
+      actions.append(SetLedForValve(valve, 0, 255, 0))
       actions.append(MeterBitters(valve_to_actuate=valve,
                                   drops_to_meter=20))
-      actions.append(LedAction(valve, 0, 128, 255))
+      actions.append(SetLedForValve(valve, 0, 128, 255))
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
     for ingredient in sorted_ingredients:
       valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                         "Flush")
-      actions.append(LedAction(valve, 0, 0, 0))
+      actions.append(SetLedForValve(valve, 0, 0, 0))
     controller.EnqueueGroup(actions)
 
 
@@ -364,10 +306,10 @@ class FillHandler(webapp2.RequestHandler):
       valve = int(args[2])
       oz = float(args[0])
       controller.EnqueueGroup([
-          LedAction(valve, 255, 0, 0), Move(valve_position(valve)),
-          LedAction(valve, 0, 255, 0),
+          SetLedForValve(valve, 255, 0, 0), Move(valve_position(valve)),
+          SetLedForValve(valve, 0, 255, 0),
           Meter(valve_to_actuate=valve, oz_to_meter=oz),
-          LedAction(valve, 0, 128, 255)
+          SetLedForValve(valve, 0, 128, 255)
       ])
     except ValueError:
       self.response.status = 400
