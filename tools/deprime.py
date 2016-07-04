@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import time
-from physical_robot import PhysicalRobot
+import common
 
-r = PhysicalRobot()
+r = common.make_robot()
 
 for i in range(31):
   print "=== ", i
