@@ -20,7 +20,7 @@ class MeterBitters(Action):
       time.sleep(BITTER_METER_TIME_SECS + .025 * self.drops_to_meter)
     time.sleep(1)
     records = robot.load_cell.recent(secs=self.drops_to_meter + 5)
-    csv = open('readings_bitters_%s_%fs.csv' %
+    csv = open('readings/readings_bitters_%s_%fs.csv' %
                (time.strftime("%Y%m%d_%H%M%S"), self.drops_to_meter), 'w')
     for record in records:
       print >> csv, "%s,%s" % record

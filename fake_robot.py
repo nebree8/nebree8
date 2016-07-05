@@ -1,9 +1,18 @@
 import time
 
+import gflags
+
 from actions.action import ActionException
 from contextlib import contextmanager
 from parts.load_cell import FakeLoadCellMonitor
 from robot import Robot
+
+FLAGS = gflags.FLAGS
+gflags.DEFINE_boolean("fake_sleep", True, "sleep() in the fake")
+
+def _sleep(secs):
+  if FLAGS.fake_sleep:
+    time.sleep(secs)
 
 
 class FakeRobot(Robot):
@@ -24,7 +33,7 @@ class FakeRobot(Robot):
     import threading
 
     def W():
-      time.sleep(delay_sec)
+      _sleep(delay_sec)
       fn()
 
     t = threading.Thread(target=W)
@@ -86,7 +95,7 @@ class FakeRobot(Robot):
     pass
 
   def _FakeMove(self, new_position):
-    time.sleep(abs(self.position - new_position) / 10.0)
+    _sleep(abs(self.position - new_position) / 10.0)
     self.position = new_position * 1.0
 
   def ChuckVent(self):

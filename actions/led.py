@@ -15,3 +15,13 @@ class Led(Action):
   def __call__(self, robot):
     robot.SetLed(self.x, self.y, self.r, self.g, self.b)
     robot.UpdateLeds()
+
+
+def led_position(valve_no):
+  return 1.875 * valve_no
+
+
+class SetLedForValve(Led):
+  def __init__(self, valve, r, g, b):
+    Led.__init__(self, max(0, led_position(valve) - 1.0), r, g, b,
+                 valve % 2 == 1)

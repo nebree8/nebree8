@@ -16,28 +16,26 @@ INGREDIENTS_ORDERED = (
     "rose",
     "rye",
     "campari",
-    "gin_backup",
-    "bourbon_backup",
-    "rye_backup",
+    "pimms",
+    "scotch",
+    "mescal",
     "angostura bitters",  #small bottle location
-    "simple",
+    "simple syrup",
     "frangelico",
     "galliano",
     "triple sec",
     "kahlua",
-    "cola",
+    "peychauds bitters",
     "sweet vermouth",
     "grenadine",
-    "lime",
-    "agave",
-    "tequila_backup",
-    "mescal",
-    "soda",
-    "orange",
-    "water",
-    "tonic",
+    "lime juice",
+    "agave syrup",
+    "peach schnapps",
+    "absinthe",
     "lemon",
     "rum_backup",
+    "lemon juice",
+    "maple syrup",
 )
 
 OVERRIDES = {
@@ -56,8 +54,6 @@ def IngredientsOrdered():
 def IngredientNameToValvePosition(ingredient, drink_name):
   ingredient_list = IngredientsOrdered()
   ingredient = ingredient.lower()
-  ingredient = ingredient.replace(" juice", "")
-  ingredient = ingredient.replace(" syrup", "")
   if drink_name != "Prime":
     if ingredient + "_backup" in ingredient_list:
       suffix = random.choice(["", "_backup"])

@@ -1,4 +1,4 @@
-"""Polls the AppEngine frontend for recipes compile.
+"""Polls the AppEngine frontend for orders.
 
 When a recipe is found, the actions for it are pushed to the controller if
 the controller has no pending actions.
@@ -11,10 +11,20 @@ import threading
 import urllib
 import urllib2
 
+import gflags
+
 from actions.action import Action
-from drinks import random_drinks
+from actions.wait_for_glass_placed import WaitForGlassPlaced
+from actions.wait_for_glass_removal import WaitForGlassRemoval
+from config import ingredients
+from drinks.actions_for_recipe import actions_for_recipe
 from drinks.recipe import Recipe
-from server import actions_for_recipe, recipe_from_json_object
+from drinks.water_down import water_down_recipe
+from fake_robot import FakeRobot
+
+FLAGS = gflags.FLAGS
+gflags.DEFINE_bool("check_ingredients", True,
+                   "Cross check list of ingredients with INGREDIENTS_ORDERED")
 
 
 class UpdateProgressAction(Action):
@@ -26,8 +36,12 @@ class UpdateProgressAction(Action):
   def __call__(self, robot):
     self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
 
+  def __str__(self):
+    return 'UpdateProgressAction: key=...%s percent=%s' % (self.key[-10:],
+                                                           self.percent)
 
-class DummyApp:
+
+class DummyApp(object):
   pass
 
 
@@ -50,6 +64,26 @@ class SyncToServer(threading.Thread):
     self.poll_frequency_secs = poll_frequency_secs
     self.controller = controller
     self.daemon = True
+    if FLAGS.check_ingredients:
+      config = json.loads(self.get('get_config'))
+      logging.info("Frontend config=%s", config)
+      backend_ingredients = set(
+          i for i in ingredients.IngredientsOrdered()
+          if i not in ("air", "") and not i.endswith("_backup"))
+      frontend_ingredients = set()
+      for ingredient in config.get("Ingredients", []):
+        name = ingredient.get('Name', '')
+        if ingredient.get('Available', False) and name:
+          frontend_ingredients.add(name)
+      if backend_ingredients - frontend_ingredients:
+        logging.error('Ingredients missing from frontend: %s',
+                      ', '.join(backend_ingredients - frontend_ingredients))
+      if frontend_ingredients - backend_ingredients:
+        logging.error('Ingredients missing from backend: %s',
+                      ', '.join(frontend_ingredients - backend_ingredients))
+      if frontend_ingredients != backend_ingredients:
+        raise NotImplementedError("Ingredients differ on backend and frontend. "
+                                  + "Disable check with --nocheck_ingredients")
 
   def get(self, url):
     return urllib2.urlopen(self.base_url + url).read()
@@ -58,7 +92,6 @@ class SyncToServer(threading.Thread):
     try:
       url = self.base_url + url
       data = urllib.urlencode(kwargs)
-      print "POST %s %s" % (url, data)
       return urllib2.urlopen(url=url, data=data).read()
     except urllib2.HTTPError, e:
       print e
@@ -74,21 +107,27 @@ class SyncToServer(threading.Thread):
           drink_id = json_recipe['id']
           if drink_id == last_drink_id:
             print "Refusing to remake order %s" % last_drink_id
+            time.sleep(20)   # Sleep extra long
             continue  # Don't make the same drink twice
           last_drink_id = drink_id
-          next_recipe = recipe_from_json_object(json_recipe)
+          next_recipe = water_down_recipe(Recipe.from_json(json_recipe))
           print "Queueing Recipe in 5 seconds: %s" % next_recipe
           time.sleep(5)
-          actions = actions_for_recipe(next_recipe)
-          actions.insert(0, UpdateProgressAction(self, drink_id, 10))
+          raw_actions = actions_for_recipe(next_recipe)
+          actions = []
+          for i, action in enumerate(raw_actions):
+            progress = 10 + 90 * i / len(raw_actions)
+            actions.append(UpdateProgressAction(self, drink_id, progress))
+            actions.append(action)
           actions.append(FinishDrinkAction(self, drink_id))
           self.controller.EnqueueGroup(actions)
         else:
           actions = self.controller.InspectQueue()
           if actions:
-            print "Current action: ", actions[0].inspect()
-            if actions[
-                0].__class__.__name__ == 'WaitForGlassPlaced' and self.controller.robot.__class__.__name__ == 'FakeRobot':
+            print "Current action: ", actions[0]
+            if (isinstance(actions[0],
+                           (WaitForGlassRemoval, WaitForGlassPlaced)) and
+                isinstance(self.controller.robot, FakeRobot)):
               print "Placing glass"
               actions[0].force = True
         self.write(queue)
