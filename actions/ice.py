@@ -9,6 +9,6 @@ class DispenseIce(Action):
   def __call__(self, robot):
     robot.ChuckVent()
     robot.LowerCup()
-    time.sleep(3.0)
+    time.sleep(1.7)
     robot.RaiseCup()
     time.sleep(3.0)

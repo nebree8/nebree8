@@ -203,8 +203,8 @@ def actions_for_recipe(recipe):
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(LedAction(valve, 255, 0, 0))
-  # actions.append(Move(-57.875))
-  # actions.append(DispenseIce())
+  actions.append(Move(-57.875))
+  actions.append(DispenseIce())
   for ingredient in sorted_ingredients:
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
@@ -290,7 +290,7 @@ class PrimeHandler(webapp2.RequestHandler):
         ingredients=[
             manual_db.Ingredient(
                 manual_db.Oz(.725), ingredient)
-            for ingredient in ingredients.IngredientsOrdered()[:15]
+            for ingredient in ingredients.IngredientsOrdered()[:10]
             if ingredient != "air"
         ],
         #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],

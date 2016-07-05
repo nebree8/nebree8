@@ -54,7 +54,7 @@ class Ingredient(object):
       if k in UNITS:
         qty = UNITS[k](v)
     if qty is None:
-      raise ValueError('Unsupported quantity for ingredient: %s', obj)
+      raise ValueError('Unsupported quantity for ingredient: %s' % obj)
     return Ingredient(qty, obj['name'])
 
   @property

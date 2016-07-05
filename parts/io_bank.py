@@ -235,6 +235,11 @@ class IOBank(object):
                       ARDUINO_RAIL_TRIGGER_NEGATIVE,
                       ARDUINO_RAIL_TRIGGER_POSITIVE, ARDUINO_STEPPER_DONE,
                       forward, steps, final_wait, max_wait)
+    #   start_time = time.time()
+    #   while not self.ReadInput(Inputs.LIMIT_SWITCH_POS):
+    #     time.sleep(0.05)
+    #     if (time.time() - start_time > 4.0):
+    #       break
     time.sleep(1.0)
     while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
       time.sleep(0.05)

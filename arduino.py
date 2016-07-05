@@ -39,8 +39,8 @@ class Arduino:
     print "set servo"
 
   def HoldPressure(self, pressure_valve_pin, hold=True):
-    min_pressure_psi = 15.5
-    max_pressure_psi = 15.8
+    min_pressure_psi = 15.8
+    max_pressure_psi = 16.1
     min_pressure_mbar = min_pressure_psi * 1014 / 14.7
     max_pressure_mbar = max_pressure_psi * 1014 / 14.7
     raw_message = []
