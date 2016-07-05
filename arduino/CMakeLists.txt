@@ -13,6 +13,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_SOURCE_DIR /home/pi/nebree8/arduino) # Source dir
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_SOURCE_DIR}/../arduino-cmake/cmake/ArduinoToolchain.cmake) # Arduino Toolchain
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 
 project(ArduinoExample C CXX)
 #set(ARDUINO_SDK /usr/share/arduino-1.0.6)

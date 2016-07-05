@@ -36,6 +36,8 @@ INGREDIENTS_ORDERED = (
     "rum_backup",
     "lemon juice",
     "maple syrup",
+    "dry vermouth_backup",
+    "absinthe_backup",
 )
 
 OVERRIDES = {
@@ -54,12 +56,18 @@ def IngredientsOrdered():
 def IngredientNameToValvePosition(ingredient, drink_name):
   ingredient_list = IngredientsOrdered()
   ingredient = ingredient.lower()
-  if drink_name != "Prime":
-    if ingredient + "_backup" in ingredient_list:
-      suffix = random.choice(["", "_backup"])
-      ingredient = ingredient + suffix
   valve = ingredient_list.index(ingredient)
   return valve
+
+
+def MaybeUseBackups(ingredients):
+  if drink_name in ("Prime", "Flush"):
+    return
+  for ingredient in ingredients:
+    ingredient.name = ingredient.name.lower()
+    if ingredient.name + "_backup" in ingredient_list:
+      suffix = random.choice(["", "_backup"])
+      ingredient.name = ingredient.name + suffix
 
 
 SCALE = 0.9

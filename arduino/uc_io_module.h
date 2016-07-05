@@ -30,7 +30,7 @@ class UCIOModule : public arduinoio::UCModule {
     if (strncmp(command, SET_IO, SET_IO_LENGTH) == 0) {
       status_on_ = !status_on_;
       for (int i = SET_IO_LENGTH; i < length - 1; i += 2) {
-        char pin = command[i];
+        unsigned int pin = static_cast<unsigned int>(command[i]);
         bool on = command[i + 1] == 0x0 ? LOW : HIGH;
         if (!pins_ready_[pin]) {
           pinMode(pin, OUTPUT);
@@ -39,6 +39,7 @@ class UCIOModule : public arduinoio::UCModule {
         digitalWrite(pin, on);
       }
     }
+    return false;
   }
 
  private:

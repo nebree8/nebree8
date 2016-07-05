@@ -233,7 +233,7 @@ class PrimeHandler(webapp2.RequestHandler):
         ingredients=[
             manual_db.Ingredient(
                 manual_db.Oz(.725), ingredient)
-            for ingredient in ingredients.IngredientsOrdered()[:10]
+            for ingredient in ingredients.IngredientsOrdered()[:]
             if ingredient != "air"
         ],
         #for ingredient in ingredients.IngredientsOrdered() if "itters" in ingredient],
@@ -263,7 +263,7 @@ class FlushHandler(webapp2.RequestHandler):
       actions.append(Move(valve_position(valve)))
       actions.append(SetLedForValve(valve, 0, 255, 0))
       actions.append(MeterBitters(valve_to_actuate=valve,
-                                  drops_to_meter=20))
+                                  drops_to_meter=10))
       actions.append(SetLedForValve(valve, 0, 128, 255))
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))

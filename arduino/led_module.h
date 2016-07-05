@@ -40,8 +40,8 @@ class LedModule : public arduinoio::UCModule {
     // 300 every 16 feet.
     const float kLedsPerInch = 1.5625;
     // Decay by dist squared
-    const int nearby_x = static_cast<uint16_t>(x * kLedsPerInch);
-    const int kNearbyLedCount = 2;
+    const uint16_t nearby_x = static_cast<uint16_t>(x * kLedsPerInch);
+    const uint16_t kNearbyLedCount = 2;
     for (uint16_t led_x = max(nearby_x - kNearbyLedCount, 0);
         led_x <= min(nearby_x + kNearbyLedCount, num_leds_); ++led_x) {
       for (uint16_t led_y = 0; led_y < LED_Y_ROWS; ++led_y) {
@@ -74,7 +74,7 @@ class LedModule : public arduinoio::UCModule {
 
   // X,Y == 0 at the front corner by the electronics box.
   uint16_t GetLedIndex(const uint16_t led_x, const uint16_t led_y) {
-    const int kLedFarRightMiddle = 171;
+    const uint16_t kLedFarRightMiddle = 171;
     if (led_y == 0) {
       return min(max(0, led_x), 86);
     } else if (led_y == 1) {
@@ -111,7 +111,7 @@ class LedModule : public arduinoio::UCModule {
       char red = command[SET_ALL_LED_LENGTH];
       char green = command[SET_ALL_LED_LENGTH + 1];
       char blue = command[SET_ALL_LED_LENGTH + 2];
-      for (int i = 0; i < num_leds_; ++i) {
+      for (uint16_t i = 0; i < num_leds_; ++i) {
         neopixel_[i / PIXELS_PER_BLOCK]->setPixelColor(i, red, green, blue);
       }
       return true;
@@ -123,7 +123,7 @@ class LedModule : public arduinoio::UCModule {
   }
 
   ~LedModule() {
-    for (int i = 0; i * PIXELS_PER_BLOCK < num_leds_; ++i) {
+    for (unsigned int i = 0; i * PIXELS_PER_BLOCK < num_leds_; ++i) {
       delete neopixel_[i];
     }
   }
@@ -131,7 +131,7 @@ class LedModule : public arduinoio::UCModule {
  private:
   int tick;
   uint8_t tick_red, tick_blue, tick_green;
-  int num_leds_;
+  unsigned int num_leds_;
   Adafruit_NeoPixel *neopixel_[3];
 };
 

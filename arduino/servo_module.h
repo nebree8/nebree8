@@ -13,7 +13,7 @@ namespace nebree8 {
 const char* SERVO = "SERV";
 const int SERVO_LENGTH = 4;
 
-const int NEUTRAL = 0;
+const int NEUTRAL = 45;
 const int MAX_SIGNAL = 2300;
 const int MIN_SIGNAL = 400;
 
@@ -45,14 +45,10 @@ class ServoModule : public arduinoio::UCModule {
     const char* command = (const char*) message.command(&length);
     if (length > SERVO_LENGTH &&
         (strncmp(command, SERVO, SERVO_LENGTH) == 0)) {
-      char pin = command[SERVO_LENGTH];
+      //char pin = command[SERVO_LENGTH];
       char speed = command[SERVO_LENGTH + 1];
       //servo_.attach(pin);
-      int full_speed = 10 * speed;
-      if (speed != 0) {
-        full_speed = 400;
-      }
-      servo_.write(full_speed);
+      servo_.write(speed);
       return true;
     }
     return false;

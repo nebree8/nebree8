@@ -25,11 +25,14 @@ class Arduino:
     self.thread.daemon = True
     self.thread.start()
 
-  def WriteOutput(self, pin, value):
+  def WriteOutput(self, pin, value, blocking=False):
     try:
       self.output_updates.put((pin, value), block=True)
-      self.signal_refresh.put((False, None), block=False, timeout=None)
+      for i in range(4):
+        # Ensures that the data is really written (if blocking)
+        self.signal_refresh.put((False, None), block=blocking, timeout=None)
     except Queue.Full:
+      print "Error, aurdino signal_refresh queue full."
       pass
 
   def WriteServo(self, pin, start_degrees, end_degrees, seconds):
@@ -128,16 +131,9 @@ class Arduino:
             break
         if use_this_command:
           self.interface.Write(0, command)
-          #f command[0:4] == "MOVE":
-          # print "Wait for motor."
-          # while True:
-          #   message = self.interface.Read(no_checksums=True)
-          #   if message:
-          #     print "Got message: %s" % message.command
-          #     if message.command[0:5] == [ord(x) for x in "MDONE"]:
-          #       print "Motor done."
-          #       break
+          print "Pushing command: %s" % command
         else:
+          print "Pushing IO update."
           self.__SendOutputsMessage()
       except Queue.Empty:
         # No refresh signals for a while, Refresh all pins

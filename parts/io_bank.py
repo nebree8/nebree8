@@ -104,7 +104,7 @@ class Outputs(enum.Enum):
   # For chuck, close head, open vent
   # For cleanup, open both
   COMPRESSOR = 2006
-  CUP_DISPENSER = 2038
+  ICE_DISPENSER = 2038
 
 
 PRESSURE_VALVE_PIN = 7  # Not a normal output -- don't list with other valves. Should be controlled directly by the arduino.
@@ -201,7 +201,7 @@ class IOBank(object):
                           rising_or_falling,
                           callback=callback)
 
-  def WriteOutput(self, output_enum, value):
+  def WriteOutput(self, output_enum, value, blocking=False):
     if output_enum.value < _SHIFT_REG_ADDRESS_OFFSET:
       gpio.output(output_enum.value, value)
     elif output_enum.value < _ARDUINO_ADDRESS_OFFSET:
@@ -222,7 +222,7 @@ class IOBank(object):
         print "Arduino write (%d) = %d" % (
             output_enum.value - _ARDUINO_ADDRESS_OFFSET, value)
         self.arduino.WriteOutput(output_enum.value - _ARDUINO_ADDRESS_OFFSET,
-                                 value)
+                                 value, blocking=blocking)
 
   def HoldPressure(self):
     self.arduino.HoldPressure(PRESSURE_VALVE_PIN, hold=True)
@@ -240,9 +240,9 @@ class IOBank(object):
     #     time.sleep(0.05)
     #     if (time.time() - start_time > 4.0):
     #       break
-    time.sleep(1.0)
-    while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
-      time.sleep(0.05)
+    #   time.sleep(1.0)
+    #   while self.ReadInput(Inputs.LIMIT_SWITCH_POS):
+    #     time.sleep(0.05)
 
   def __Shift(self, byte):
     SLEEP_TIME = 0.0001

@@ -23,14 +23,12 @@ class PhysicalRobot(Robot):
     self.pressurized = False
 
   def CalibrateToZero(self, carefully=True):
-    self.ChuckVent()
+    self.ActivateCompressor()
+    time.sleep(0.5)
     self.cannot_interrupt = True
     self.rail.CalibrateToZero()
     self.cannot_interrupt = False
-    self.io.WriteOutput(io_bank.Outputs.CHUCK, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
-    # time.sleep(5)
-    # self.io.WriteOutput(io_bank.Outputs.CHUCK, 1)
+    self.DeactivateCompressor()
     self.calibrated = True
 
   def MoveToPosition(self, position_in_inches):
@@ -39,8 +37,10 @@ class PhysicalRobot(Robot):
     self.cannot_interrupt = True
     self.ChuckHoldHeadPressure()
     time.sleep(0.5)
+    print "Moving"
     self.rail.FillPositions([position_in_inches])
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    print "Move Done"
+    self.Vent()
     self.cannot_interrupt = False
     if position_in_inches < -65.25:
       self.rail.position = -65.25
@@ -55,22 +55,22 @@ class PhysicalRobot(Robot):
   def Vent(self):
     #self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 1)
     #self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0, blocking=True)
 
   def ChuckVent(self):
     """Runs the compressor and holds the chuck."""
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 1)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
-    self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
+    #self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
 
-  def LowerCup(self):
-    """Drops the cup container."""
-    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 1)
+  def StartIce(self):
+    """Starts the ice dispenser."""
+    self.io.WriteOutput(io_bank.Outputs.ICE_DISPENSER, 1, blocking=True)
 
-  def RaiseCup(self):
-    """Raises the cup container."""
-    self.io.WriteOutput(io_bank.Outputs.CUP_DISPENSER, 0)
+  def StopIce(self):
+    """Stops the ice dispenser."""
+    self.io.WriteOutput(io_bank.Outputs.ICE_DISPENSER, 0, blocking=True)
 
   def ChuckHoldHeadPressure(self):
     return self.ChuckVent()
@@ -82,10 +82,10 @@ class PhysicalRobot(Robot):
   def CompressorLock(self):
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_HEAD, 0)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 1)
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0, blocking=True)
     #time.sleep(0.5)
     # self.io.WriteOutput(io_bank.Outputs.COMPRESSOR_VENT, 0)
-    self.io.WriteOutput(io_bank.Outputs.CHUCK, 0)
+    self.io.WriteOutput(io_bank.Outputs.CHUCK, 0, blocking=True)
 
   def HoldPressure(self):
     """Maintains a min/max pressure range in the vessel."""
@@ -101,18 +101,18 @@ class PhysicalRobot(Robot):
   @contextmanager
   def OpenValve(self, valve_no):
     valve_io = io_bank.GetValve(valve_no)
-    self.io.WriteOutput(valve_io, 1)
+    self.io.WriteOutput(valve_io, 1, blocking=True)
     print "OPEN VALVE: %d -> %s (wired at %d)" % (valve_no, valve_io,
                                                   valve_io.value)
     yield
-    self.io.WriteOutput(valve_io, 0)
+    self.io.WriteOutput(valve_io, 0, blocking=True)
     print "CLOSE VALVE: %s" % valve_io
 
   def ActivateCompressor(self):
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
 
   def DeactivateCompressor(self):
-    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 0, blocking=True)
 
   def SetLed(self, x, y, r, g, b):
     self.io.arduino.SetLed(x, y, r, g, b)
@@ -133,7 +133,7 @@ class PhysicalRobot(Robot):
       self.io.Move(False, steps, min_wait, max_wait=400)
 
   def StartStirMotor(self):
-    self.io.arduino.Servo(13, 40)
+    self.io.arduino.Servo(13, 90)
 
   def StopStirMotor(self):
-    self.io.arduino.Servo(13, 0)
+    self.io.arduino.Servo(13, 30)

@@ -107,7 +107,12 @@ class MotorModule : public arduinoio::UCModule {
       timed_callback_ = new arduinoio::TimedCallback<MotorModule>(true, current_wait_,
           this,
           &MotorModule::StepMotor);
+      while (!send_done_) {
+        timed_callback_->Update();
+      }
+      send_done_ = false;
     }
+    return true;
   }
 
  private:
