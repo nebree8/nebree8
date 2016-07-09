@@ -6,16 +6,11 @@ import numpy
 from actions.action import Action, ActionException
 from collections import namedtuple
 from time import time, sleep
+from actions.meter_common import OZ_TO_ADC_VALUES, tare
 
 VALVE_ACTUATION_DELAY_SECS = 0.5
-OZ_TO_ADC_VALUES = 35
-MAX_TARE_STDDEV = 3.
-TARE_TIMEOUT_SECS = 20.
+OZ_TO_ADC_VALUES = 53.28
 MAX_METER_SECS = 15.
-
-
-class TareTimeout(ActionException):
-  """Thrown when attempt to tare times out"""
 
 
 class MeterTimeout(ActionException):
@@ -36,25 +31,6 @@ class MeterTimeout(ActionException):
 def _format_summary(start_ts, s):
   return 'elapsed=%s mean=%s stddev=%s' % (s.timestamp - start_ts, s.mean,
                                            s.stddev)
-
-
-def _tare(robot):
-  """Waits for load cell readings to stabilize.
-
-  returns: load_cell.Summary
-  throws: Exception
-  """
-  tare_start = time()
-  tare = robot.load_cell.recent_summary(secs=.1)
-  while (tare.stddev > MAX_TARE_STDDEV and
-         time() < tare_start + TARE_TIMEOUT_SECS):
-    sleep(.1)
-    tare = robot.load_cell.recent_summary(secs=.1)
-  if tare.stddev > MAX_TARE_STDDEV:
-    logging.error('Reading standard deviation while taring above ' +
-                  '%s for %s secs. Last result: %s' % (MAX_TARE_STDDEV,
-                                                       TARE_TIMEOUT_SECS, tare))
-  return tare
 
 
 def _predict_fill_completion(summary, target_reading):
@@ -114,7 +90,7 @@ class Meter(Action):
       logging.warning("oz_to_meter was zero, returning early.")
     start_ts = time()
     print "Waiting to tare"
-    self.tare = _tare(robot)
+    self.tare = tare(robot)
     print "Tared", _format_summary(start_ts, self.tare)
     self.adc_units_to_meter = self.oz_to_meter * OZ_TO_ADC_VALUES
     self.target_reading = self.adc_units_to_meter + self.tare.mean

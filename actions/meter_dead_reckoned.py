@@ -19,7 +19,7 @@ class MeterDeadReckoned(Action):
       time.sleep(self.oz_to_meter * SECONDS_PER_OZ)
     time.sleep(1)
     r = robot.load_cell.recent(secs=t + 5)
-    f = open('readings_%s_%fs.csv' % (time.strftime("%Y%m%d_%H%M%S"), t), 'w')
+    f = open('readings/readings_%s_%fs.csv' % (time.strftime("%Y%m%d_%H%M%S"), t), 'w')
     for ts, v in r:
       print >> f, "%s,%s" % (ts, v)
     f.close()
