@@ -23,10 +23,11 @@ def actions_for_recipe(recipe):
     """
   logging.info("Enqueuing actions for recipe %s", recipe)
   actions = []
-  recipe.ingredients = ingredients.MaybeUseBackups(recipe.ingredients)
+  ingredients.ReplaceWithBackups(recipe.ingredients, recipe.name)
   sorted_ingredients = sorted(
       recipe.ingredients,
-      key=lambda i: -ingredients.IngredientNameToValvePosition(i.name, recipe.name))
+      key=lambda i: -ingredients.IngredientNameToValvePosition(
+        i.name, recipe.name))
   for ingredient in sorted_ingredients:
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)

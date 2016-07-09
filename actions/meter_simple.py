@@ -3,10 +3,9 @@ import logging
 import time
 
 from actions.action import Action
-from actions.meter import OZ_TO_ADC_VALUES, _tare
 
 METER_OZ_OFFSET = 0.4
-
+OZ_TO_ADC_VALUES = 35
 TIME_PER_OZ = 13.5
 
 
@@ -29,7 +28,7 @@ class MeterSimple(Action):
     if self.oz_to_meter == 0:
       logging.warning("oz_to_meter was zero, returning early.")
     self.initial_reading = robot.load_cell.recent_summary(secs=.2).mean
-    tare = _tare(robot)
+    tare = self._tare(robot)
     self.tare_reading = tare.mean
     if not tare.healthy:
       with robot.OpenValve(self.valve_to_actuate):
@@ -52,3 +51,21 @@ class MeterSimple(Action):
     for ts, v in r:
       print >> f, "%s,%s" % (ts, v)
     f.close()
+
+  def _tare(self, robot):
+    """Waits for load cell readings to stabilize.
+
+    returns: load_cell.Summary
+    throws: Exception
+    """
+    tare_start = time()
+    tare = robot.load_cell.recent_summary(secs=.1)
+    while (tare.stddev > MAX_TARE_STDDEV and
+           time() < tare_start + TARE_TIMEOUT_SECS):
+      sleep(.1)
+      tare = robot.load_cell.recent_summary(secs=.1)
+    if tare.stddev > MAX_TARE_STDDEV:
+      logging.error('Reading standard deviation while taring above ' +
+                    '%s for %s secs. Last result: %s' %
+                    (MAX_TARE_STDDEV, TARE_TIMEOUT_SECS, tare))
+    return tare
