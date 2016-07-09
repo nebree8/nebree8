@@ -32,7 +32,6 @@ INGREDIENTS_ORDERED = (
     "agave syrup",
     "peach schnapps",
     "absinthe",
-    "lemon",
     "rum_backup",
     "lemon juice",
     "maple syrup",
