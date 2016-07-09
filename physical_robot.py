@@ -132,8 +132,24 @@ class PhysicalRobot(Robot):
       self.io.Move(True, steps, min_wait, max_wait=400)
       self.io.Move(False, steps, min_wait, max_wait=400)
 
-  def StartStirMotor(self):
+  def BootStirMotor(self):
     self.io.arduino.Servo(13, 90)
+    time.sleep(0.1)
+    self.StopStirMotor()
+
+  def CleanStirMotor(self):
+    self.io.arduino.Servo(13, 90)
+    time.sleep(1)
+    self.StopStirMotor()
+
+  def GentleStir(self):
+    on_sleep_secs = 0.4
+    off_sleep_secs = 0.3
+    for i in range(6):
+      self.io.arduino.Servo(13, 50)
+      time.sleep(on_sleep_secs)
+      self.StopStirMotor()
+      time.sleep(off_sleep_secs)
 
   def StopStirMotor(self):
     self.io.arduino.Servo(13, 30)
