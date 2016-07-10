@@ -60,3 +60,9 @@ class Robot(object):
 
   def StopStirMotor(self):
     pass
+
+  def Slam(self):
+    pass
+
+  def UnSlam(self):
+    pass

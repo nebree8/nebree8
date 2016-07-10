@@ -22,6 +22,7 @@ class PhysicalRobot(Robot):
     self.load_cell = LoadCellMonitor()
     self.calibrated = False
     self.pressurized = False
+    self.BootStirMotor()
 
   def CalibrateToZero(self, carefully=True):
     self.ActivateCompressor()
@@ -154,3 +155,9 @@ class PhysicalRobot(Robot):
 
   def StopStirMotor(self):
     self.io.arduino.Servo(13, 30)
+
+  def Slam(self):
+    self.io.WriteOutput(io_bank.Outputs.SLAM, 1, blocking=True)
+
+  def UnSlam(self):
+    self.io.WriteOutput(io_bank.Outputs.SLAM, 0, blocking=True)

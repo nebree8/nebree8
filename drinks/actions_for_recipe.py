@@ -3,10 +3,9 @@ import logging
 from actions.compressor import CompressorToggle
 from actions.compressor import State
 from actions.home import Home
-#from actions.meter import Meter
-#from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
-from actions.led import SetLedForValve
-from actions.meter_simple import MeterSimple as Meter
+from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
+#from actions.meter_simple import MeterSimple as Meter
+from actions.led import SetLedForValve, Led
 from actions.meter_bitters import MeterBitters
 from actions.move import Move
 from actions.wait_for_glass_removal import WaitForGlassRemoval
@@ -14,6 +13,7 @@ from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.dispense_cup import DispenseCup, ReleaseCup
 from actions.ice import DispenseIce
 from actions.pressurize import HoldPressure, ReleasePressure
+from actions.slam_stir import SlamStir
 from config import valve_position, ingredients
 
 def actions_for_recipe(recipe):
@@ -32,8 +32,12 @@ def actions_for_recipe(recipe):
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(SetLedForValve(valve, 255, 0, 0))
-  actions.append(Move(-57.875))
+  ICE_LOCATION = -57.875
+  actions.append(Led(max(0, -10.65 - ICE_LOCATION), 255, 255, 0, y=4))
+  actions.append(Move(ICE_LOCATION))
+  actions.append(Led(max(0, -10.65 - ICE_LOCATION), 0, 255, 0, y=4))
   actions.append(DispenseIce())
+  actions.append(Led(max(0, -10.65 - ICE_LOCATION), 0, 128, 255, y=4))
   for ingredient in sorted_ingredients:
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
@@ -49,6 +53,10 @@ def actions_for_recipe(recipe):
       raise Exception("Ingredient %s has no quantity for recipe %s:\n%s",
                       ingredient.name, recipe.name, recipe)
     actions.append(SetLedForValve(valve, 0, 128, 255))
+  actions.append(Move(0.0))
+  actions.append(Home(carefully=False))
+  actions.append(Move(-3.8))
+  actions.append(SlamStir())
   actions.append(Move(0.0))
   actions.append(Home(carefully=False))
   actions.append(WaitForGlassRemoval(recipe.user_name, recipe))

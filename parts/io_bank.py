@@ -97,13 +97,14 @@ class Outputs(enum.Enum):
   VALVE_29 = 2046
   VALVE_30 = 2048
 
-  CHUCK = 2008
+  #CHUCK = 2008
   # COMPRESSOR_HEAD = 2004
   # COMPRESSOR_VENT = 2005
   # To pressurize, open head, close vent
   # For chuck, close head, open vent
   # For cleanup, open both
   COMPRESSOR = 2006
+  SLAM = 2008
   ICE_DISPENSER = 2038
 
 
