@@ -150,6 +150,8 @@ class StaticFileHandler(webapp2.RequestHandler):
       self.response.content_type = 'image/jpg'
     elif '.js' in self.request.path:
       self.response.content_type = 'application/javascript'
+    elif '.css' in self.request.path:
+      self.response.content_type = 'text/css'
     relative_path = self.to_relative_path(self.request.path)
     path = STATIC_FILE_DIR + relative_path
     try:
@@ -383,6 +385,7 @@ def StartServer(port, syncer):
       ('/queue-retry', RetryQueue),
       ('/queue-clear', ClearQueue),
       ('/queue-skip', SkipQueue),
+      ('/display', ServeFile(STATIC_FILE_DIR + 'display.html')),
       # Debug API
       ('/api/calibrate', SingleActionHandler(Home)),
       ('/api/compressor-on',

@@ -60,6 +60,7 @@ class SyncToServer(threading.Thread):
   def __init__(self, base_url, poll_frequency_secs, controller):
     super(self.__class__, self).__init__()
     self.queuefile = 'remote_queue.txt'
+    self.jsonqueuefile = 'static/order-queue.json'
     self.base_url = base_url
     self.poll_frequency_secs = poll_frequency_secs
     self.controller = controller
@@ -142,7 +143,8 @@ class SyncToServer(threading.Thread):
       for order in queue or []:
         recipe = Recipe.from_json(order)
         f.write(str(recipe))
-
+    with open(self.jsonqueuefile, 'w') as f:
+      f.write(json.dumps(queue or []))
 
 def unittest():
   from controller import Controller
