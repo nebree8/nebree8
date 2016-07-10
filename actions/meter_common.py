@@ -1,10 +1,12 @@
 import logging
 from time import time, sleep
 from actions.action import ActionException
+from parts import load_cell
 
 OZ_TO_ADC_VALUES = 53.28
 MAX_TARE_STDDEV = 3.
 TARE_TIMEOUT_SECS = 20.
+SECONDS_PER_OZ = 3 * .75
 
 
 class TareTimeout(ActionException):
@@ -27,4 +29,5 @@ def tare(robot):
     logging.error('Reading standard deviation while taring above ' +
                   '%s for %s secs. Last result: %s' % (MAX_TARE_STDDEV,
                                                        TARE_TIMEOUT_SECS, tare))
+    tare = load_cell.Summary(*(tare[:4] + (False,)))
   return tare
