@@ -445,7 +445,7 @@ if __name__ == "__main__":
   gflags.DEFINE_bool('fake', False, 'Run with hardware faked out')
   gflags.DEFINE_string('logfile', '',
                        'File to log to. If empty, does not log to a file')
-  gflags.DEFINE_boolean('logtostderr', True, 'Log to stderr instead of a file')
+  gflags.DEFINE_boolean('logtostderr', False, 'Log to stderr instead of a file')
   gflags.DEFINE_enum('loglevel', 'info', ('debug', 'info', 'warning', 'error'),
                      'Log verbosity')
   gflags.DEFINE_string('frontend', '', 'Frontend server to sync with, if any')
