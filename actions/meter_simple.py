@@ -20,12 +20,13 @@ class MeterSimple(Action):
     tare = meter_common.tare(robot)
     self.tare_reading = tare.mean
     if not tare.healthy:
+      self.unhealthy = True
       logging.error("UNHEALTHY TARE")
       with robot.OpenValve(self.valve_to_actuate):
         time.sleep(meter_common.SECONDS_PER_OZ * self.oz_to_meter)
         return
     self.target_reading = (tare.mean + meter_common.OZ_TO_ADC_VALUES * max(
-        self.oz_to_meter - METER_OZ_OFFSET, .05))
+        self.oz_to_meter - METER_OZ_OFFSET, .1))
     last_summary = tare
     print "Metering to oz %f or %s" % (self.oz_to_meter, self.target_reading)
     with robot.OpenValve(self.valve_to_actuate):
