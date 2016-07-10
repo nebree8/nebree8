@@ -127,14 +127,11 @@ class Arduino:
           try:
             pin, value = self.output_updates.get(False)
             self.outputs[pin] = value
-            #logging.info("output set")
           except Queue.Empty:
             break
         if use_this_command:
-          #logging.info("Pushing command: %s", command)
           self.interface.Write(0, command)
         else:
-          #print "Pushing IO update."
           self.__SendOutputsMessage()
       except Queue.Empty:
         # No refresh signals for a while, Refresh all pins

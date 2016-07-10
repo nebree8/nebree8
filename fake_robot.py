@@ -113,3 +113,9 @@ class FakeRobot(Robot):
 
   def ChuckVent(self):
     pass
+
+  def GentleStir(self):
+    pass
+
+  def CleanStirMotor(self):
+    pass

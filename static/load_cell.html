@@ -123,7 +123,7 @@
           return [data[i][0], d3.median(data.slice(i, i + 50).map(get_y))];
         });
         if (data.length > 50) {
-          var s = data.slice(data.length - 50, data.length);
+          var s = data.slice(0, 50);
           var avg = d3.sum(s.map(get_y)) / s.length;
           var stddev = Math.sqrt(
               d3.sum(s.map(function(r) { return Math.pow(r[1] - avg, 2); }))
