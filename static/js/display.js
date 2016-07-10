@@ -7,7 +7,7 @@ var DisplayCtrl = function($http, $interval) {
 };
 
 DisplayCtrl.prototype.updateQueue = function() {
-  this.$http.get('/order-queue-test.json').then(angular.bind(this, function(resp) {
+  this.$http.get('/order-queue.json').then(angular.bind(this, function(resp) {
     this.queue = resp.data;
   }));
 }
