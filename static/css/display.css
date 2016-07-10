@@ -1,5 +1,6 @@
 body {
   background-color: #fff;
+  box-sizing: border-box;
   padding: 40px;
 }
 
@@ -8,18 +9,61 @@ body {
 }
 
 .order-banner {
-  font-size: 90px;
+  font-size: 80px;
   font-family: 'Oswald', sans-serif;
   font-weight: bold;
-  margin-left: 20px;
+  margin-left: 40px;
 }
 
 .order-current {
   font-size: 48px;
   font-family: 'Oswald', sans-serif;
+  margin-top: 36px;
 }
 
 .queue-banner {
+  color: rgba(0,0,0,0.50);
   font-family: 'Oswald', sans-serif;
   font-size: 32px;
+}
+
+.position {
+  border: 2px solid #000;
+  border-radius: 50%;
+  height: 36px;
+  line-height: 32px;
+  text-align: center;
+  width: 36px;
+}
+
+.position-cont {
+  box-sizing: border-box;
+  padding: 4px;
+  text-align: center;
+}
+
+.queue-item {
+  font-family: 'Oswald', sans-serif;
+  font-size: 24px;
+  line-height: 48px;
+}
+
+.for {
+ font-size: 14px;
+}
+
+.stat {
+  margin-left: 40px;
+  text-align: center;
+}
+
+.graph-header {
+  font-family: 'Oswald', sans-serif;
+}
+
+.expl {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;  
+  padding: 80px;
+  text-align: center;
 }

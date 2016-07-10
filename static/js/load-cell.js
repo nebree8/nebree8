@@ -74,8 +74,8 @@ line = d3.svg.line()
         var stddev = Math.sqrt(
             d3.sum(s.map(function(r) { return Math.pow(r[1] - avg, 2); }))
            / (s.length - 1));
-         avg_elt.innerHTML = avg;
-         std_dev_elt.innerHTML = stddev;
+        avg_elt.innerHTML = String(avg).substring(0, 6);
+        std_dev_elt.innerHTML = String(stddev).substring(0, 4);
       }
       x = d3.scale.linear().domain(d3.extent(data.map(get_x))).range([0, w]);
       y = d3.scale.linear().domain(d3.extent(data.map(get_y))).range([h, 0]);
