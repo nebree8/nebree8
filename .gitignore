@@ -1,7 +1,7 @@
 # Custom additions
 monitor/data/queue.txt
 remote_queue.txt
-static/d3.v3.min.js
+static/order-queue.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

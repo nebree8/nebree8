@@ -1,0 +1,25 @@
+body {
+  background-color: #fff;
+  padding: 40px;
+}
+
+.logo {
+  width: 226px;
+}
+
+.order-banner {
+  font-size: 90px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: bold;
+  margin-left: 20px;
+}
+
+.order-current {
+  font-size: 48px;
+  font-family: 'Oswald', sans-serif;
+}
+
+.queue-banner {
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+}
