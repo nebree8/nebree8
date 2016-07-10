@@ -94,6 +94,19 @@ class FakeRobot(Robot):
   def AllLed(self, r, g, b):
     pass
 
+  def StartIce(self):
+    _sleep(2.0)
+
+  def StopIce(self):
+    pass
+
+  def StartStirMotor(self):
+    pass
+
+  def StopStirMotor(self):
+    pass
+
+  
   def _FakeMove(self, new_position):
     _sleep(abs(self.position - new_position) / 10.0)
     self.position = new_position * 1.0
