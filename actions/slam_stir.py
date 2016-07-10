@@ -8,9 +8,11 @@ class SlamStir(Action):
 
   def __call__(self, robot):
     robot.ChuckVent()
+    time.sleep(1.0)
     robot.Slam()
     robot.GentleStir()
     robot.StopStirMotor()
     robot.UnSlam()
+    time.sleep(1.0)
     robot.CleanStirMotor()
-    time.sleep(4.0)
+    time.sleep(1.0)

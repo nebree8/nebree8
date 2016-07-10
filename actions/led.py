@@ -25,5 +25,5 @@ def led_position(valve_no):
 
 class SetLedForValve(Led):
   def __init__(self, valve, r, g, b):
-    Led.__init__(self, max(0, led_position(valve) - 1.0), r, g, b,
+    Led.__init__(self, max(1.3, led_position(valve) - 1.0), r, g, b,
                  valve % 2 == 1)

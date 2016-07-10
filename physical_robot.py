@@ -141,13 +141,13 @@ class PhysicalRobot(Robot):
 
   def CleanStirMotor(self):
     self.io.arduino.Servo(13, 90)
-    time.sleep(1)
+    time.sleep(3)
     self.StopStirMotor()
 
   def GentleStir(self):
-    on_sleep_secs = 0.4
-    off_sleep_secs = 0.3
-    for i in range(6):
+    on_sleep_secs = 0.2
+    off_sleep_secs = 0.13
+    for i in range(9):
       self.io.arduino.Servo(13, 50)
       time.sleep(on_sleep_secs)
       self.StopStirMotor()

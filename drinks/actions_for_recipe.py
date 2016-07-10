@@ -3,8 +3,8 @@ import logging
 from actions.compressor import CompressorToggle
 from actions.compressor import State
 from actions.home import Home
-from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
-#from actions.meter_simple import MeterSimple as Meter
+#from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
+from actions.meter_simple import MeterSimple as Meter
 from actions.led import SetLedForValve, Led
 from actions.meter_bitters import MeterBitters
 from actions.move import Move

@@ -7,6 +7,7 @@ from actions.action import Action
 METER_OZ_OFFSET = 0.4
 OZ_TO_ADC_VALUES = 35
 TIME_PER_OZ = 13.5
+TARE_TIMEOUT_SECS = 20.
 MAX_TARE_STDDEV = 3.
 
 
@@ -32,6 +33,7 @@ class MeterSimple(Action):
     tare = self._tare(robot)
     self.tare_reading = tare.mean
     if not tare.healthy:
+      logging.info("UNHEALTHY TARE")
       with robot.OpenValve(self.valve_to_actuate):
         time.sleep(TIME_PER_OZ * self.oz_to_meter)
         return
@@ -40,6 +42,7 @@ class MeterSimple(Action):
     last_summary = tare
     print "Metering to oz %f or %s" % (self.oz_to_meter, self.target_reading)
     with robot.OpenValve(self.valve_to_actuate):
+      logging.info("healthy tare")
       while last_summary.mean < self.target_reading:
         time.sleep(.05)
         last_summary = robot.load_cell.recent_summary(secs=.1)
@@ -63,7 +66,7 @@ class MeterSimple(Action):
     tare = robot.load_cell.recent_summary(secs=.1)
     while (tare.stddev > MAX_TARE_STDDEV and
            time.time() < tare_start + TARE_TIMEOUT_SECS):
-      sleep(.1)
+      time.sleep(.1)
       tare = robot.load_cell.recent_summary(secs=.1)
     if tare.stddev > MAX_TARE_STDDEV:
       logging.error('Reading standard deviation while taring above ' +
