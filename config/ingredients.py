@@ -16,7 +16,7 @@ INGREDIENTS_ORDERED = (
     "rose",
     "rye",
     "campari",
-    "pimms",
+    "rye_backup",
     "scotch",
     "mescal",
     "angostura bitters",  #small bottle location
@@ -30,13 +30,14 @@ INGREDIENTS_ORDERED = (
     "grenadine",
     "lime juice",
     "agave syrup",
-    "peach schnapps",
+    "bourbon_backup",
     "absinthe",
-    "rum_backup",
+    "soda",
+    "",
+    "orange juice",
+    "tonic",
     "lemon juice",
-    "maple syrup",
-    "dry vermouth_backup",
-    "absinthe_backup",
+    "tequila_backup",
 )
 
 OVERRIDES = {
