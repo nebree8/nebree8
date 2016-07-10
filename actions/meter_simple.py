@@ -7,6 +7,7 @@ from actions.action import Action
 METER_OZ_OFFSET = 0.4
 OZ_TO_ADC_VALUES = 35
 TIME_PER_OZ = 13.5
+MAX_TARE_STDDEV = 3.
 
 
 # class MeterSimple(Action):
@@ -58,10 +59,10 @@ class MeterSimple(Action):
     returns: load_cell.Summary
     throws: Exception
     """
-    tare_start = time()
+    tare_start = time.time()
     tare = robot.load_cell.recent_summary(secs=.1)
     while (tare.stddev > MAX_TARE_STDDEV and
-           time() < tare_start + TARE_TIMEOUT_SECS):
+           time.time() < tare_start + TARE_TIMEOUT_SECS):
       sleep(.1)
       tare = robot.load_cell.recent_summary(secs=.1)
     if tare.stddev > MAX_TARE_STDDEV:

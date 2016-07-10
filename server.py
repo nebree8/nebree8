@@ -265,7 +265,7 @@ class FlushHandler(webapp2.RequestHandler):
       actions.append(Move(valve_position(valve)))
       actions.append(SetLedForValve(valve, 0, 255, 0))
       actions.append(MeterBitters(valve_to_actuate=valve,
-                                  drops_to_meter=10))
+                                  drops_to_meter=1))
       actions.append(SetLedForValve(valve, 0, 128, 255))
     actions.append(Move(0.0))
     actions.append(Home(carefully=False))
@@ -416,6 +416,7 @@ def main():
   FLAGS(sys.argv)
 
   # Set up logging
+  logging.basicConfig(format='%(asctime)s %(message)s')
   rootLogger = logging.getLogger()
   rootLogger.setLevel(getattr(logging, FLAGS.loglevel.upper()))
   if FLAGS.logfile:

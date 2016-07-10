@@ -144,7 +144,6 @@ class RobotRail(object):
       self.motor.Move(steps, forward=forward)
       if forward:
         self.position += StepsToInches(steps + 2)
-        #self.position += 0.1 #75  # 2:30am edit -- might be bad
       else:
         self.position -= StepsToInches(steps + 2)
       print "At position: %f" % position

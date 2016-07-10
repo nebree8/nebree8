@@ -30,7 +30,7 @@ void setup() {
 //serial->begin(9600);
   const uint16_t kNumLeds = 300;
   arduino_io.Add(new nebree8::LedModule(kNumLeds, LED_SIGNAL_PIN));
-  //Serial.begin(9600);
+  //Serial.begin(50000);
   Serial.begin(115200);
   arduino_io.Add(new arduinoio::SerialRXModule(NULL, 0));
   arduino_io.Add(new nebree8::UCIOModule());
