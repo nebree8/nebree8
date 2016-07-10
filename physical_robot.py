@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import logging
 import time
 
 from parts import io_bank
@@ -37,9 +38,9 @@ class PhysicalRobot(Robot):
     self.cannot_interrupt = True
     self.ChuckHoldHeadPressure()
     time.sleep(0.5)
-    print "Moving"
+    logging.info("Moving")
     self.rail.FillPositions([position_in_inches])
-    print "Move Done"
+    logging.info("Move Done")
     self.Vent()
     self.cannot_interrupt = False
     if position_in_inches < -65.25:

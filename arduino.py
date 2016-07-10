@@ -19,6 +19,7 @@ class Arduino:
     self.interface = serial_control.SerialInterface()
     self.outputs = {}
     self.signal_refresh = Queue.Queue(1)
+    self.done_ack = Queue.Queue(1)
     self.incoming_messages = Queue.Queue(10)
     self.output_updates = Queue.Queue(100)
     self.thread = threading.Thread(target=self.__RefreshOutputs)
@@ -28,7 +29,7 @@ class Arduino:
   def WriteOutput(self, pin, value, blocking=False):
     try:
       self.output_updates.put((pin, value), block=True)
-      for i in range(4):
+      for i in range(2):
         # Ensures that the data is really written (if blocking)
         self.signal_refresh.put((False, None), block=blocking, timeout=None)
     except Queue.Full:
@@ -126,14 +127,14 @@ class Arduino:
           try:
             pin, value = self.output_updates.get(False)
             self.outputs[pin] = value
-            logging.info("output set")
+            #logging.info("output set")
           except Queue.Empty:
             break
         if use_this_command:
+          #logging.info("Pushing command: %s", command)
           self.interface.Write(0, command)
-          print "Pushing command: %s" % command
         else:
-          print "Pushing IO update."
+          #print "Pushing IO update."
           self.__SendOutputsMessage()
       except Queue.Empty:
         # No refresh signals for a while, Refresh all pins

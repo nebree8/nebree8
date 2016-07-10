@@ -112,8 +112,8 @@ class SyncToServer(threading.Thread):
             continue  # Don't make the same drink twice
           last_drink_id = drink_id
           next_recipe = water_down_recipe(Recipe.from_json(json_recipe))
-          print "Queueing Recipe in 5 seconds: %s" % next_recipe
-          time.sleep(5)
+          print "Queueing Recipe in 1 seconds: %s" % next_recipe
+          time.sleep(1)
           raw_actions = actions_for_recipe(next_recipe)
           actions = []
           for i, action in enumerate(raw_actions):

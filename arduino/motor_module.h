@@ -11,6 +11,10 @@ namespace nebree8 {
 
 const char* MOVE = "MOVE";
 const int MOVE_LENGTH = 4;
+const double SPEED_UP_FACTOR = 0.996;
+const double SLOW_DOWN_FACTOR = 1.004;
+const int SLOW_DOWN_INCREMENT = 100;
+const double SLOW_DOWN_FACTOR_INCREMENT = 1.49063488565;
 
 class MotorModule : public arduinoio::UCModule {
  public:
@@ -18,7 +22,7 @@ class MotorModule : public arduinoio::UCModule {
     pulse_state_ = false;
     initialized_ = false;
     timed_callback_ = NULL;
-    max_wait_ = 4000;
+    max_wait_ = 2000;
     send_done_ = false;
 
     const int kLocalAddress = 0;
@@ -43,12 +47,10 @@ class MotorModule : public arduinoio::UCModule {
     --remaining_steps_;
     pulse_state_ = !pulse_state_;
     digitalWrite(pulse_pin_, pulse_state_ ? HIGH : LOW);
-    if (remaining_steps_ > 600) {  // long way to go, speed up
-      if (current_wait_ > min_wait_) {
-        current_wait_ *= 0.996;
-      }
-    } else if (current_wait_ < max_wait_) {  // almost there, slow down
-      current_wait_ *= 1.004;
+    if (TimeToSlowDown(remaining_steps_)) {
+      current_wait_ *= SLOW_DOWN_FACTOR;
+    } else if (current_wait_ > min_wait_) {
+      current_wait_ *= SPEED_UP_FACTOR;
     }
     if (remaining_steps_ > 0) {
       char relevant_trigger_pin =
@@ -63,6 +65,19 @@ class MotorModule : public arduinoio::UCModule {
     digitalWrite(done_pin_, HIGH);
     send_done_ = true;
     timed_callback_ = NULL;
+  }
+
+  bool TimeToSlowDown(int steps_remaining) {
+    const int steps_increment = steps_remaining / SLOW_DOWN_INCREMENT;
+    double new_wait = current_wait_;
+    for (int i = 0; i < steps_increment; ++i) {
+      new_wait *= SLOW_DOWN_FACTOR_INCREMENT;
+      if (new_wait > max_wait_) {
+        // We can wait and still slow down in time.
+        return false;
+      }
+    }
+    return true;
   }
 
   virtual bool AcceptMessage(const arduinoio::Message &message) {
@@ -86,12 +101,13 @@ class MotorModule : public arduinoio::UCModule {
       if (command[MOVE_LENGTH + 6] > 5) {
         max_wait_ = 500;
       } else {
-        max_wait_ = 4000;
+        max_wait_ = 2000;
       }
+      send_done_ = false;
       
       const int *int_args = (const int*) (command + MOVE_LENGTH + 7);
       remaining_steps_ = int_args[0];
-      min_wait_ = 250;
+      min_wait_ = 200;
       if (!initialized_) {
         // Assumes the pins won't change.
         pinMode(dir_pin, OUTPUT);
