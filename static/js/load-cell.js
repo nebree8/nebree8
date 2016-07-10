@@ -60,7 +60,7 @@ line = d3.svg.line()
   function refreshData() {
     d3.json("/load_cell.json", function(error, json) {
       if (error) return console.warn(error);
-      data = json;
+      data = json.map(function (v, i) { return [v[0], v[1] / 49.8]; });
       var avg_data = data.map(function (_, i) {
         var s = data.slice(i, i + 50);
         return [data[i][0], d3.sum(s.map(get_y)) / s.length];
@@ -69,12 +69,12 @@ line = d3.svg.line()
         return [data[i][0], d3.median(data.slice(i, i + 50).map(get_y))];
       });
       if (data.length > 50) {
-        var s = data.slice(data.length - 50, data.length);
+        var s = data.slice(0, 50);
         var avg = d3.sum(s.map(get_y)) / s.length;
         var stddev = Math.sqrt(
             d3.sum(s.map(function(r) { return Math.pow(r[1] - avg, 2); }))
            / (s.length - 1));
-        avg_elt.innerHTML = String(avg).substring(0, 6);
+        avg_elt.innerHTML = String(avg).substring(0, 6) + ' oz';
         std_dev_elt.innerHTML = String(stddev).substring(0, 4);
       }
       x = d3.scale.linear().domain(d3.extent(data.map(get_x))).range([0, w]);
