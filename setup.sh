@@ -14,8 +14,9 @@ function install_once {
     libxml2 python-dev python-pycurl python-pyquery \
     imagemagick
   run sudo -H pip install --upgrade pip
+  # TODO: This only works on the Pi.
   run sudo -H pip install --upgrade \
-    RPi.GPIO \  # TODO: This only works on the Pi.
+    RPi.GPIO \
     enum34 WebOb Paste webapp2 python-gflags
   install_polymer
   curl https://d3js.org/d3.v3.min.js > static/d3.v3.min.js
