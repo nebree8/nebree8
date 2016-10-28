@@ -100,12 +100,26 @@ class FakeRobot(Robot):
   def StopIce(self):
     pass
 
+  def BootStirMotor(self):
+    time.sleep(0.1)
+    self.StopStirMotor()
+
+  def CleanStirMotor(self):
+    time.sleep(1)
+    self.StopStirMotor()
+
   def StartStirMotor(self):
     pass
 
   def StopStirMotor(self):
     pass
 
+  def GentleStir(self):
+    on_sleep_secs = 0.4
+    off_sleep_secs = 0.3
+    for i in range(6):
+      _sleep(on_sleep_secs)
+      _sleep(off_sleep_secs)
   
   def _FakeMove(self, new_position):
     _sleep(abs(self.position - new_position) / 10.0)
