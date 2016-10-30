@@ -37,6 +37,7 @@ INGREDIENTS_ORDERED = (
     "orange juice",
     "tonic",
     "lemon juice",
+    "cola",
 )
 
 OVERRIDES = {
