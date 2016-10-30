@@ -30,13 +30,13 @@ INGREDIENTS_ORDERED = (
     "grenadine",
     "lime juice",
     "agave syrup",
-    "peach schnapps",
+    "water",
     "absinthe",
-    "rum_backup",
+    "soda",
+    "air",
+    "orange juice",
+    "tonic",
     "lemon juice",
-    "maple syrup",
-    "dry vermouth_backup",
-    "absinthe_backup",
 )
 
 OVERRIDES = {
