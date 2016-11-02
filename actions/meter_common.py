@@ -3,7 +3,8 @@ from time import time, sleep
 from actions.action import ActionException
 from parts import load_cell
 
-OZ_TO_ADC_VALUES = 49.8
+#OZ_TO_ADC_VALUES = 30  # True calibration
+OZ_TO_ADC_VALUES = 39.  # +30% for generous pours.
 MAX_TARE_STDDEV = 4.
 TARE_TIMEOUT_SECS = 20.
 SECONDS_PER_OZ = 3 * .75

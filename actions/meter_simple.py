@@ -5,7 +5,7 @@ import time
 from actions.action import Action
 from actions import meter_common
 
-METER_OZ_OFFSET = 0.4
+METER_OZ_OFFSET = 0.0
 
 
 class MeterSimple(Action):
