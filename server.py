@@ -17,6 +17,7 @@ from actions.home import Home
 from actions.led import SetLedForValve
 from actions.meter_bitters import MeterBitters
 from actions.meter_simple import MeterSimple as Meter
+#from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
 from actions.move import Move
 from actions.pressurize import HoldPressure, ReleasePressure
 from config import ingredients
@@ -28,6 +29,7 @@ from drinks.random_drinks import RandomSourDrink, RandomSpirituousDrink, RandomB
 from drinks.recipe import Recipe
 from drinks.water_down import water_down_recipe
 from fake_robot import FakeRobot
+from actions.slam_stir import STIR_POSITION, SlamStir
 import poll_appengine
 
 FLAGS = gflags.FLAGS
@@ -234,7 +236,8 @@ class PrimeHandler(webapp2.RequestHandler):
         name='Prime',
         ingredients=[
             manual_db.Ingredient(
-                manual_db.Oz(.725), ingredient)
+                #manual_db.Oz(.725), ingredient)
+                manual_db.Oz(.2), ingredient)
             for ingredient in ingredients.IngredientsOrdered()[:]
             if ingredient != "air"
         ],
@@ -282,6 +285,14 @@ class HoldPressureHandler(webapp2.RequestHandler):
     controller.EnqueueGroup([HoldPressure()])
 
 
+class SlamStirHandler(webapp2.RequestHandler):
+  def post(self):
+    print "Slam stir."
+    controller.EnqueueGroup([
+      Move(STIR_POSITION),
+      SlamStir(),
+    ])
+
 class ReleasePressureHandler(webapp2.RequestHandler):
   def post(self):
     controller.EnqueueGroup([ReleasePressure()])
@@ -310,7 +321,7 @@ class FillHandler(webapp2.RequestHandler):
       controller.EnqueueGroup([
           SetLedForValve(valve, 255, 0, 0), Move(valve_position(valve)),
           SetLedForValve(valve, 0, 255, 0),
-          Meter(valve_to_actuate=valve, oz_to_meter=oz),
+          #Meter(valve_to_actuate=valve, oz_to_meter=oz),
           SetLedForValve(valve, 0, 128, 255)
       ])
     except ValueError:
@@ -395,6 +406,7 @@ def StartServer(port, syncer):
       ('/api/prime', PrimeHandler),
       ('/api/flush', FlushHandler),
       ('/api/hold_pressure', HoldPressureHandler),
+      ('/api/slam_stir', SlamStirHandler),
       ('/api/release_pressure', ReleasePressureHandler),
       ('/api/dispense_cup', DispenseCupHandler),
       ('/api/dispense_cup_full_test', DispenseCupFullTestHandler),

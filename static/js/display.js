@@ -3,7 +3,7 @@ var DisplayCtrl = function($http, $interval) {
   this.$http = $http;
   this.queue = [];
   this.updateQueue();
-  $interval(angular.bind(this, this.updateQueue), 50000);
+  $interval(angular.bind(this, this.updateQueue), 1000);
 };
 
 DisplayCtrl.prototype.updateQueue = function() {

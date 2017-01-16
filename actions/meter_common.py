@@ -7,7 +7,7 @@ from parts import load_cell
 OZ_TO_ADC_VALUES = 39.  # +30% for generous pours.
 MAX_TARE_STDDEV = 4.
 TARE_TIMEOUT_SECS = 20.
-SECONDS_PER_OZ = 3 * .75
+SECONDS_PER_OZ = 10 * .75 * 1.25
 
 
 class TareTimeout(ActionException):

@@ -42,7 +42,7 @@ class PhysicalRobot(Robot):
     logging.info("Moving")
     self.rail.FillPositions([position_in_inches])
     logging.info("Move Done")
-    self.Vent()
+    #self.Vent()
     self.cannot_interrupt = False
     if position_in_inches < -65.25:
       self.rail.position = -65.25
@@ -69,6 +69,11 @@ class PhysicalRobot(Robot):
   def StartIce(self):
     """Starts the ice dispenser."""
     self.io.WriteOutput(io_bank.Outputs.ICE_DISPENSER, 1, blocking=True)
+
+  def ToggleIceDoor(self):
+    self.io.arduino.Servo(41, 0)
+    time.sleep(2)
+    self.io.arduino.Servo(41, 90)
 
   def StopIce(self):
     """Stops the ice dispenser."""
@@ -104,11 +109,11 @@ class PhysicalRobot(Robot):
   def OpenValve(self, valve_no):
     valve_io = io_bank.GetValve(valve_no)
     self.io.WriteOutput(valve_io, 1, blocking=True)
-    print "OPEN VALVE: %d -> %s (wired at %d)" % (valve_no, valve_io,
-                                                  valve_io.value)
+    logging.info("OPEN VALVE: %d -> %s (wired at %d)",
+                 valve_no, valve_io, valve_io.value)
     yield
     self.io.WriteOutput(valve_io, 0, blocking=True)
-    print "CLOSE VALVE: %s" % valve_io
+    logging.info("CLOSE VALVE: %s", valve_io)
 
   def ActivateCompressor(self):
     self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
@@ -146,8 +151,9 @@ class PhysicalRobot(Robot):
 
   def GentleStir(self):
     on_sleep_secs = 0.2
+    #on_sleep_secs = 0.18
     off_sleep_secs = 0.13
-    for i in range(9):
+    for i in range(8):
       self.io.arduino.Servo(13, 50)
       time.sleep(on_sleep_secs)
       self.StopStirMotor()

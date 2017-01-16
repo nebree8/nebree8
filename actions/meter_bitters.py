@@ -5,7 +5,7 @@ import time
 
 from actions.action import Action
 
-BITTER_METER_TIME_SECS = .25
+BITTER_METER_TIME_SECS = .20
 
 
 class MeterBitters(Action):

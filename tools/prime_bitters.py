@@ -7,13 +7,19 @@ import common
 import gflags
 
 from config.ingredients import INGREDIENTS_ORDERED
-from drinks.recipe import Recipe, Ingredient, Oz
+from drinks.recipe import Recipe, Ingredient, Drops, Oz
 from drinks.actions_for_recipe import actions_for_recipe
 
+"""
 BITTERS = set([
     'angostura bitters',
     'peychauds bitters',
     'rose',
+])
+"""
+
+BITTERS = set([
+    'agave syrup',
 ])
 
 

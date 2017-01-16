@@ -27,7 +27,8 @@ class LedShow(object):
     if self.rindex < 0:
       self.rindex = 179
 
-    self.robot.AllLed(0, 0, 0)
+    STATIC_AMP = 80
+    self.robot.AllLed(STATIC_AMP / 2, 0, STATIC_AMP)
     self.SetFromIndex(self.index)
     self.SetFromIndex(self.rindex)
     self.robot.UpdateLeds()

@@ -1,5 +1,9 @@
 from actions.action import Action, ActionException
+#from actions.wait_for_glass_placed import WaitForGlassPlaced
 import time
+
+
+ICE_LOCATION = -58.375
 
 
 class DispenseIce(Action):
@@ -9,6 +13,8 @@ class DispenseIce(Action):
   def __call__(self, robot):
     robot.ChuckVent()
     robot.StartIce()
-    time.sleep(1.7)
+    time.sleep(2.9)
+    #time.sleep(5.0)
     robot.StopIce()
-    time.sleep(3.0)
+    #WaitForGlassPlaced()(robot)
+    time.sleep(2.2)

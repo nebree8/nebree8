@@ -37,7 +37,11 @@ void setup() {
   //arduino_io.Add(new nebree8::UCServoModule());
   arduino_io.Add(new nebree8::PressureSensorModule());
   arduino_io.Add(new nebree8::MotorModule());
-  arduino_io.Add(new nebree8::ServoModule());
+  // Stir motor
+  const int NEUTRAL = 45;
+  arduino_io.Add(new nebree8::ServoModule(13, NEUTRAL));
+  // Ice Door
+  arduino_io.Add(new nebree8::ServoModule(41, 90));
 }
 
 void loop() {

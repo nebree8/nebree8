@@ -14,6 +14,7 @@ class MeterSimple(Action):
     self.oz_to_meter = oz_to_meter
 
   def __call__(self, robot):
+    robot.Vent()
     if self.oz_to_meter == 0:
       logging.warning("oz_to_meter was zero, returning early.")
     self.initial_reading = robot.load_cell.recent_summary(secs=.2).mean

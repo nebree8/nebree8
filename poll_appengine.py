@@ -34,7 +34,10 @@ class UpdateProgressAction(Action):
     self.percent = percent
 
   def __call__(self, robot):
-    self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
+    try:
+        self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
+    except urllib2.URLError as e:
+        logging.exception("Ignoring error while uploading progress")
 
   def __str__(self):
     return 'UpdateProgressAction: key=...%s percent=%s' % (self.key[-10:],
@@ -90,13 +93,17 @@ class SyncToServer(threading.Thread):
     return urllib2.urlopen(self.base_url + url).read()
 
   def post(self, url, **kwargs):
-    try:
-      url = self.base_url + url
-      data = urllib.urlencode(kwargs)
-      return urllib2.urlopen(url=url, data=data).read()
-    except urllib2.HTTPError, e:
-      print e
-      raise
+    attempt = 1
+    while True:
+      try:
+        url = self.base_url + url
+        data = urllib.urlencode(kwargs)
+        return urllib2.urlopen(url=url, data=data).read()
+      except urllib2.HTTPError, e:
+        logging.exception("Error on POST to %s", url)
+        if attempt >= 3:
+          raise
+        attempt += 1
 
   def run(self):
     last_drink_id = None
@@ -112,8 +119,6 @@ class SyncToServer(threading.Thread):
             continue  # Don't make the same drink twice
           last_drink_id = drink_id
           next_recipe = water_down_recipe(Recipe.from_json(json_recipe))
-          print "Queueing Recipe in 0 seconds: %s" % next_recipe
-          time.sleep(0)
           raw_actions = actions_for_recipe(next_recipe)
           actions = []
           for i, action in enumerate(raw_actions):
@@ -125,11 +130,11 @@ class SyncToServer(threading.Thread):
         else:
           actions = self.controller.InspectQueue()
           if actions:
-            print "Current action: ", actions[0]
+            logging.info("Current action: %s", actions[0])
             if (isinstance(actions[0],
                            (WaitForGlassRemoval, WaitForGlassPlaced)) and
                 isinstance(self.controller.robot, FakeRobot)):
-              print "Placing glass"
+              logging.info("Placing glass")
               actions[0].force = True
         self.write(queue)
       except urllib2.URLError, e:

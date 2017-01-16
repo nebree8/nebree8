@@ -60,7 +60,7 @@ line = d3.svg.line()
   function refreshData() {
     d3.json("/load_cell.json", function(error, json) {
       if (error) return console.warn(error);
-      data = json.map(function (v, i) { return [v[0], v[1] / 49.8]; });
+      data = json.map(function (v, i) { return [v[0], v[1] / 30]; });
       var avg_data = data.map(function (_, i) {
         var s = data.slice(i, i + 50);
         return [data[i][0], d3.sum(s.map(get_y)) / s.length];

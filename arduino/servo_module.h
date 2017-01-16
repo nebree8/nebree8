@@ -13,31 +13,19 @@ namespace nebree8 {
 const char* SERVO = "SERV";
 const int SERVO_LENGTH = 4;
 
-const int NEUTRAL = 45;
 const int MAX_SIGNAL = 2300;
 const int MIN_SIGNAL = 400;
 
 class ServoModule : public arduinoio::UCModule {
  public:
-   ServoModule() {
-    servo_.attach(13);
-    servo_.write(NEUTRAL);
-  //unsigned long kUsecDelay = 4000000;
-  //timed_callback_ = NULL;
-  //new TimedCallback<ServoModule>(kUsecDelay, this,
-  //    &ServoModule::TurnOn);
+   ServoModule(const char pin,
+       const char start_speed) : pin_(pin), start_speed_(start_speed) {
+    servo_.attach(pin_);
+    servo_.write(start_speed);
   }
 
   virtual const arduinoio::Message* Tick() {
-  //if (timed_callback_ != NULL) {
-  //  timed_callback_->Update();
-  //}
     return NULL;
-  }
-
-  void TurnOff() {
-    servo_.write(0);
-    //timed_callback_ = NULL;
   }
 
   virtual bool AcceptMessage(const arduinoio::Message &message) {
@@ -45,18 +33,20 @@ class ServoModule : public arduinoio::UCModule {
     const char* command = (const char*) message.command(&length);
     if (length > SERVO_LENGTH &&
         (strncmp(command, SERVO, SERVO_LENGTH) == 0)) {
-      //char pin = command[SERVO_LENGTH];
-      char speed = command[SERVO_LENGTH + 1];
-      //servo_.attach(pin);
-      servo_.write(speed);
-      return true;
+      const char command_pin = command[SERVO_LENGTH];
+      if (command_pin == pin_) {
+        char speed = command[SERVO_LENGTH + 1];
+        servo_.write(speed);
+        return true;
+      }
     }
     return false;
   }
 
  private:
   Servo servo_;
-//arduinoio::TimedCallback<ServoModule> *timed_callback_;
+  const char pin_;
+  const char start_speed_;
 };
 
 }  // namespace nebree8

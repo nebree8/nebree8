@@ -29,7 +29,7 @@ class Arduino:
   def WriteOutput(self, pin, value, blocking=False):
     try:
       self.output_updates.put((pin, value), block=True)
-      for i in range(2):
+      for i in range(1):
         # Ensures that the data is really written (if blocking)
         self.signal_refresh.put((False, None), block=blocking, timeout=None)
     except Queue.Full:
