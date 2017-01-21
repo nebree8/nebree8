@@ -9,56 +9,64 @@
   <link rel="stylesheet" href="/css/display.css">
 </head>
 <body ng-app="nebree8.display" ng-cloak>
-  <div layout="column" ng-controller="DisplayCtrl as ctrl">
-    <div layout="row" layout-align="start center" flex="10">
+  <div class="main-cont" layout="column" ng-controller="DisplayCtrl as ctrl">
+    <div layout="row" layout-align="start center" flex="30">
       <div class="logo">
         <img src="/images/logo.png">
       </div>
       <div class="order-banner" flex>Order drinks at nebree8.com</div>
     </div>
-    <div layout="row">
+    <div layout="row" flex>
       <div layout="column" flex="50">
         <div ng-if="ctrl.queue.length == 0" class="order-current">
           Just sitting around...
         </div>
-	<div ng-if="ctrl.queue.length > 0" layout="column">
-	  <div class="order-current">
-	    <div class="queue-banner">Now making:</div>
-	    <span class="drink_name">{{ctrl.queue[0].drink_name}}</span>
-	    for
-            <span class="user_name">{{ctrl.queue[0].user_name}}</span>
+	      <div ng-if="ctrl.finished_drink" layout="column">
+	        <div class="order-finished">
+	          <div class="queue-banner">Last made:</div>
+	          <span class="drink_name">{{ctrl.finished_drink.drink_name}}</span>
+	          <span class="for">for</span>
+            <span class="user_name">{{ctrl.finished_drink.user_name}}</span>
           </div>
-	</div>
+	      </div>
+	      <div ng-if="ctrl.current_drink">
+	        <div class="order-current">
+	          <div class="queue-banner">Now making:</div>
+	          <span class="drink_name">{{ctrl.current_drink.drink_name}}</span>
+	          <span class="for">for</span>
+            <span class="user_name">{{ctrl.current_drink.user_name}}</span>
+          </div>
+	      </div>
         <div class="queue" layout="column">
           <div ng-if="ctrl.queue.length > 1" class="queue-banner" flex="35">
             Next up:</div>
           <div class="queue-list" flex>
             <div ng-if="$index > 0" ng-repeat="order in ctrl.queue"
-		 layout="row">
+		             layout="row">
 	      <div class="position-cont" layout="row"
-		   layout-align="center center" flex="10">
-		<div class="position">{{$index}}</div>
+		         layout-align="center center" flex="10">
+		      <div class="position">{{$index}}</div>
 	      </div>
 	      <div class="queue-item" flex>
-		{{order.drink_name}}
-		<span class="for">for</span>
-		{{order.user_name}}
+		      {{order.drink_name}}
+		      <span class="for">for</span>
+		      {{order.user_name}}
 	      </div>
             </div>
           </div>
         </div>
       </div>
-      <div flex="50" layout="column" layout-align="center center">
+      <div flex="50" layout="column" layout-align="start center">
         <div>
-	  <h3 class="graph-header">Cocktail weight</h3>
-	  <div id="graph" class="aGraph"></div>
+	        <h3 class="graph-header">Cocktail weight</h3>
+	        <div id="graph" class="aGraph"></div>
           <div class="stat">Avg: <span id="avg"></span></div>
           <div class="stat">Std dev: <span id="stddev"></span></div>
-	</div>
-	<div class="expl">
-	  * If you've ordered and don't see your name, talk to a specialist
-	  to get your drink approved.
-	</div>
+	      </div>
+	      <div class="expl">
+	        * If you've ordered and don't see your name, talk to<br>
+          a specialist to get your drink approved.
+	      </div>
       </div>
     </div>
   </div>

@@ -1,7 +1,15 @@
 body {
   background-color: #fff;
   box-sizing: border-box;
-  padding: 40px;
+  height: 100%;
+  margin: 0;
+  padding: 20px;
+  padding-bottom: 0;
+}
+
+.main-cont {
+  height: 100%;
+  overflow: hidden;
 }
 
 .logo {
@@ -15,16 +23,31 @@ body {
   margin-left: 40px;
 }
 
-.order-current {
-  font-size: 48px;
+.order-current,
+.order-finished {
+  font-size: 40px;
   font-family: 'Oswald', sans-serif;
-  margin-top: 36px;
+}
+
+.order-finished,
+.order-finished .queue-banner {
+  color: green;
+}
+
+.order-current,
+.order-current .queue-banner {
+  color: orange;
+}
+
+.order-current .for,
+.order-finished .for {
+  font-size: 20px;
 }
 
 .queue-banner {
   color: rgba(0,0,0,0.50);
   font-family: 'Oswald', sans-serif;
-  font-size: 32px;
+  font-size: 16px;
 }
 
 .position {
@@ -59,11 +82,12 @@ body {
 
 .graph-header {
   font-family: 'Oswald', sans-serif;
+  margin-top: 0;
 }
 
 .expl {
   font-family: 'Oswald', sans-serif;
   font-size: 18px;  
-  padding: 80px;
+  padding: 20px;
   text-align: center;
 }
