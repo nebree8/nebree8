@@ -8,8 +8,8 @@
 
 namespace nebree8 {
 
-const char* IO_DELAY = "IO_DELAY";
-const int IO_DELAY_LENGTH = 8;
+const char* IO_DELAY = "DELAY";
+const int IO_DELAY_LENGTH = 5;
 
 class IODelay : public arduinoio::UCModule {
  public:
@@ -29,6 +29,7 @@ class IODelay : public arduinoio::UCModule {
     command[7] = on_;
     message_.Reset(kLocalAddress, kSetIoSize, (unsigned char*) command);
     outgoing_message_ready_ = true;
+    timed_callback_ = NULL;
   }
 
   virtual const arduinoio::Message* Tick() {
@@ -52,12 +53,12 @@ class IODelay : public arduinoio::UCModule {
         // Tenths of a second
         const unsigned long delay =
             static_cast<unsigned long>(command[IO_DELAY_LENGTH + 2]);
-      //ToggleIO();
+        ToggleIO();
         // Flip it.
-      //on_ = on_ == 0x0 ? 0x1 : 0x0;
+        // Dies even with this off and no message sending.
+        on_ = on_ == 0x0 ? 0x1 : 0x0;
         timed_callback_ = new arduinoio::TimedCallback<IODelay>(
-            3000,
-            //100L * delay,
+            100L * delay,
             this,
             &IODelay::ToggleIO);
         return true;
@@ -67,6 +68,7 @@ class IODelay : public arduinoio::UCModule {
   }
 
  private:
+  bool first_;
   char pin_;
   char on_;
   bool outgoing_message_ready_;

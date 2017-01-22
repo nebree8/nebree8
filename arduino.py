@@ -15,8 +15,8 @@ _REFRESH_RATE = 5  # Refreshes per second
 
 
 class Arduino:
-  def __init__(self):
-    self.interface = serial_control.SerialInterface()
+  def __init__(self, device_basename="ttyACM"):
+    self.interface = serial_control.SerialInterface(device_basename)
     self.outputs = {}
     self.signal_refresh = Queue.Queue(1)
     self.done_ack = Queue.Queue(1)
@@ -42,14 +42,23 @@ class Arduino:
     self.interface.Write(0, command)
     print "set servo"
 
-  def WriteDelay(self, pin, on, seconds):
+  def Blink(self, pin, seconds):
     centi_secs = int(round(seconds * 10))
+    raw_message = [chr(pin), chr(centi_secs)]
+    command = "BLINK" + "".join(raw_message)
+    self.interface.Write(0, command)
+
+  def WriteDelay(self, pin, on, seconds):
     pin = pin.value - 2000
+    self.WriteDelayRaw(pin, on, seconds)
+
+  def WriteDelayRaw(self, pin, on, seconds):
+    centi_secs = int(round(seconds * 10))
     print pin
     print on
     print centi_secs
     raw_message = [chr(pin), chr(on), chr(centi_secs)]
-    command = "IO_DELAY" + "".join(raw_message)
+    command = "DELAY" + "".join(raw_message)
     self.interface.Write(0, command)
 
   def HoldPressure(self, pressure_valve_pin, hold=True):

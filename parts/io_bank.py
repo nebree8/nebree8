@@ -175,6 +175,7 @@ class IOBank(object):
     gpio.setwarnings(False)
     if update_arduino:
       self.arduino = arduino.Arduino()
+      self.nano = arduino.Arduino("ttyUSB")
     else:
       self.arduino = None
     for output in Outputs:

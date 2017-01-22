@@ -4,7 +4,7 @@ import time
 import threading
 
 
-ICE_LOCATION = -54
+ICE_LOCATION = -54.5
 
 
 class StartIce(Action):

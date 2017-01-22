@@ -44,7 +44,7 @@ void setup() {
   // Ice Door
   arduino_io.Add(new nebree8::ServoModule(41, 90));
   // Delay for ice motor
-  //arduino_io.Add(new nebree8::IODelay());
+  arduino_io.Add(new nebree8::IODelay());
 }
 
 void loop() {
