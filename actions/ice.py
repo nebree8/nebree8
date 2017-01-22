@@ -1,20 +1,36 @@
 from actions.action import Action, ActionException
-#from actions.wait_for_glass_placed import WaitForGlassPlaced
+from parts import io_bank
 import time
+import threading
 
 
-ICE_LOCATION = -58.375
+ICE_LOCATION = -54
 
+
+class StartIce(Action):
+  def __init__(self):
+    pass
+  def __call__(self, robot):
+    robot.StartIce()
+
+class StopIce(Action):
+  def __init__(self):
+    pass
+  def __call__(self, robot):
+    robot.StopIce()
+
+class PrepareIce(Action):
+  def __init__(self):
+    pass
+  def __call__(self, robot):
+    robot.PrepIce()
 
 class DispenseIce(Action):
   def __init__(self):
     pass
 
   def __call__(self, robot):
-    robot.ChuckVent()
-    robot.StartIce()
-    time.sleep(2.9)
-    #time.sleep(5.0)
-    robot.StopIce()
-    #WaitForGlassPlaced()(robot)
-    time.sleep(2.2)
+    robot.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
+    robot.io.arduino.Servo(41, 0)
+    time.sleep(1.5)
+    robot.io.arduino.Servo(41, 90)

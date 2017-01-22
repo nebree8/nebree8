@@ -69,6 +69,7 @@ class SyncToServer(threading.Thread):
     self.controller = controller
     self.daemon = True
     if FLAGS.check_ingredients:
+      print("checking ingredients")
       config = json.loads(self.get('get_config'))
       logging.info("Frontend config=%s", config)
       backend_ingredients = set(
@@ -90,6 +91,7 @@ class SyncToServer(threading.Thread):
                                   + "Disable check with --nocheck_ingredients")
 
   def get(self, url):
+    print("Looking up url: %s", self.base_url + url)
     return urllib2.urlopen(self.base_url + url).read()
 
   def post(self, url, **kwargs):

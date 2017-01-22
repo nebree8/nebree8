@@ -66,3 +66,6 @@ class Robot(object):
 
   def UnSlam(self):
     pass
+
+  def PrepIce(self):
+    pass

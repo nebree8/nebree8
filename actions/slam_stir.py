@@ -1,7 +1,7 @@
 from actions.action import Action, ActionException
 import time
 
-STIR_POSITION = -3.8
+STIR_POSITION = -4.3
 
 class SlamStir(Action):
   def __init__(self):

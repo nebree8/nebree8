@@ -11,7 +11,7 @@ from actions.move import Move
 from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.dispense_cup import DispenseCup, ReleaseCup
-from actions.ice import DispenseIce, ICE_LOCATION
+from actions.ice import DispenseIce, ICE_LOCATION, StartIce, StopIce
 from actions.pressurize import HoldPressure, ReleasePressure
 from actions.slam_stir import STIR_POSITION, SlamStir
 from config import valve_position, ingredients
@@ -33,11 +33,15 @@ def actions_for_recipe(recipe):
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(SetLedForValve(valve, 255, 0, 0))
-  actions.append(Led(max(0, -10.65 - ICE_LOCATION), 255, 255, 0, y=4))
+  actions.append(Led(max(0, -11.15 - ICE_LOCATION), 255, 255, 0, y=4))
+  actions.append(Move(0))
+  actions.append(StartIce())
+  actions.append(Move(ICE_LOCATION / 2))
+  actions.append(StopIce())
   actions.append(Move(ICE_LOCATION))
-  actions.append(Led(max(0, -10.65 - ICE_LOCATION), 0, 255, 0, y=4))
+  actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 255, 0, y=4))
   actions.append(DispenseIce())
-  actions.append(Led(max(0, -10.65 - ICE_LOCATION), 0, 128, 255, y=4))
+  actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
   for ingredient in sorted_ingredients:
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)

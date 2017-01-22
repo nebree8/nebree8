@@ -42,6 +42,16 @@ class Arduino:
     self.interface.Write(0, command)
     print "set servo"
 
+  def WriteDelay(self, pin, on, seconds):
+    centi_secs = int(round(seconds * 10))
+    pin = pin.value - 2000
+    print pin
+    print on
+    print centi_secs
+    raw_message = [chr(pin), chr(on), chr(centi_secs)]
+    command = "IO_DELAY" + "".join(raw_message)
+    self.interface.Write(0, command)
+
   def HoldPressure(self, pressure_valve_pin, hold=True):
     min_pressure_psi = 15.8
     max_pressure_psi = 16.1

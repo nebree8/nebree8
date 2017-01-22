@@ -15,6 +15,7 @@
 #include "motor_module.h"
 #include "pressure_sensor_module.h"
 #include "uc_io_module.h"
+#include "io_delay.h"
 #include "servo_module.h"
 //#include "uc_servo_module.h"
 
@@ -42,6 +43,8 @@ void setup() {
   arduino_io.Add(new nebree8::ServoModule(13, NEUTRAL));
   // Ice Door
   arduino_io.Add(new nebree8::ServoModule(41, 90));
+  // Delay for ice motor
+  //arduino_io.Add(new nebree8::IODelay());
 }
 
 void loop() {
