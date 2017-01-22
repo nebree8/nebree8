@@ -18,7 +18,7 @@
     </div>
     <div layout="row" flex>
       <div layout="column" flex="50">
-        <div ng-if="ctrl.queue.length == 0" class="order-current">
+        <div ng-if="ctrl.queue.length == 0 && !ctrl.finished_drink && !ctrl.current_drink" class="order-current">
           Just sitting around...
         </div>
 	      <div ng-if="ctrl.finished_drink" layout="column">
