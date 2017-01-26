@@ -1,6 +1,5 @@
 from actions.action import Action, ActionException
 import time
-import threading
 
 
 ICE_LOCATION = -54.5
