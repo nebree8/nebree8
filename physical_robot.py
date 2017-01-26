@@ -168,6 +168,13 @@ class PhysicalRobot(Robot):
   def UnSlam(self):
     self.io.WriteOutput(io_bank.Outputs.SLAM, 0, blocking=True)
 
+  @contextmanager
+  def DispenseIce(self):
+    robot.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
+    robot.io.arduino.Servo(41, 0)
+    yield
+    robot.io.arduino.Servo(41, 90)
+
   def PrepIce(self):
     secs = 3.0
     self.io.arduino.WriteDelay(io_bank.Outputs.ICE_DISPENSER, 1, secs)
