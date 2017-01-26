@@ -91,8 +91,7 @@ class SyncToServer(threading.Thread):
                                   + "Disable check with --nocheck_ingredients")
 
   def get(self, url):
-    print("Looking up url: %s", self.base_url + url)
-    return urllib2.urlopen(self.base_url + url).read()
+    return urllib2.urlopen(self.base_url + url, timeout = 1).read()
 
   def post(self, url, **kwargs):
     attempt = 1
@@ -100,7 +99,7 @@ class SyncToServer(threading.Thread):
       try:
         url = self.base_url + url
         data = urllib.urlencode(kwargs)
-        return urllib2.urlopen(url=url, data=data).read()
+        return urllib2.urlopen(url=url, data=data, timeout = 1).read()
       except urllib2.HTTPError, e:
         logging.exception("Error on POST to %s", url)
         if attempt >= 3:
