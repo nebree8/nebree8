@@ -49,12 +49,13 @@ class DummyApp(object):
 
 
 class FinishDrinkAction(Action):
-  def __init__(self, syncer, key):
+  def __init__(self, syncer, drink):
     self.syncer = syncer
-    self.key = key
+    self.drink = drink
 
   def __call__(self, robot):
-    self.syncer.post("finished_drink", key=self.key)
+    self.syncer.post("finished_drink", key=self.drink['id'])
+    self.syncer.finished_drink = self.drink
 
 
 class SyncToServer(threading.Thread):
@@ -64,6 +65,9 @@ class SyncToServer(threading.Thread):
     super(self.__class__, self).__init__()
     self.queuefile = 'remote_queue.txt'
     self.jsonqueuefile = 'static/order-queue.json'
+    self.queue_for_display = {}
+    self.finished_drink = None
+    self.current_drink = None
     self.base_url = base_url
     self.poll_frequency_secs = poll_frequency_secs
     self.controller = controller
@@ -108,18 +112,17 @@ class SyncToServer(threading.Thread):
         attempt += 1
 
   def run(self):
-    last_drink_id = None
     while True:
       try:
         queue = json.loads(self.get('next_drink'))
         if not self.controller and queue:
           json_recipe = queue[0]
           drink_id = json_recipe['id']
-          if drink_id == last_drink_id:
-            print "Refusing to remake order %s" % last_drink_id
+          if self.finished_drink and drink_id == self.finished_drink['id']:
+            print "Refusing to remake order %s" % self.finished_drink['id']
             time.sleep(20)   # Sleep extra long
             continue  # Don't make the same drink twice
-          last_drink_id = drink_id
+          self.current_drink = json_recipe
           next_recipe = water_down_recipe(Recipe.from_json(json_recipe))
           raw_actions = actions_for_recipe(next_recipe)
           actions = []
@@ -127,7 +130,7 @@ class SyncToServer(threading.Thread):
             progress = 10 + 90 * i / len(raw_actions)
             actions.append(UpdateProgressAction(self, drink_id, progress))
             actions.append(action)
-          actions.append(FinishDrinkAction(self, drink_id))
+          actions.append(FinishDrinkAction(self, self.current_drink))
           self.controller.EnqueueGroup(actions)
         else:
           actions = self.controller.InspectQueue()
@@ -138,6 +141,7 @@ class SyncToServer(threading.Thread):
                 isinstance(self.controller.robot, FakeRobot)):
               logging.info("Placing glass")
               actions[0].force = True
+        self.prepare_queue_for_display(queue)
         self.write(queue)
       except urllib2.URLError, e:
         logging.warning("URLError: %s", e)
@@ -145,13 +149,20 @@ class SyncToServer(threading.Thread):
         print e
       time.sleep(self.poll_frequency_secs)
 
+  def prepare_queue_for_display(self, queue):
+    self.queue_for_display = {
+      'finished_drink': self.finished_drink,
+      'current_drink': self.current_drink,
+      'queue': queue or []
+    }
+
   def write(self, queue):
     with open(self.queuefile, 'w') as f:
       for order in queue or []:
         recipe = Recipe.from_json(order)
         f.write(str(recipe))
     with open(self.jsonqueuefile, 'w') as f:
-      f.write(json.dumps(queue or []))
+      json.dump(self.queue_for_display, f)
 
 def unittest():
   from controller import Controller
