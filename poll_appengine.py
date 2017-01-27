@@ -4,6 +4,7 @@ When a recipe is found, the actions for it are pushed to the controller if
 the controller has no pending actions.
 """
 
+import contextlib
 import json
 import logging
 import time
@@ -25,6 +26,8 @@ from fake_robot import FakeRobot
 FLAGS = gflags.FLAGS
 gflags.DEFINE_bool("check_ingredients", True,
                    "Cross check list of ingredients with INGREDIENTS_ORDERED")
+gflags.DEFINE_integer("urllib_timeout_secs", 1,
+                      "Timeout in secs for GET and POSTs")
 
 
 class UpdateProgressAction(Action):
@@ -35,9 +38,12 @@ class UpdateProgressAction(Action):
 
   def __call__(self, robot):
     try:
-        self.syncer.post("set_drink_progress", key=self.key, progress=self.percent)
+      self.syncer.post("set_drink_progress",
+                       attempts=1,
+                       key=self.key,
+                       progress=self.percent)
     except urllib2.URLError as e:
-        logging.exception("Ignoring error while uploading progress")
+      logging.warning("set_drink_progress failed: %s", e)
 
   def __str__(self):
     return 'UpdateProgressAction: key=...%s percent=%s' % (self.key[-10:],
@@ -74,7 +80,7 @@ class SyncToServer(threading.Thread):
     self.daemon = True
     if FLAGS.check_ingredients:
       print("checking ingredients")
-      config = json.loads(self.get('get_config'))
+      config = json.loads(self.get(url='get_config', attempts=1))
       logging.info("Frontend config=%s", config)
       backend_ingredients = set(
           i for i in ingredients.IngredientsOrdered()
@@ -94,27 +100,34 @@ class SyncToServer(threading.Thread):
         raise NotImplementedError("Ingredients differ on backend and frontend. "
                                   + "Disable check with --nocheck_ingredients")
 
-  def get(self, url):
-    print("Looking up url: %s", self.base_url + url)
-    return urllib2.urlopen(self.base_url + url).read()
+  def get(self, url, attempts=-1):
+    return self._urlopen(url=self.base_url + url, attempts=attempts)
 
-  def post(self, url, **kwargs):
+  def post(self, url, attempts=-1, **kwargs):
+    return self._urlopen(url=self.base_url + url,
+                         attempts=attempts,
+                         data=urllib.urlencode(kwargs))
+
+  @staticmethod
+  def _urlopen(url, attempts, **kwargs):
     attempt = 1
     while True:
       try:
-        url = self.base_url + url
-        data = urllib.urlencode(kwargs)
-        return urllib2.urlopen(url=url, data=data).read()
-      except urllib2.HTTPError, e:
-        logging.exception("Error on POST to %s", url)
-        if attempt >= 3:
+        with contextlib.closing(urllib2.urlopen(
+            url=url, timeout=FLAGS.urllib_timeout_secs,
+            **kwargs)) as f:
+          return f.read()
+      except (urllib2.URLError, urllib2.HTTPError):
+        if attempts <= 0:
+          logging.exception("retrying urlopen(%s) indefinitely", url)
+        elif attempt >= attempts:
           raise
         attempt += 1
 
   def run(self):
     while True:
       try:
-        queue = json.loads(self.get('next_drink'))
+        queue = json.loads(self.get(url='next_drink', attempts=1))
         if not self.controller and queue:
           json_recipe = queue[0]
           drink_id = json_recipe['id']
@@ -143,8 +156,8 @@ class SyncToServer(threading.Thread):
               actions[0].force = True
         self.prepare_queue_for_display(queue)
         self.write(queue)
-      except urllib2.URLError, e:
-        logging.warning("URLError: %s", e)
+      except (urllib2.URLError, urllib2.HTTPError) as e:
+        logging.warning("urllib error: %s", e)
       except ValueError, e:
         print e
       time.sleep(self.poll_frequency_secs)
