@@ -34,14 +34,32 @@ body {
   color: green;
 }
 
-.order-current,
-.order-current .queue-banner {
-  color: orange;
-}
-
 .order-current .for,
 .order-finished .for {
   font-size: 20px;
+}
+
+md-progress-linear {
+  margin: auto;
+  height: 12px;;
+  width: 80%;
+}
+
+md-progress-linear ._md-container {
+  height: 12px;;
+}
+
+md-progress-linear ._md-container ._md-bar {
+  height: 12px;
+}
+
+md-progress-linear ._md-container ._md-dashed:before {
+  height: 12px;;
+}
+
+.sitting-around {
+  margin-top: 80px;
+  text-align: center;
 }
 
 .queue-banner {
