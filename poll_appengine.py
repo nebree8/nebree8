@@ -7,6 +7,7 @@ the controller has no pending actions.
 import contextlib
 import json
 import logging
+import socket
 import time
 import threading
 import urllib
@@ -26,7 +27,7 @@ from fake_robot import FakeRobot
 FLAGS = gflags.FLAGS
 gflags.DEFINE_bool("check_ingredients", True,
                    "Cross check list of ingredients with INGREDIENTS_ORDERED")
-gflags.DEFINE_integer("urllib_timeout_secs", 1,
+gflags.DEFINE_integer("urllib_timeout_secs", 5,
                       "Timeout in secs for GET and POSTs")
 
 
@@ -42,7 +43,7 @@ class UpdateProgressAction(Action):
                        attempts=1,
                        key=self.key,
                        progress=self.percent)
-    except urllib2.URLError as e:
+    except (urllib2.URLError, socket.timeout) as e:
       logging.warning("set_drink_progress failed: %s", e)
 
   def __str__(self):
@@ -81,7 +82,7 @@ class SyncToServer(threading.Thread):
     self.daemon = True
     if FLAGS.check_ingredients:
       print("checking ingredients")
-      config = json.loads(self.get(url='get_config', attempts=1))
+      config = json.loads(self.get(url='get_config', attempts=3))
       logging.info("Frontend config=%s", config)
       backend_ingredients = (set(
           i for i in ingredients.IngredientsOrdered()
@@ -119,7 +120,7 @@ class SyncToServer(threading.Thread):
             url=url, timeout=FLAGS.urllib_timeout_secs,
             **kwargs)) as f:
           return f.read()
-      except (urllib2.URLError, urllib2.HTTPError):
+      except (urllib2.URLError, urllib2.HTTPError, socket.timeout):
         if attempts <= 0:
           logging.exception("retrying urlopen(%s) indefinitely", url)
         elif attempt >= attempts:
@@ -157,7 +158,7 @@ class SyncToServer(threading.Thread):
               logging.info("Placing glass")
               actions[0].force = True
         self.write(queue)
-      except (urllib2.URLError, urllib2.HTTPError) as e:
+      except (urllib2.URLError, urllib2.HTTPError, socket.timeout) as e:
         logging.warning("urllib error: %s", e)
       except ValueError, e:
         print e
