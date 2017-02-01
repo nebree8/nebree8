@@ -83,9 +83,10 @@ class SyncToServer(threading.Thread):
       print("checking ingredients")
       config = json.loads(self.get(url='get_config', attempts=1))
       logging.info("Frontend config=%s", config)
-      backend_ingredients = set(
+      backend_ingredients = (set(
           i for i in ingredients.IngredientsOrdered()
-          if i not in ("air", "") and not i.endswith("_backup"))
+          if i not in ("air", "") and not i.endswith(ingredients.BACKUP)) |
+                             set(ingredients.OVERRIDES.keys()))
       frontend_ingredients = set()
       for ingredient in config.get("Ingredients", []):
         name = ingredient.get('Name', '')
