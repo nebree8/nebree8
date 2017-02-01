@@ -71,13 +71,16 @@ class StepperMotor(object):
            forward=1,
            ramp_seconds=0,
            final_wait=0.0005,
-           max_wait=4000):
+           max_wait=4000,
+           ice_steps=None):
+    if ice_steps is None:
+      ice_steps = steps
     if self.dry_run:
       print "DRY RUN: Moving %d steps in direction: %d" % (steps, forward)
     else:
       print "Moving %d steps in direction: %d" % (steps, forward)
     if self.use_arduino:
-      return self.io.Move(forward, steps, final_wait)
+      return self.io.Move(forward, steps, ice_steps, final_wait)
 
     if self.use_separate_process:
       if forward:
@@ -137,10 +140,11 @@ class RobotRail(object):
     self.motor = motor
     self.position = 0
 
-  def FillPositions(self, absolute_positions):
+  def FillPositions(self, absolute_positions, ice_percent=0.0):
     for position in absolute_positions:
       forward = position > self.position
       steps = InchesToSteps(abs(position - self.position))
+      ice_steps = steps * (1.0 - ice_percent)
       self.motor.Move(steps, forward=forward)
       if forward:
         self.position += StepsToInches(steps + 2)

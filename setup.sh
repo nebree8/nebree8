@@ -12,7 +12,8 @@ function install_once {
   run sudo apt-get install \
     python-smbus python-pip i2c-tools \
     libxml2 python-dev python-pycurl python-pyquery \
-    imagemagick
+    imagemagick cmake \
+    gcc-avr binutils-avr gdb-avr avr-libc avrdude
   run sudo -H pip install --upgrade pip
   # TODO: This only works on the Pi.
   run sudo -H pip install --upgrade \

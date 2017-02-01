@@ -133,3 +133,10 @@ class FakeRobot(Robot):
 
   def CleanStirMotor(self):
     pass
+
+  @contextmanager
+  def DispenseIce(self):
+    yield
+
+  def PrepIce(self):
+    return

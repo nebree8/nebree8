@@ -104,7 +104,7 @@ class Arduino:
 
   def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
            positive_trigger_pin, done_pin, forward, steps, final_wait,
-           max_wait):
+           max_wait, temp_pin=0, temp_pin_threshold=0):
     raw_message = []
     if forward:
       forward = 0x01
@@ -117,7 +117,9 @@ class Arduino:
       raw_message.append(10)
     else:
       raw_message.append(0)
+    raw_message.append(temp_pin)
     raw_message.extend(struct.unpack('4B', struct.pack('<i', steps)))
+    raw_message.extend(struct.unpack('4B', struct.pack('<i', temp_pin_threshold)))
     # print "max_wait: %s" % max_wait
     # raw_message.extend(struct.unpack('4B', struct.pack('<i', 4000)))
     raw_message = [chr(x) for x in raw_message]
