@@ -19,21 +19,22 @@ project(LoadCellNano C CXX)
 #set(ARDUINO_SDK /usr/share/arduino-1.0.6)
 #set(ARDUINO_SDK /usr/share/arduino)
 set(ARDUINO_SDK /home/pi/Downloads/arduino-1.6.9)
-set(FIRMWARE_NAME nano_controller)
+set(FIRMWARE_NAME raw_load_cell)
 
 
 set(${FIRMWARE_NAME}_BOARD nano328)               # Arduino Target board
-set(${FIRMWARE_NAME}_SRCS  nano_controller.cc)
+set(${FIRMWARE_NAME}_SRCS  raw_load_cell.cc)
 
 set(${FIRMWARE_NAME}_PORT /dev/ttyUSB0)            # Serial upload port
-link_directories(/home/pi/nebree8/arduino)
+link_directories(/home/pi/nebree8/nano)
 #link_directories(/home/pi/nebree8/arduino/MS5803)
 #link_directories(/home/pi/nebree8/MS5803-14BA_Breakout/Libraries/Arduino/MS5803)
-#set(${FIRMWARE_NAME}_LIBS MS5803)  # Pressure sensor library.
+link_directories(/home/pi/nebree8/nano/HX711)
+set(${FIRMWARE_NAME}_LIBS HX711)  # Load cell library
 set(${FIRMWARE_NAME}_NO_AUTOLIBS false)
 
 #====================================================================#
 #  Target generation                                                 #
 #====================================================================#
 generate_arduino_firmware(${FIRMWARE_NAME})
-#target_link_libraries(${FIRMWARE_NAME} LINK_PUBLIC MS5803)
+target_link_libraries(${FIRMWARE_NAME} LINK_PUBLIC HX711)
