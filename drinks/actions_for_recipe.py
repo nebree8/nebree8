@@ -23,6 +23,7 @@ def actions_for_recipe(recipe):
     """
   logging.info("Enqueuing actions for recipe %s", recipe)
   actions = []
+  ingredients.SubstituteIngredients(recipe.ingredients, recipe.name)
   ingredients.ReplaceWithBackups(recipe.ingredients, recipe.name)
   sorted_ingredients = sorted(
       recipe.ingredients,
