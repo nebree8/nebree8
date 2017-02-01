@@ -18,10 +18,13 @@ Summary = namedtuple('Summary',
 class LoadCellMonitor(threading.Thread):
   """Continuously monitors and logs weight sensor readings."""
 
-  def __init__(self, bufsize=10000, adc=None):
+  def __init__(self, bufsize=10000, fake_serial=None):
     super(LoadCellMonitor, self).__init__()
-    self.nano_ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=0, rtscts=True)  # 1s timeout
-    time.sleep(1)
+    if not fake_serial:
+      self.nano_ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=0, rtscts=True)  # 1s timeout
+      time.sleep(1)
+    else:
+      self.nano_ser = fake_serial
     self.lock = threading.Lock()
     self.buffer = deque(maxlen=bufsize)
     self.shutdown = False
@@ -103,11 +106,12 @@ class FakeLoadCellMonitor(LoadCellMonitor):
     self.stddev = 2.
     self.last_read = time.time()
     self.sample_time_pct_var = .1
-    super(FakeLoadCellMonitor, self).__init__(*args, adc=self, **kwargs)
+    self.sample_rate = 10
+    super(FakeLoadCellMonitor, self).__init__(*args, fake_serial=self, **kwargs)
 
-  def readADCSingleEnded(self, _ch, _max, sample_rate):
+  def readline(self):
     time.sleep(self.random.gauss(1., self.sample_time_pct_var) /
-               sample_rate)  # sleep for the sample period
+               self.sample_rate)  # sleep for the sample period
     sample_ts = time.time()
     self.mean += self.load_per_second * (sample_ts - self.last_read)
     self.last_read = sample_ts
