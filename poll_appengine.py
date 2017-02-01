@@ -27,7 +27,7 @@ from fake_robot import FakeRobot
 FLAGS = gflags.FLAGS
 gflags.DEFINE_bool("check_ingredients", True,
                    "Cross check list of ingredients with INGREDIENTS_ORDERED")
-gflags.DEFINE_integer("urllib_timeout_secs", 5,
+gflags.DEFINE_integer("urllib_timeout_secs", 1,
                       "Timeout in secs for GET and POSTs")
 
 
@@ -116,8 +116,9 @@ class SyncToServer(threading.Thread):
     attempt = 1
     while True:
       try:
+        timeout_factor = 5 if attempts <= 1 else attempts
         with contextlib.closing(urllib2.urlopen(
-            url=url, timeout=FLAGS.urllib_timeout_secs,
+            url=url, timeout=FLAGS.urllib_timeout_secs * timeout_factor,
             **kwargs)) as f:
           return f.read()
       except (urllib2.URLError, urllib2.HTTPError, socket.timeout):
