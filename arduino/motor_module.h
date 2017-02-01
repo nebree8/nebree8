@@ -52,7 +52,7 @@ class MotorModule : public arduinoio::UCModule {
     } else if (current_wait_ > min_wait_) {
       current_wait_ *= SPEED_UP_FACTOR;
     }
-    if (temp_pin > 0) {
+    if (temp_pin_ > 0) {
       if (remaining_steps_ > temp_pin_steps_) {
         digitalWrite(temp_pin_, HIGH);
       } else {
@@ -115,7 +115,8 @@ class MotorModule : public arduinoio::UCModule {
       
       const int *int_args = (const int*) (command + MOVE_LENGTH + 8);
       remaining_steps_ = int_args[0];
-      temp_pin_steps_ = int_args[1];
+      const int *temp_int_args = (const int*) (command + MOVE_LENGTH + 12);
+      temp_pin_steps_ = temp_int_args[0];
       min_wait_ = 200;
       if (!initialized_) {
         // Assumes the pins won't change.

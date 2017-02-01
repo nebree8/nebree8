@@ -236,7 +236,7 @@ class IOBank(object):
     self.arduino.Move(ARDUINO_STEPPER_DIR, ARDUINO_STEPPER_PULSE,
                       ARDUINO_RAIL_TRIGGER_NEGATIVE,
                       ARDUINO_RAIL_TRIGGER_POSITIVE, ARDUINO_STEPPER_DONE,
-                      forward, steps, final_wait, max_wait, ICE_DISPENSER.value - 2000, ice_steps)
+                      forward, steps, final_wait, max_wait, Outputs.ICE_DISPENSER.value - 2000, ice_steps)
     #   start_time = time.time()
     #   while not self.ReadInput(Inputs.LIMIT_SWITCH_POS):
     #     time.sleep(0.05)

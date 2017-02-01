@@ -80,7 +80,8 @@ class StepperMotor(object):
     else:
       print "Moving %d steps in direction: %d" % (steps, forward)
     if self.use_arduino:
-      return self.io.Move(forward, steps, ice_steps, final_wait)
+      print "motor.py ice steps is: %d" % ice_steps
+      return self.io.Move(forward, steps, final_wait, ice_steps)
 
     if self.use_separate_process:
       if forward:
@@ -145,7 +146,7 @@ class RobotRail(object):
       forward = position > self.position
       steps = InchesToSteps(abs(position - self.position))
       ice_steps = steps * (1.0 - ice_percent)
-      self.motor.Move(steps, forward=forward)
+      self.motor.Move(steps, forward=forward, ice_steps=ice_steps)
       if forward:
         self.position += StepsToInches(steps + 2)
       else:

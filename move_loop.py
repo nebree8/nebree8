@@ -4,6 +4,7 @@ import time
 from physical_robot import PhysicalRobot
 from actions.ice import PrepareIce, DispenseIce, ICE_LOCATION, StartIce, StopIce
 from actions.move import Move
+from actions.move_with_ice import MoveWithIce
 from actions.led import SetLedForValve, Led
 from parts import io_bank
 
@@ -24,7 +25,7 @@ robot.io.arduino.Servo(41, 90)
 
 move0 = Move(0)
 move2 = Move(-2)
-move57 = Move(-57)
+move57 = MoveWithIce(-57, 0.5)
 move0(robot)
 for i in range(50):
     move2(robot)

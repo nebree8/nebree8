@@ -4,6 +4,7 @@ import math
 import random
 import time
 import threading
+import serial
 
 from collections import deque, namedtuple
 
@@ -19,20 +20,10 @@ class LoadCellMonitor(threading.Thread):
 
   def __init__(self, bufsize=10000, adc=None):
     super(LoadCellMonitor, self).__init__()
+    self.nano_ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=0, rtscts=True)  # 1s timeout
+    time.sleep(1)
     self.lock = threading.Lock()
     self.buffer = deque(maxlen=bufsize)
-    if not adc:
-      try:
-        from Adafruit_ADS1x15 import ADS1x15
-        from Adafruit_I2C import Adafruit_I2C
-        Adafruit_I2C.getPiI2CBusNumber = staticmethod(lambda: 1)
-        self.adc = ADS1x15(ic=ADS1115)
-      except IOError:
-        print("Failed to open i2c device -- have you run ./setup.py " +
-              "initialize?\n")
-        raise
-    else:
-      self.adc = adc
     self.shutdown = False
     self.daemon = True
     self.start()
@@ -84,13 +75,18 @@ class LoadCellMonitor(threading.Thread):
   def run(self):
     while not self.shutdown:
       try:
-        val = self.adc.readADCSingleEnded(1, 4096, SAMPLES_PER_SECOND)
-        ts = time.time()
-        with self.lock:
-          self.buffer.append((ts, val))
-        sleepfor = ts + .01 - time.time()
-        if sleepfor > 0:
-          time.sleep(sleepfor)
+        line = self.nano_ser.readline()
+        if "Read: " in line:
+          try:
+            val = float(line.replace("Read: ", "").rstrip())
+            ts = time.time()
+            with self.lock:
+              self.buffer.append((ts, val))
+            print val
+          except ValueError:
+            pass
+        else:
+          time.sleep(0.02)
       except TypeError:  # Happens if the read fails.
         pass
 

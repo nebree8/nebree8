@@ -33,14 +33,14 @@ class PhysicalRobot(Robot):
     self.DeactivateCompressor()
     self.calibrated = True
 
-  def MoveToPosition(self, position_in_inches):
+  def MoveToPosition(self, position_in_inches, ice_percent=0.0):
     if not self.calibrated:
       self.CalibrateToZero()
     self.cannot_interrupt = True
     self.ChuckHoldHeadPressure()
     time.sleep(0.5)
     logging.info("Moving")
-    self.rail.FillPositions([position_in_inches])
+    self.rail.FillPositions([position_in_inches], ice_percent=ice_percent)
     logging.info("Move Done")
     #self.Vent()
     self.cannot_interrupt = False

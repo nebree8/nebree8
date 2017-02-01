@@ -104,7 +104,7 @@ class Arduino:
 
   def Move(self, stepper_dir_pin, stepper_pulse_pin, negative_trigger_pin,
            positive_trigger_pin, done_pin, forward, steps, final_wait,
-           max_wait, temp_pin=0, temp_pin_threshold=0):
+           max_wait, temp_pin, temp_pin_threshold):
     raw_message = []
     if forward:
       forward = 0x01

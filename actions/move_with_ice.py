@@ -11,7 +11,7 @@ class MoveWithIce(Action):
     self.ice_percent = ice_percent
 
   def __call__(self, robot):
-    robot.MoveToPosition(self.position_in_inches, ice_percent=ice_percent)
+    robot.MoveToPosition(self.position_in_inches, ice_percent=self.ice_percent)
 
   def sensitive(self):
     return True
