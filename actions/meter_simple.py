@@ -36,10 +36,10 @@ class MeterSimple(Action):
         last_summary = robot.load_cell.recent_summary(secs=.1)
         self.current_reading = last_summary.mean
       self.final_reading = self.current_reading
-    time.sleep(1)
-    r = robot.load_cell.recent(secs=time.time() - tare.timestamp + 5)
-    f = open('readings/readings_%s_%foz.csv' %
-             (time.strftime("%Y%m%d_%H%M%S"), self.oz_to_meter), 'w')
-    for ts, v in r:
-      print >> f, "%s,%s" % (ts, v)
-    f.close()
+    #time.sleep(1)
+    #   r = robot.load_cell.recent(secs=time.time() - tare.timestamp + 5)
+    #   f = open('readings/readings_%s_%foz.csv' %
+    #            (time.strftime("%Y%m%d_%H%M%S"), self.oz_to_meter), 'w')
+    #   for ts, v in r:
+    #     print >> f, "%s,%s" % (ts, v)
+    #   f.close()

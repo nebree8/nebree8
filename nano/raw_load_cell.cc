@@ -18,20 +18,20 @@ const int LED_SIGNAL_PIN = 51;
 const int CLK_PIN = 6;
 const int DAT_PIN = 7;
 HX711 scale(DAT_PIN, CLK_PIN);
-float calibration_factor = 7050; //-7050 worked for my 440lb max scale setup
+float calibration_factor = 600; //-7050 worked for my 440lb max scale setup
 
 void setup() {
   Serial.begin(115200);
   Serial.println("HX711 calibration sketch");
   scale.set_scale();
   scale.tare();
-  delay(2000);
+  delay(1000);
 }
 
 void loop() {
   scale.set_scale(calibration_factor); //Adjust to this calibration factor
   Serial.print("Read: ");
   Serial.print(scale.get_units(), 1);
-  Serial.println();
+  Serial.print("\n");
   delay(100);
 }

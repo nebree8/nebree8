@@ -65,7 +65,7 @@ class LoadCellMonitor(threading.Thread):
       stddev = math.sqrt(sum((v - mean)**2 for t, v in recs) / (n - 1))
     else:
       stddev = 0.
-    healthy = mean > 5
+    healthy = mean != 0.0
     return Summary(recs, mean, stddev, max(ts for ts, v in recs), healthy)
 
   def stop(self):
@@ -78,7 +78,8 @@ class LoadCellMonitor(threading.Thread):
         line = self.nano_ser.readline()
         if "Read: " in line:
           try:
-            val = float(line.replace("Read: ", "").rstrip())
+            # Units are 1/100 oz
+            val = float(line.replace("Read: ", "").rstrip()) / 100.0
             ts = time.time()
             with self.lock:
               self.buffer.append((ts, val))
@@ -86,8 +87,11 @@ class LoadCellMonitor(threading.Thread):
           except ValueError:
             pass
         else:
-          time.sleep(0.02)
+          time.sleep(0.1)
       except TypeError:  # Happens if the read fails.
+        pass
+      except serial.SerialException:
+        print "load cell serial exception"
         pass
 
 

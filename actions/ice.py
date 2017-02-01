@@ -2,7 +2,7 @@ from actions.action import Action, ActionException
 import time
 
 
-ICE_LOCATION = -54.5
+ICE_LOCATION = -56.5
 
 
 class StartIce(Action):

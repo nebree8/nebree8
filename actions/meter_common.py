@@ -4,7 +4,8 @@ from actions.action import ActionException
 from parts import load_cell
 
 #OZ_TO_ADC_VALUES = 30  # True calibration
-OZ_TO_ADC_VALUES = 39.  # +30% for generous pours.
+#OZ_TO_ADC_VALUES = 39.  # +30% for generous pours.
+OZ_TO_ADC_VALUES = 1 # For the nano load cell
 MAX_TARE_STDDEV = 4.
 TARE_TIMEOUT_SECS = 20.
 SECONDS_PER_OZ = 10 * .75 * 1.25

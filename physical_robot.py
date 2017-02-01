@@ -170,10 +170,10 @@ class PhysicalRobot(Robot):
 
   @contextmanager
   def DispenseIce(self):
-    robot.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
-    robot.io.arduino.Servo(41, 0)
+    self.io.WriteOutput(io_bank.Outputs.COMPRESSOR, 1, blocking=True)
+    self.io.arduino.Servo(41, 0)
     yield
-    robot.io.arduino.Servo(41, 90)
+    self.io.arduino.Servo(41, 90)
 
   def PrepIce(self):
     secs = 3.0

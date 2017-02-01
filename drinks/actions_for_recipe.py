@@ -3,11 +3,12 @@ import logging
 from actions.compressor import CompressorToggle
 from actions.compressor import State
 from actions.home import Home
-from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
-#from actions.meter_simple import MeterSimple as Meter
+#from actions.meter_dead_reckoned import MeterDeadReckoned as Meter
+from actions.meter_simple import MeterSimple as Meter
 from actions.led import SetLedForValve, Led
 from actions.meter_bitters import MeterBitters
 from actions.move import Move
+from actions.move_with_ice import MoveWithIce
 from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.dispense_cup import DispenseCup, ReleaseCup
@@ -36,10 +37,7 @@ def actions_for_recipe(recipe):
     actions.append(SetLedForValve(valve, 255, 0, 0))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 255, 255, 0, y=4))
   actions.append(Move(0))
-  actions.append(StartIce())
-  actions.append(Move(ICE_LOCATION / 2))
-  actions.append(StopIce())
-  actions.append(Move(ICE_LOCATION))
+  actions.append(MoveWithIce(ICE_LOCATION, 0.5))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 255, 0, y=4))
   actions.append(DispenseIce())
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
