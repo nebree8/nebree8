@@ -20,7 +20,7 @@ class LoadCellMonitor(threading.Thread):
 
   def __init__(self, bufsize=10000, adc=None):
     super(LoadCellMonitor, self).__init__()
-    self.nano_ser = serial.Serial("/dev/ttyUSB0", 115200, timeout=0, rtscts=True)  # 1s timeout
+    self.nano_ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0, rtscts=True)  # 1s timeout
     time.sleep(1)
     self.lock = threading.Lock()
     self.buffer = deque(maxlen=bufsize)
@@ -73,17 +73,25 @@ class LoadCellMonitor(threading.Thread):
     self.join()
 
   def run(self):
+    count_since_print = 0
     while not self.shutdown:
       try:
-        line = self.nano_ser.readline()
-        if "Read: " in line:
+        if self.nano_ser.inWaiting() > 0:
+          line = self.nano_ser.readline()
           try:
             # Units are 1/100 oz
-            val = float(line.replace("Read: ", "").rstrip()) / 100.0
+            line = line.rstrip()
+            if "Read: " in line:
+              line = line.replace("Read: ", "")
+            val = float(line) / 100.0
             ts = time.time()
             with self.lock:
               self.buffer.append((ts, val))
-            print val
+            if count_since_print > 2:
+              print val
+              count_since_print = 0
+            else:
+              count_since_print += 1
           except ValueError:
             pass
         else:
@@ -92,6 +100,9 @@ class LoadCellMonitor(threading.Thread):
         pass
       except serial.SerialException:
         print "load cell serial exception"
+        pass
+      except OSError:  # Happens if the read fails.
+        print "load cell OS exception"
         pass
 
 

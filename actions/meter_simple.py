@@ -14,7 +14,7 @@ class MeterSimple(Action):
     self.oz_to_meter = oz_to_meter
 
   def __call__(self, robot):
-    robot.Vent()
+    #robot.Vent()
     if self.oz_to_meter == 0:
       logging.warning("oz_to_meter was zero, returning early.")
     self.initial_reading = robot.load_cell.recent_summary(secs=.2).mean
@@ -29,11 +29,11 @@ class MeterSimple(Action):
     self.target_reading = (tare.mean + meter_common.OZ_TO_ADC_VALUES * max(
         self.oz_to_meter - METER_OZ_OFFSET, .1))
     last_summary = tare
-    print "Metering to oz %f or %s" % (self.oz_to_meter, self.target_reading)
+    print "------------ Metering to oz %f or %s" % (self.oz_to_meter, self.target_reading)
     with robot.OpenValve(self.valve_to_actuate):
       while last_summary.mean < self.target_reading:
         time.sleep(.05)
-        last_summary = robot.load_cell.recent_summary(secs=.1)
+        last_summary = robot.load_cell.recent_summary(n=2)
         self.current_reading = last_summary.mean
       self.final_reading = self.current_reading
     #time.sleep(1)

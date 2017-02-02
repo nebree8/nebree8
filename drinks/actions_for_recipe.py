@@ -42,6 +42,7 @@ def actions_for_recipe(recipe):
   actions.append(DispenseIce())
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
   for ingredient in sorted_ingredients:
+    actions.append(HoldPressure())
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(Move(valve_position(valve)))
@@ -67,5 +68,5 @@ def actions_for_recipe(recipe):
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(SetLedForValve(valve, 0, 0, 0))
-  #actions.append(WaitForGlassPlaced())
+  actions.append(WaitForGlassPlaced())
   return actions

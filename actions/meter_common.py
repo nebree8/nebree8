@@ -22,11 +22,11 @@ def tare(robot):
   throws: Exception
   """
   tare_start = time()
-  tare = robot.load_cell.recent_summary(secs=.1)
+  tare = robot.load_cell.recent_summary(n=2)
   while (tare.stddev > MAX_TARE_STDDEV and
          time() < tare_start + TARE_TIMEOUT_SECS):
     sleep(.1)
-    tare = robot.load_cell.recent_summary(secs=.1)
+    tare = robot.load_cell.recent_summary(n=2)
   if tare.stddev > MAX_TARE_STDDEV:
     logging.error('Reading standard deviation while taring above ' +
                   '%s for %s secs. Last result: %s' % (MAX_TARE_STDDEV,

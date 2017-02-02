@@ -126,12 +126,13 @@
           window.setTimeout(refreshData, 200);
           if (error) return console.warn(error);
           data = json;
+          var kNumMeasurements = 50;
           var avg_data = data.map(function (_, i) {
-            var s = data.slice(i, i + 50);
+            var s = data.slice(i, i + kNumMeasurements);
             return [data[i][0], d3.sum(s.map(get_y)) / s.length];
           });
-          if (data.length > 50) {
-            var s = data.slice(data.length - 50, data.length);
+          if (data.length > kNumMeasurements) {
+            var s = data.slice(data.length - kNumMeasurements, data.length);
             var avg = d3.sum(s.map(get_y)) / s.length;
             var stddev = Math.sqrt(
                 d3.sum(s.map(function(r) { return Math.pow(r[1] - avg, 2); }))
