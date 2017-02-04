@@ -1,4 +1,5 @@
 import time
+import random
 
 import gflags
 
@@ -20,9 +21,11 @@ class FakeRobot(Robot):
     import collections
     self.position = 30.0
     self.load_cell = FakeLoadCellMonitor()
-    self.load_cell.stddev = 1
+    self.load_cell.stddev = .1
     self.valves = collections.defaultdict(lambda: False)
     self.pressurized = False
+    self.started_ice = None
+    self.loaded_ice = 0.0
 
   def __check_position(self, valve_no):
     if abs(self.position - (-9.625 - 1.875 * valve_no)) > 1:
@@ -40,14 +43,16 @@ class FakeRobot(Robot):
     t.daemon = True
     t.start()
 
-  def __set_load_cell_attrs(self, load_per_second=0, stddev=1):
+  def __set_load_cell_attrs(self, load_per_second=0, stddev=.1):
     self.load_cell.load_per_second = load_per_second
     self.load_cell.stddev = stddev
 
   def CalibrateToZero(self, carefully=False):
     self._FakeMove(0)
 
-  def MoveToPosition(self, position_in_inches):
+  def MoveToPosition(self, position_in_inches, ice_percent=0.0):
+    if ice_percent > 0:
+      self.loaded_ice += random.randint(0, int(ice_percent * 5))
     old_stddev = self.load_cell.stddev
     self.load_cell.stddev *= 10
     self._FakeMove(position_in_inches)
@@ -61,7 +66,7 @@ class FakeRobot(Robot):
     self.__check_position(valve_no)
     self.__run_with_delay(
         .25,
-        lambda: self.__set_load_cell_attrs(load_per_second=10, stddev=10))
+        lambda: self.__set_load_cell_attrs(load_per_second=.3, stddev=.1))
     yield
     if not self.valves[valve_no]:
       raise ActionException("Valve %s wasn't open!" % valve_no)
@@ -69,7 +74,7 @@ class FakeRobot(Robot):
     self.valves[valve_no] = False
     self.__run_with_delay(
         .25,
-        lambda: self.__set_load_cell_attrs(load_per_second=0, stddev=1))
+        lambda: self.__set_load_cell_attrs(load_per_second=0, stddev=.1))
 
   def ActivateCompressor(self):
     return
@@ -95,10 +100,11 @@ class FakeRobot(Robot):
     pass
 
   def StartIce(self):
-    _sleep(2.0)
+    self.started_ice = time.time()
 
   def StopIce(self):
-    pass
+    self.loaded_ice = time.time() - self.started_ice
+    self.started_ice = None
 
   def BootStirMotor(self):
     time.sleep(0.1)
@@ -136,7 +142,10 @@ class FakeRobot(Robot):
 
   @contextmanager
   def DispenseIce(self):
+    print '@@@@ dispensing loaded ice:', self.loaded_ice
+    self.load_cell.mean += self.loaded_ice
+    self.loaded_ice = 0
     yield
 
   def PrepIce(self):
-    return
+    self.loaded_ice += random.randint(0, 2)

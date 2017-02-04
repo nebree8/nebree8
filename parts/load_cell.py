@@ -91,7 +91,6 @@ class LoadCellMonitor(threading.Thread):
             with self.lock:
               self.buffer.append((ts, val))
             if count_since_print > 2:
-              print val
               count_since_print = 0
             else:
               count_since_print += 1
@@ -113,8 +112,8 @@ class FakeLoadCellMonitor(LoadCellMonitor):
   def __init__(self, *args, **kwargs):
     self.random = random.Random()
     self.load_per_second = 0
-    self.mean = 100.
-    self.stddev = 2.
+    self.mean = 0
+    self.stddev = .01
     self.last_read = time.time()
     self.sample_time_pct_var = .1
     self.sample_rate = 10
@@ -126,7 +125,10 @@ class FakeLoadCellMonitor(LoadCellMonitor):
     sample_ts = time.time()
     self.mean += self.load_per_second * (sample_ts - self.last_read)
     self.last_read = sample_ts
-    return self.random.gauss(self.mean, self.stddev)
+    return str(self.random.gauss(self.mean, self.stddev) * 100)
+
+  def inWaiting(self):
+    return 1
 
 
 def main():

@@ -12,7 +12,7 @@ from actions.move_with_ice import MoveWithIce
 from actions.wait_for_glass_removal import WaitForGlassRemoval
 from actions.wait_for_glass_placed import WaitForGlassPlaced
 from actions.dispense_cup import DispenseCup, ReleaseCup
-from actions.ice import DispenseIce, ICE_LOCATION, StartIce, StopIce
+from actions.ice import DispenseIce, DispenseIceWithRetry, ICE_LOCATION
 from actions.pressurize import HoldPressure, ReleasePressure
 from actions.slam_stir import STIR_POSITION, SlamStir
 from config import valve_position, ingredients
@@ -39,7 +39,7 @@ def actions_for_recipe(recipe):
   actions.append(Move(0))
   actions.append(MoveWithIce(ICE_LOCATION, 0.5))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 255, 0, y=4))
-  actions.append(DispenseIce())
+  actions.append(DispenseIceWithRetry(min_oz_to_meter=1.0))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
   for ingredient in sorted_ingredients:
     actions.append(HoldPressure())
