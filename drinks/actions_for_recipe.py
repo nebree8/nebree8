@@ -37,15 +37,18 @@ def actions_for_recipe(recipe):
     actions.append(SetLedForValve(valve, 255, 0, 0))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 255, 255, 0, y=4))
   actions.append(Move(0))
-  actions.append(MoveWithIce(ICE_LOCATION, 0.5))
+  actions.append(MoveWithIce(ICE_LOCATION, 0.75))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 255, 0, y=4))
-  actions.append(DispenseIceWithRetry(min_oz_to_meter=1.0))
+  actions.append(DispenseIceWithRetry(min_oz_to_meter=0.6))
   actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
+  ingredients_added = 0
   for ingredient in sorted_ingredients:
-    actions.append(HoldPressure())
+    ingredients_added += 1
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(Move(valve_position(valve)))
+    if ingredients_added % 10 == 0:
+      actions.append(HoldPressure())
     actions.append(SetLedForValve(valve, 0, 255, 0))
     if hasattr(ingredient.qty, 'drops'):
       actions.append(MeterBitters(valve_to_actuate=valve,

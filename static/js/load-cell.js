@@ -59,17 +59,18 @@ line = d3.svg.line()
   graph.append("svg:path").attr("class", "med-line");
   function refreshData() {
     d3.json("/load_cell.json", function(error, json) {
+      var smooth = 3;
       if (error) return console.warn(error);
-      data = json.map(function (v, i) { return [v[0], v[1] / 30]; });
+      data = json.map(function (v, i) { return [v[0], v[1]]; });
       var avg_data = data.map(function (_, i) {
-        var s = data.slice(i, i + 50);
+        var s = data.slice(i, i + smooth);
         return [data[i][0], d3.sum(s.map(get_y)) / s.length];
       });
       var med_data = data.map(function (_, i) {
-        return [data[i][0], d3.median(data.slice(i, i + 50).map(get_y))];
+        return [data[i][0], d3.median(data.slice(i, i + smooth).map(get_y))];
       });
-      if (data.length > 50) {
-        var s = data.slice(0, 50);
+      if (data.length > smooth) {
+        var s = data.slice(0, smooth);
         var avg = d3.sum(s.map(get_y)) / s.length;
         var stddev = Math.sqrt(
             d3.sum(s.map(function(r) { return Math.pow(r[1] - avg, 2); }))

@@ -14,13 +14,13 @@ INGREDIENTS_ORDERED = (
     "vodka",
     "gin",
     "bourbon",
-    "tequila",
+    "air",  #"tequila",
     "rum",
     "dry vermouth",
     "rose",
     "rye",
     "campari",
-    "tequila_backup",
+    "tequila",
     "scotch",
     "mescal",
     "angostura bitters",  #small bottle location
@@ -45,7 +45,10 @@ INGREDIENTS_ORDERED = (
 )
 
 OVERRIDES = {
-    "lime juice": "Lemon juice",
+    #"lime juice": "Lemon juice",
+    "rye" : "bourbon_backup",
+    "rum" : "bourbon",
+    "mescal" : "tequila",
 }
 
 

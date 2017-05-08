@@ -174,7 +174,8 @@ class IOBank(object):
     gpio.setmode(gpio.BCM)
     gpio.setwarnings(False)
     if update_arduino:
-      self.arduino = arduino.Arduino()
+      self.arduino = arduino.Arduino("ttyACM0")
+      #self.cup_dispenser_uno = arduino.Arduino("ttyACM1")
       self.nano = arduino.Arduino("ttyUSB")
     else:
       self.arduino = None

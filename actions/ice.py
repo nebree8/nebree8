@@ -46,7 +46,13 @@ class DispenseIceWithRetry(Action):
     self.tare = robot.load_cell.recent_summary(n=2)
     self.target_reading = (
         self.tare.mean + meter_common.OZ_TO_ADC_VALUES * self.min_oz_to_meter)
+    first = True
     for i in range(3):  #  Try at most three times
+      if not first:
+          robot.StartIce()
+          time.sleep(3.0)
+          robot.StopIce()
+      first = False
       with robot.DispenseIce():
         time.sleep(1.5)
       time.sleep(.5)
@@ -56,7 +62,4 @@ class DispenseIceWithRetry(Action):
       logging.info("retrying ice; target_reading=%s, current_reading=%s",
                    self.target_reading, self.current_reading.mean)
       # retry
-      robot.StartIce()
-      time.sleep(3.0)
-      robot.StopIce()
     self.final_reading = self.current_reading

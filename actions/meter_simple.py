@@ -33,7 +33,7 @@ class MeterSimple(Action):
     with robot.OpenValve(self.valve_to_actuate):
       while last_summary.mean < self.target_reading:
         time.sleep(.05)
-        last_summary = robot.load_cell.recent_summary(n=2)
+        last_summary = robot.load_cell.recent_summary(n=1)
         self.current_reading = last_summary.mean
       self.final_reading = self.current_reading
     #time.sleep(1)

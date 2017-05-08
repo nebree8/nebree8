@@ -15,8 +15,8 @@ _REFRESH_RATE = 5  # Refreshes per second
 
 
 class Arduino:
-  def __init__(self, device_basename="ttyACM"):
-    self.interface = serial_control.SerialInterface(device_basename)
+  def __init__(self, device_basename="ttyACM", baud=115200):
+    self.interface = serial_control.SerialInterface(device_basename, baud=baud)
     self.outputs = {}
     self.signal_refresh = Queue.Queue(1)
     self.done_ack = Queue.Queue(1)
