@@ -129,7 +129,10 @@ class StepperMotor(object):
 
 
 def InchesToSteps(inches):
-  return int(inches / 2.81 * 800)  # 14 teeth -> 2.81 inches
+  # This has to be even, because each step is one pulse inversion, but the
+  # stepper only actually moves on the rising edge of the signal. So, odd step
+  # counts will produce inconstent movement.
+  return int(inches / 2.81 * 800 / 2) * 2  # 14 teeth -> 2.81 inches
 
 
 def StepsToInches(steps):

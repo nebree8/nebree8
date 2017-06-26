@@ -321,7 +321,7 @@ class FillHandler(webapp2.RequestHandler):
       controller.EnqueueGroup([
           SetLedForValve(valve, 255, 0, 0), Move(valve_position(valve)),
           SetLedForValve(valve, 0, 255, 0),
-          #Meter(valve_to_actuate=valve, oz_to_meter=oz),
+          Meter(valve_to_actuate=valve, oz_to_meter=oz),
           SetLedForValve(valve, 0, 128, 255)
       ])
     except ValueError:

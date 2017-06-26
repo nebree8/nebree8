@@ -14,7 +14,7 @@ INGREDIENTS_ORDERED = (
     "vodka",
     "gin",
     "bourbon",
-    "air",  #"tequila",
+    "tequila",
     "rum",
     "dry vermouth",
     "rose",
@@ -34,7 +34,7 @@ INGREDIENTS_ORDERED = (
     "grenadine",
     "lime juice",
     "agave syrup",
-    "bourbon_backup",
+    "rum", #"bourbon_backup",
     "absinthe",
     "air",
     "tonic",
@@ -46,9 +46,9 @@ INGREDIENTS_ORDERED = (
 
 OVERRIDES = {
     #"lime juice": "Lemon juice",
-    "rye" : "bourbon_backup",
-    "rum" : "bourbon",
-    "mescal" : "tequila",
+    #"rye" : "bourbon_backup",
+    #"rum" : "bourbon",
+    #"mescal" : "tequila",
 }
 
 
