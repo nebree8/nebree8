@@ -62,8 +62,7 @@ class MotorModule : public arduinoio::UCModule {
     if (remaining_steps_ > 0) {
       char relevant_trigger_pin =
           moving_positive_ ? trigger_positive_pin_ : trigger_negative_pin_;
-    //if (digitalRead(relevant_trigger_pin) == HIGH) {  // on a pull-up -> not triggered
-      if (true) {
+      if (digitalRead(relevant_trigger_pin) == HIGH) {  // on a pull-up -> not triggered
         timed_callback_ = new arduinoio::TimedCallback<MotorModule>(true, current_wait_,
             this,
             &MotorModule::StepMotor);
@@ -124,8 +123,8 @@ class MotorModule : public arduinoio::UCModule {
         pinMode(dir_pin, OUTPUT);
         pinMode(pulse_pin_, OUTPUT);
         pinMode(done_pin_, OUTPUT);
-        pinMode(trigger_negative_pin_, INPUT);
-        pinMode(trigger_positive_pin_, INPUT);
+        pinMode(trigger_negative_pin_, INPUT_PULLUP);
+        pinMode(trigger_positive_pin_, INPUT_PULLUP);
         initialized_ = true;
       }
       digitalWrite(done_pin_, LOW);
