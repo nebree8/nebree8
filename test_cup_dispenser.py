@@ -21,13 +21,13 @@ DIR_PIN = 4
 STEP_PIN = 5
 # UNCONNECTED
 TRIGGER_NEG = 6
-TRIGGER_POS = 6
+TRIGGER_POS = 2  # Should not be in use
 STEPPER_DONE = 8
 ICE_PIN = 7
 ICE_STEPS = 6
 
 forward = 1
-steps = 2000
+steps = 200
 final_wait = 4000
 max_wait = 4000
 print steps
@@ -43,6 +43,11 @@ for i in range(50):
              max_wait=max_wait,
              temp_pin=ICE_PIN,
              temp_pin_threshold=ICE_STEPS)
-    time.sleep(2)
+    forward = not forward
+    if not forward:
+      steps *= 2
+    else:
+      steps /= 2
+    time.sleep(10)
 
 # NOTE, may need to ground the enable pin beyond default wiring.
