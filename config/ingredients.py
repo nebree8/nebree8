@@ -1,13 +1,17 @@
 #!/usr/bin/env python
 
 import random
-import sys
-
 import logging
+
+import gflags
 
 from drinks import recipe
 
+FLAGS = gflags.FLAGS
 BACKUP = '_backup'
+
+gflags.DEFINE_list('demo_mode_valves', [],
+                   'Enable demo mode and pick from the given list of valves')
 
 # MUST MAP TO ORDER OF PHYSICAL VALVES
 INGREDIENTS_ORDERED = (
@@ -59,6 +63,9 @@ def IngredientsOrdered():
 
 
 def IngredientNameToValvePosition(ingredient, drink_name):
+  if FLAGS.demo_mode_valves:
+    indexes = map(int, FLAGS.demo_mode_valves)
+    return random.choice(indexes)
   ingredient_list = IngredientsOrdered()
   ingredient = ingredient.lower()
   valve = ingredient_list.index(ingredient)
