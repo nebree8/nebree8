@@ -1,5 +1,7 @@
 import logging
 
+import gflags
+
 from actions.compressor import CompressorToggle
 from actions.compressor import State
 from actions.home import Home
@@ -17,6 +19,10 @@ from actions.pressurize import HoldPressure, ReleasePressure
 from actions.slam_stir import STIR_POSITION, SlamStir
 from config import valve_position, ingredients
 from actions.pressurize import HoldPressure, ReleasePressure
+
+FLAGS = gflags.FLAGS
+
+gflags.DEFINE_bool('ice', True, 'Enable ice dispensing')
 
 def actions_for_recipe(recipe):
   """Returns the actions necessary to make the given recipe.
@@ -36,12 +42,14 @@ def actions_for_recipe(recipe):
     valve = ingredients.IngredientNameToValvePosition(ingredient.name,
                                                       recipe.name)
     actions.append(SetLedForValve(valve, 255, 0, 0))
-  actions.append(Led(max(0, -11.15 - ICE_LOCATION), 255, 255, 0, y=4))
+  if FLAGS.ice:
+    actions.append(Led(max(0, -11.15 - ICE_LOCATION), 255, 255, 0, y=4))
   actions.append(Move(0))
-  actions.append(MoveWithIce(ICE_LOCATION, 0.75))
-  actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 255, 0, y=4))
-  actions.append(DispenseIceWithRetry(min_oz_to_meter=1.8))
-  actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
+  if FLAGS.ice:
+    actions.append(MoveWithIce(ICE_LOCATION, 0.75))
+    actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 255, 0, y=4))
+    actions.append(DispenseIceWithRetry(min_oz_to_meter=1.8))
+    actions.append(Led(max(0, -11.15 - ICE_LOCATION), 0, 128, 255, y=4))
   ingredients_added = 0
   for ingredient in sorted_ingredients:
     ingredients_added += 1
