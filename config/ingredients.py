@@ -61,11 +61,16 @@ OVERRIDES = {
 def IngredientsOrdered():
   return INGREDIENTS_ORDERED
 
-
+last_valve = -1
 def IngredientNameToValvePosition(ingredient, drink_name):
+  global last_valve
   if FLAGS.demo_mode_valves:
     indexes = map(int, FLAGS.demo_mode_valves)
-    return random.choice(indexes)
+    valve = last_valve
+    while last_valve == valve:
+        valve = random.choice(indexes)
+    last_valve = valve
+    return valve
   ingredient_list = IngredientsOrdered()
   ingredient = ingredient.lower()
   valve = ingredient_list.index(ingredient)
