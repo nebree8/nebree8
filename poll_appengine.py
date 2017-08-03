@@ -129,16 +129,18 @@ class SyncToServer(threading.Thread):
         attempt += 1
 
   def run(self):
+    last_drink_id = ''
     while True:
       try:
         queue = json.loads(self.get(url='next_drink', attempts=1))
         if not self.controller and queue:
           json_recipe = queue[0]
           drink_id = json_recipe['id']
-          if drink_id == self.finished_drink.get('id'):
+          if drink_id == last_drink_id:
             print "Refusing to remake order %s" % self.finished_drink['id']
             time.sleep(20)   # Sleep extra long
             continue  # Don't make the same drink twice
+          last_drink_id = drink_id
           self.current_drink = json_recipe
           next_recipe = water_down_recipe(Recipe.from_json(json_recipe))
           raw_actions = actions_for_recipe(next_recipe)
