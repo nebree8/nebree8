@@ -62,8 +62,8 @@ class Outputs(enum.Enum):
   # COMPRESSOR = 1023
 
   VALVE_0 = 2053
-  VALVE_1 = 2011
-  VALVE_2 = 2012  # orange
+  VALVE_1 = 2012
+  VALVE_2 = 2011  # orange
   VALVE_3 = 2010
   VALVE_4 = 2009
 
@@ -76,23 +76,23 @@ class Outputs(enum.Enum):
   VALVE_11 = 2016
   VALVE_12 = 2017
 
-  VALVE_13 = 2018
-  VALVE_14 = 2019
-  VALVE_15 = 2022
-  VALVE_16 = 2024
-  VALVE_17 = 2026
-  VALVE_18 = 2028
-  VALVE_19 = 2030
-  VALVE_20 = 2032
+  VALVE_13 = 2039
+  VALVE_14 = 2025
+  VALVE_15 = 2027
+  VALVE_16 = 2029
+  VALVE_17 = 2031
+  VALVE_18 = 2033
+  VALVE_19 = 2035
+  VALVE_20 = 2037
 
-  VALVE_21 = 2039
-  VALVE_22 = 2025
-  VALVE_23 = 2027
-  VALVE_24 = 2029
-  VALVE_25 = 2031
-  VALVE_26 = 2033
-  VALVE_27 = 2035
-  VALVE_28 = 2037
+  VALVE_21 = 2032
+  VALVE_22 = 2030
+  VALVE_23 = 2028
+  VALVE_24 = 2026
+  VALVE_25 = 2024  # removed to make space for ice
+  VALVE_26 = 2022
+  VALVE_27 = 2019
+  VALVE_28 = 2018  # broken
 
   VALVE_29 = 2046
   VALVE_30 = 2048
